@@ -1,176 +1,142 @@
-<p align="center">
-  <img src="./images/图标.png" alt="呆呆面板 Flutter" width="100">
-</p>
+# 呆呆面板 Flutter
 
-<h1 align="center">呆呆面板 Flutter</h1>
+呆呆面板 Flutter 是面向 Android 和 iOS 的移动端客户端，用于连接呆呆面板服务并在手机端管理任务、脚本、日志、环境变量、依赖、安全设置和开放 API。
 
-<p align="center">
-  <em>呆呆面板官方移动端 App，基于 Flutter 构建</em>
-</p>
+## 最新版本
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white" alt="Flutter">
-  <img src="https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart&logoColor=white" alt="Dart">
-  <img src="https://img.shields.io/badge/Android-APK-3DDC84?logo=android&logoColor=white" alt="Android">
-  <img src="https://img.shields.io/badge/iOS-IPA-007AFF?logo=apple&logoColor=white" alt="iOS">
-  <img src="https://img.shields.io/github/v/release/tall-1997/daidai-flutter" alt="Version">
-</p>
+- App 版本：`v0.0.58`
+- 仓库范围：仅保留 Flutter App、Android/iOS 平台工程和双端构建工作流
+- 适配目标：呆呆面板新版 `/api` 接口，兼容必要的 `/api/v1` 流式接口
 
----
+## 下载安装
 
-## 简介
+| 平台 | 安装包 |
+|------|--------|
+| Android | [daidai-flutter-v0.0.58-android.apk](https://github.com/tall-1997/daidai-flutter/releases/download/v0.0.58/daidai-flutter-v0.0.58-android.apk) |
+| iOS | [daidai-flutter-v0.0.58-ios.ipa](https://github.com/tall-1997/daidai-flutter/releases/download/v0.0.58/daidai-flutter-v0.0.58-ios.ipa) |
 
-呆呆面板 Flutter 是 [呆呆面板](https://github.com/linzixuanzz/daidai-panel) 的官方移动端客户端，使用 Flutter 框架开发，支持 Android 和 iOS 双平台。通过本 App，您可以随时随地管理定时任务、查看执行日志、编辑脚本、监控系统状态。
+所有版本见 [GitHub Releases](https://github.com/tall-1997/daidai-flutter/releases)。
 
-## 下载
+## 功能范围
 
-### 最新版本 v0.0.57
+- 仪表盘：查看系统概览、资源状态和最近执行记录
+- 定时任务：任务列表、创建编辑、启停、执行、复制、置顶和批量操作
+- 脚本管理：脚本浏览、编辑、上传、批量操作和运行辅助
+- 执行日志：日志列表、详情、导出、清理和实时/流式日志入口
+- 环境变量：变量增删改查、启停、排序和批量操作
+- 依赖管理：Python/Node.js 依赖查看、安装、重装、取消和删除
+- 订阅管理：订阅列表、同步、启停和日志入口
+- 通知渠道：渠道配置、启停、测试和发送
+- 安全设置：2FA、登录日志、会话管理、IP 白名单和审计信息
+- 开放 API：客户端凭据管理和开放接口访问配置
 
-| 平台 | 下载链接 |
-|------|---------|
-| Android APK | [daidai-flutter-v0.0.57-android.apk](https://github.com/tall-1997/daidai-flutter/releases/download/v0.0.57/daidai-flutter-v0.0.57-android.apk) |
-| iOS IPA | [daidai-flutter-v0.0.57-ios.ipa](https://github.com/tall-1997/daidai-flutter/releases/download/v0.0.57/daidai-flutter-v0.0.57-ios.ipa) |
+## 当前限制
 
-> 所有版本: [Releases](https://github.com/tall-1997/daidai-flutter/releases)
-
-## 功能特性
-
-### 核心功能
-
-- **定时任务管理** — Cron 表达式调度，支持启用/禁用、手动触发、重试机制、超时控制、任务依赖、前后置钩子、并发实例控制、Python 多版本选择（3.10/3.11/3.12）
-- **脚本文件管理** — 在线代码编辑器，支持语法高亮、全屏编辑、查找替换、格式化、行号显示、版本管理、调试运行
-- **执行日志** — SSE 实时日志流，历史日志查看，状态追踪（成功/失败/超时/手动终止），日志统计与清理
-- **环境变量** — 分组管理、拖拽排序、批量导入导出（兼容青龙格式）、变量值脱敏显示
-- **依赖管理** — 可视化安装/卸载 Python (pip) 和 Node.js (npm) 依赖，支持按 Python 版本（3.10/3.11/3.12）筛选和管理
-
-### 系统管理
-
-- **系统监控** — 实时 CPU / 内存 / 磁盘监控，趋势图表展示（每5秒采样）
-- **系统安全** — 双因素认证 (2FA)、IP 白名单、登录日志、多设备会话管理
-- **配置管理** — 面板标题与图标自定义、通知渠道配置、备份与恢复
-- **通知推送** — 支持 18 种推送渠道
-
-### 支持的通知渠道
-
-| 类型 | 渠道 |
-|------|------|
-| 即时通讯 | 企业微信、钉钉、飞书、Telegram、Discord、Slack |
-| 推送服务 | Bark、PushPlus、Server酱、PushDeer、PushMe、Chanify、iGot、Qmsg、Pushover、Gotify、ntfy、WxPusher |
-| 通用 | Webhook、Email |
-| 自定义 | 自定义通知模板 |
-
-## 技术栈
-
-- **框架**: Flutter 3.x
-- **状态管理**: Provider
-- **HTTP 客户端**: Dio
-- **本地存储**: SharedPreferences
-- **代码编辑器**: 自定义全屏编辑器（支持行号、查找替换、格式化）
-- **图表**: CustomPainter 自绘折线图
-
-## 项目结构
-
-```
-lib/
-├── main.dart                    # 应用入口
-├── screens/                     # 页面
-│   ├── home_screen.dart         # 主界面（9项导航）
-│   ├── login_screen.dart        # 登录界面
-│   ├── tasks_screen.dart        # 任务管理
-│   ├── scripts_screen.dart      # 脚本管理（含全屏编辑器）
-│   ├── logs_screen.dart         # 执行日志
-│   ├── envs_screen.dart         # 环境变量
-│   ├── dependencies_screen.dart # 依赖管理
-│   ├── system_screen.dart       # 系统监控
-│   ├── security_screen.dart     # 安全设置
-│   ├── notifications_screen.dart# 通知渠道
-│   ├── config_screen.dart       # 配置管理
-│   └── settings_screen.dart     # 设置页面
-├── services/                    # 服务层
-│   ├── api_service.dart         # API 请求封装
-│   └── auth_service.dart        # 认证服务
-├── theme/                       # 主题
-│   └── miuix_theme.dart         # Miuix 风格主题
-└── widgets/                     # 通用组件
-    └── miuix_widgets.dart       # Miuix 风格组件
-```
+- iOS 安装包为 GitHub Actions 构建的无签名 IPA，需要使用 AltStore、Sideloadly 或企业/开发者签名方式安装。
+- Android 安装包为 Release APK，首次安装可能需要允许浏览器或文件管理器安装未知来源应用。
+- 本仓库仅包含 Flutter App，服务端、Web 管理端、Docker、Magisk、桌面打印工具和历史构建产物已从新历史中移除。
+- 当前环境未内置 Flutter/Dart SDK，本地会话无法执行 `flutter test` 和 `flutter analyze`；云端 GitHub Actions 负责双端构建验证。
+- App 依赖可访问的呆呆面板服务，默认地址为 `http://127.0.0.1:5700`，移动设备使用时需填写实际局域网或公网地址。
+- 反代、NAS、Nginx Proxy Manager 等部署场景遇到 `403` 登录错误时，建议升级面板到 `v2.3.0` 及以上并检查 CORS/反代配置。
 
 ## 连接配置
 
-启动 App 后，在登录页面配置面板地址：
+启动 App 后在登录页填写面板地址。
 
-- **默认地址**: `http://127.0.0.1:5700`
-- **API 路径**: `/api/v1`
+- 默认地址：`http://127.0.0.1:5700`
+- 常规接口：`/api`
+- 流式接口：`/api/v1`
 
-确保您的呆呆面板服务已启动，并开启了 API 访问。
+## 技术栈
 
-## 构建说明
+- Flutter 3.x
+- Dart 3.x
+- Provider 状态管理
+- `http` 网络请求
+- SharedPreferences 本地存储
+- Miuix 风格主题与组件
+- GitHub Actions 自动构建 Android APK 和 iOS IPA
 
-### 环境要求
+## 项目结构
 
-- Flutter SDK >= 3.0.0
-- Dart SDK >= 3.0.0
-- Android Studio / Xcode（用于构建）
+```text
+.
+├── android/                    # Android 平台工程
+├── ios/                        # iOS 平台工程
+├── lib/
+│   ├── main.dart               # 应用入口
+│   ├── screens/                # 页面
+│   ├── services/               # API、认证、日志、通知和 Root 服务
+│   ├── theme/                  # Miuix 主题
+│   └── widgets/                # 通用组件
+├── test/                       # Flutter 测试
+├── pubspec.yaml                # Flutter 依赖和版本
+└── .github/workflows/build.yml # Android/iOS 自动构建
+```
 
-### 本地构建
+## 本地构建
 
 ```bash
 # 安装依赖
 flutter pub get
 
+# 运行静态检查
+flutter analyze
+
+# 运行测试
+flutter test
+
 # 构建 Android APK
 flutter build apk --release
 
-# 构建 iOS IPA（需要 macOS + Xcode）
-flutter build ipa --release --no-codesign
+# 构建 iOS App，无签名
+flutter build ios --release --no-codesign
 ```
 
-### GitHub Actions 自动构建
+## 云端构建
 
-本项目使用 GitHub Actions 自动构建，推送到 `main` 分支会自动触发构建并发布 Release。
+推送到 `main` 分支会触发 `Build Android & iOS` 工作流。
 
 构建产物：
-- `daidai-flutter-v{x.x.x}-android.apk`
-- `daidai-flutter-v{x.x.x}-ios.ipa`
 
-## 版本历史
+- `daidai-flutter-v0.0.58-android.apk`
+- `daidai-flutter-v0.0.58-ios.ipa`
 
-| 版本 | 主要更新 |
-|------|---------|
-| v0.0.57 | 修复脚本详情夜间模式文字颜色问题 |
-| v0.0.56 | 修复版本号显示、任务日志实时刷新、脚本编辑器夜间模式文字颜色 |
-| v0.0.55 | 优化深色模式边框和背景对比度 |
-| v0.0.54 | 仪表盘资源趋势添加磁盘数据显示 |
-| v0.0.53 | 恢复设置页面主题切换功能 |
-| v0.0.52 | 修复脚本上传失败问题，使用正确的 API 路由 |
-| v0.0.51 | 仪表盘日志箭头点击打开详情，提取日志详情为共享组件 |
-| v0.0.50 | 仪表盘最近执行日志点击可跳转到日志页面 |
-| v0.0.49 | 修复仪表盘字段匹配问题，数据正常显示 |
-| v0.0.48 | 修复日志保存失败问题，使用 path_provider 保存到应用目录 |
-| v0.0.47 | 日志导出改用文件选择器保存，支持选择保存位置 |
-| v0.0.46 | 添加日志导出功能，方便调试 |
-| v0.0.45 | 改进仪表盘数据加载和错误处理 |
-| v0.0.44 | 修复仪表盘字段名与API返回不匹配问题 |
-| v0.0.43 | 恢复仪表盘数据加载逻辑，修复信息未显示问题 |
-| v0.0.42 | 修复仪表盘空白、修复滚动条不能手动滑动 |
-| v0.0.41 | 修复仪表盘空白、移除重复安全设置、日志详情添加滚动条 |
-| v0.0.40 | 页面重构：合并用户管理/个人设置、集成系统监控到仪表盘、移除多余刷新按钮 |
-| v0.0.39 | 修复仪表盘导航、日志状态筛选优化、删除配置Tab |
-| v0.0.38 | 新增仪表盘、订阅管理、个人设置、用户管理、开放API功能模块 |
-| v0.0.37 | 对接 v2.2.17：Python 多版本运行环境、任务级 Python 版本选择、依赖管理 Python 版本切换、备份文件导出导入、深色模式持续优化 |
-| v0.0.36 | 修复夜间模式白色背景问题、环境变量和日志页面深色模式适配 |
-| v0.0.35 | 依赖管理按钮优化、版本更新 |
-| v0.0.38+31 | 面板标题图标自定义、设置页面增强 |
-| v0.0.36+29 | 通知渠道扩展18种类型、脚本全屏编辑器、任务重试/依赖/钩子、系统监控趋势图表 |
-| v0.0.35+28 | 任务卡片编辑按钮 |
-| v0.0.35+27 | Chip组件修复、安装依赖按钮、通知渠道配置 |
-| v0.0.35+26 | 登录界面优化、记住密码、自动登录 |
-| v0.0.35+25 | 初始 Flutter 版本，基础功能实现 |
+构建完成后，产物会作为 GitHub Actions artifacts 上传，并同步到 `v0.0.58` Release。
+
+## v0.0.58 更新日志
+
+### 仓库治理
+
+- 重置远端 `main` 为全新 root commit，清理历史中混入的服务端、Web、Docker、桌面工具、Magisk、历史 APK、无关脚本和压缩包。
+- 精简仓库范围，仅保留 Flutter App、Android/iOS 平台工程、基础文档和双端构建工作流。
+- 保留 `Build Android & iOS` 工作流，推送 `main` 后自动构建 APK 和 IPA，并创建或更新最新 Release。
+
+### API 兼容
+
+- 新增 `api_utils.dart`，集中处理面板地址规范化、API 路径拼接和登录错误文案。
+- 常规面板接口统一走 `/api`，健康检查和流式日志等接口保留 `/api/v1`。
+- 修正健康检查路径为 `/health`，日志清理路径为 `/logs/clean`，登录日志路径为 `/security/login-logs`。
+- 登录遇到 `403` 时显示反代/NAS/Nginx Proxy Manager 兼容提示，指导用户升级面板和检查配置。
+
+### App 体验
+
+- 保留根目录 Flutter App 的 Miuix 风格、Provider 状态管理和侧边栏导航。
+- 设置页新增“系统管理”聚合入口，统一跳转开放 API 和安全设置。
+- 替换失效的默认 Counter 测试，新增 URL 规范化、登录错误提示和 API 路径拼接测试。
+
+## 历史版本
+
+- `v0.0.57`：修复脚本详情夜间模式文字颜色问题。
+- `v0.0.56`：修复版本号显示、任务日志实时刷新、脚本编辑器夜间模式文字颜色。
+- `v0.0.55`：优化深色模式边框和背景对比度。
+- `v0.0.54`：仪表盘资源趋势添加磁盘数据显示。
+- `v0.0.53`：恢复设置页面主题切换功能。
 
 ## 相关项目
 
-- **呆呆面板后端**: [linzixuanzz/daidai-panel](https://github.com/linzixuanzz/daidai-panel)
-- **本项目**: [tall-1997/daidai-flutter](https://github.com/tall-1997/daidai-flutter)
+- 呆呆面板后端：[linzixuanzz/daidai-panel](https://github.com/linzixuanzz/daidai-panel)
+- Flutter 客户端：[tall-1997/daidai-flutter](https://github.com/tall-1997/daidai-flutter)
 
 ## 许可证
 
