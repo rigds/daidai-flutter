@@ -4,16 +4,16 @@
 
 ## 最新版本
 
-- App 版本：`v0.0.58`
+- App 版本：`v0.0.59`
 - 仓库范围：仅保留 Flutter App、Android/iOS 平台工程和双端构建工作流
-- 适配目标：呆呆面板新版 `/api` 接口，兼容必要的 `/api/v1` 流式接口
+- 架构方向：`core/`、`features/`、`shared/` 分层迁移，保留 Miuix 风格与 Provider 状态管理
 
 ## 下载安装
 
 | 平台 | 安装包 |
 |------|--------|
-| Android | [daidai-flutter-v0.0.58-android.apk](https://github.com/tall-1997/daidai-flutter/releases/download/v0.0.58/daidai-flutter-v0.0.58-android.apk) |
-| iOS | [daidai-flutter-v0.0.58-ios.ipa](https://github.com/tall-1997/daidai-flutter/releases/download/v0.0.58/daidai-flutter-v0.0.58-ios.ipa) |
+| Android | [daidai-flutter-v0.0.59-android.apk](https://github.com/tall-1997/daidai-flutter/releases/download/v0.0.59/daidai-flutter-v0.0.59-android.apk) |
+| iOS | [daidai-flutter-v0.0.59-ios.ipa](https://github.com/tall-1997/daidai-flutter/releases/download/v0.0.59/daidai-flutter-v0.0.59-ios.ipa) |
 
 所有版本见 [GitHub Releases](https://github.com/tall-1997/daidai-flutter/releases)。
 
@@ -52,8 +52,8 @@
 - Flutter 3.x
 - Dart 3.x
 - Provider 状态管理
-- `http` 网络请求
-- SharedPreferences 本地存储
+- `http` 与 `dio` 网络请求
+- SharedPreferences 与 SecureStorage 本地存储
 - Miuix 风格主题与组件
 - GitHub Actions 自动构建 Android APK 和 iOS IPA
 
@@ -64,7 +64,11 @@
 ├── android/                    # Android 平台工程
 ├── ios/                        # iOS 平台工程
 ├── lib/
-│   ├── main.dart               # 应用入口
+│   ├── main.dart               # 启动入口
+│   ├── app.dart                # 应用装配和 Provider 注入
+│   ├── core/                   # 主题、网络、存储、认证和路由基础层
+│   ├── features/               # 登录、仪表盘、任务、日志等功能模块
+│   ├── shared/                 # 通用模型、工具和组件
 │   ├── screens/                # 页面
 │   ├── services/               # API、认证、日志、通知和 Root 服务
 │   ├── theme/                  # Miuix 主题
@@ -99,10 +103,19 @@ flutter build ios --release --no-codesign
 
 构建产物：
 
-- `daidai-flutter-v0.0.58-android.apk`
-- `daidai-flutter-v0.0.58-ios.ipa`
+- `daidai-flutter-v0.0.59-android.apk`
+- `daidai-flutter-v0.0.59-ios.ipa`
 
-构建完成后，产物会作为 GitHub Actions artifacts 上传，并同步到 `v0.0.58` Release。
+构建完成后，产物会作为 GitHub Actions artifacts 上传，并同步到 `v0.0.59` Release。
+
+## v0.0.59 更新日志
+
+### 架构迁移
+
+- 新增 `core/`、`features/`、`shared/` 分层目录，为后续按模块迁移参考 App 架构提供稳定边界。
+- 新增 Provider 版 `core/auth` 适配层、`core/router` 路由配置、Dio 网络基础层、安全存储和 UserAgent 初始化。
+- 新增 feature 页面包装层，将登录、仪表盘、任务、日志、环境变量、依赖、脚本、通知、订阅、系统、安全和 OpenAPI 模块映射到现有已验证页面。
+- 抽出 `app.dart`，让 `main.dart` 聚焦启动初始化，应用装配集中在 `DaidaiApp`。
 
 ## v0.0.58 更新日志
 

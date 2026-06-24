@@ -1,0 +1,129 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
+import 'services/auth_service.dart';
+import 'services/notification_service.dart';
+import 'services/log_service.dart';
+import 'theme/miuix_theme.dart';
+import 'core/auth/auth_provider.dart' as core_auth;
+
+class ThemeProvider extends ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  ThemeMode get themeMode => _themeMode;
+
+  ThemeProvider() {
+    _loadThemeMode();
+  }
+
+  Future<void> _loadThemeMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final themeIndex = prefs.getInt('theme_mode') ?? 0;
+    _themeMode = ThemeMode.values[themeIndex];
+    notifyListeners();
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('theme_mode', mode.index);
+  }
+
+  bool get isDarkMode {
+    if (_themeMode == ThemeMode.system) {
+      return WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+          Brightness.dark;
+    }
+    return _themeMode == ThemeMode.dark;
+  }
+}
+
+class DaidaiApp extends StatelessWidget {
+  const DaidaiApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProxyProvider<AuthService, core_auth.AuthProvider>(
+          create: (context) => core_auth.AuthProvider(context.read<AuthService>()),
+          update: (_, __, authProvider) => authProvider!,
+        ),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        Provider(create: (_) => LogService()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) => MaterialApp(
+          title: '呆呆面板',
+          debugShowCheckedModeBanner: false,
+          theme: buildMiuixLightTheme(),
+          darkTheme: buildMiuixDarkTheme(),
+          themeMode: themeProvider.themeMode,
+          home: const AppInitializer(),
+        ),
+      ),
+    );
+  }
+}
+
+class AppInitializer extends StatefulWidget {
+  const AppInitializer({super.key});
+
+  @override
+  State<AppInitializer> createState() => _AppInitializerState();
+}
+
+class _AppInitializerState extends State<AppInitializer> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthService>().initialize();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = context.watch<AuthService>();
+
+    if (!authService.isInitialized) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.dashboard_customize,
+                size: 80,
+                color: MiuixColors.primary,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '呆呆面板',
+                style: MiuixTextStyles.title2.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 24),
+              const CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (authService.isAuthenticated) {
+      return const HomeScreen();
+    }
+    return const LoginScreen();
+  }
+}
+
+Future<void> initializeAppServices() async {
+  await NotificationService().initialize();
+}
