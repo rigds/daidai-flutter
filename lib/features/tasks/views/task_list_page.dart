@@ -9,6 +9,7 @@ import '../../../core/network/api_endpoints.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/storage/secure_storage.dart';
 import '../../../core/network/sse_client.dart';
+import '../../../core/services/local_notification_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/models/task.dart';
 import '../../../shared/utils/ansi_text.dart';
@@ -2891,6 +2892,9 @@ class _TaskLiveLogPageState extends ConsumerState<TaskLiveLogPage> {
           _done = _lines.isNotEmpty;
           _statusText = _lines.isEmpty ? '暂无日志' : '已完成';
         });
+        if (_lines.isNotEmpty) {
+          _sendTaskCompletionNotification(widget.taskId, 'finished');
+        }
       }
     });
   }
@@ -2922,6 +2926,7 @@ class _TaskLiveLogPageState extends ConsumerState<TaskLiveLogPage> {
             _done = event.data == 'finished';
             _statusText = _statusFromStreamDone(event.data);
           });
+          _sendTaskCompletionNotification(widget.taskId, event.data);
           return;
         }
         final newLines = event.data.replaceAll('\r\n', '\n').split('\n');
@@ -3004,6 +3009,29 @@ class _TaskLiveLogPageState extends ConsumerState<TaskLiveLogPage> {
         return '运行中';
       default:
         return value;
+    }
+  }
+
+  void _sendTaskCompletionNotification(int taskId, String data) async {
+    if (data == 'reconnect') return;
+    final enabled = await LocalNotificationService()
+        .getChannelEnabled(NotificationChannel.task);
+    if (!enabled) return;
+    final title = widget.taskName?.trim().isNotEmpty == true
+        ? widget.taskName!
+        : '任务 #$taskId';
+    if (data == 'finished') {
+      LocalNotificationService().showTaskNotification(
+        id: taskId,
+        title: '$title 执行完成',
+        body: '任务已成功执行完毕',
+      );
+    } else {
+      LocalNotificationService().showTaskNotification(
+        id: taskId,
+        title: '$title 执行结束',
+        body: '任务状态: $data',
+      );
     }
   }
 
