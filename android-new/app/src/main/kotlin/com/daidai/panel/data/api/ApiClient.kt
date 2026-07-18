@@ -1,8 +1,11 @@
 package com.daidai.panel.data.api
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
@@ -41,6 +44,7 @@ object ApiClient {
     suspend fun login(username: String, password: String): Result<Map<String, Any>> {
         return try {
             val response = client.post("$baseUrl/api/auth/login") {
+                contentType(ContentType.Application.Json)
                 setBody(mapOf("username" to username, "password" to password))
             }
             if (response.status.value == 200) {
