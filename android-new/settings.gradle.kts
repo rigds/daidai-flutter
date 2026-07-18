@@ -1,5 +1,4 @@
 pluginManagement {
-    includeBuild("miuix/build-plugins")
     repositories {
         google()
         mavenCentral()
@@ -17,6 +16,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "DaidaiPanel"
 include(":app")
-include(":miuix:miuix-ui")
-include(":miuix:miuix-core")
-include(":miuix:miuix-icons")

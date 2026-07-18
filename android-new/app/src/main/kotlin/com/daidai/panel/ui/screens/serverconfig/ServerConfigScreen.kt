@@ -1,13 +1,10 @@
 package com.daidai.panel.ui.screens.serverconfig
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import top.yukonga.miuix.kmp.basic.Button
-import top.yukonga.miuix.kmp.basic.Card
-import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
 
 @Composable
 fun ServerConfigScreen() {
@@ -27,17 +24,17 @@ fun ServerConfigScreen() {
             ) {
                 Text(text = "服务器配置")
                 Spacer(modifier = Modifier.height(16.dp))
-                TextField(
+                OutlinedTextField(
                     value = serverName,
                     onValueChange = { serverName = it },
-                    label = "服务器名称",
+                    label = { Text("服务器名称") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                TextField(
+                OutlinedTextField(
                     value = serverUrl,
                     onValueChange = { serverUrl = it },
-                    label = "服务器地址",
+                    label = { Text("服务器地址") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))

@@ -1,15 +1,12 @@
 package com.daidai.panel.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import top.yukonga.miuix.kmp.basic.Button
-import top.yukonga.miuix.kmp.basic.Card
-import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
 
 @Composable
 fun LoginScreen(
@@ -36,27 +33,27 @@ fun LoginScreen(
             ) {
                 Text(
                     text = "呆呆面板",
-                    style = top.yukonga.miuix.kmp.theme.MiuixTheme.textStyles.headline1
+                    style = MaterialTheme.typography.headlineLarge
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = serverUrl,
                     onValueChange = { serverUrl = it },
-                    label = "服务器地址",
+                    label = { Text("服务器地址") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = "用户名",
+                    label = { Text("用户名") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = "密码",
+                    label = { Text("密码") },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
                 )

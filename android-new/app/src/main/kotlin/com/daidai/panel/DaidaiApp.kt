@@ -1,6 +1,7 @@
 package com.daidai.panel
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,8 +23,6 @@ import com.daidai.panel.ui.screens.tasks.TaskFormScreen
 import com.daidai.panel.ui.screens.tasks.TaskListScreen
 import com.daidai.panel.ui.screens.users.UserListScreen
 import com.daidai.panel.viewmodel.AuthViewModel
-import top.yukonga.miuix.kmp.basic.Scaffold
-import top.yukonga.miuix.kmp.basic.TopAppBar
 
 @Composable
 fun DaidaiApp() {
@@ -34,7 +33,7 @@ fun DaidaiApp() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = "呆呆面板"
+                title = { Text("呆呆面板") }
             )
         }
     ) { paddingValues ->

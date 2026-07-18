@@ -1,13 +1,10 @@
 package com.daidai.panel.ui.screens.tasks
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import top.yukonga.miuix.kmp.basic.Button
-import top.yukonga.miuix.kmp.basic.Card
-import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
 
 @Composable
 fun TaskFormScreen(
@@ -29,26 +26,29 @@ fun TaskFormScreen(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                Text(text = if (taskId != null) "编辑任务" else "创建任务")
+                Text(
+                    text = if (taskId != null) "编辑任务" else "创建任务",
+                    style = MaterialTheme.typography.titleLarge
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-                TextField(
+                OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = "任务名称",
+                    label = { Text("任务名称") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                TextField(
+                OutlinedTextField(
                     value = command,
                     onValueChange = { command = it },
-                    label = "执行命令",
+                    label = { Text("执行命令") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                TextField(
+                OutlinedTextField(
                     value = cron,
                     onValueChange = { cron = it },
-                    label = "Cron 表达式",
+                    label = { Text("Cron 表达式") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -56,7 +56,7 @@ fun TaskFormScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Button(
+                    OutlinedButton(
                         onClick = { onNavigateBack() },
                         modifier = Modifier.weight(1f)
                     ) {

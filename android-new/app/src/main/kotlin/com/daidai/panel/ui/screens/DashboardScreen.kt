@@ -2,11 +2,10 @@ package com.daidai.panel.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import top.yukonga.miuix.kmp.basic.Card
-import top.yukonga.miuix.kmp.basic.Text
 
 @Composable
 fun DashboardScreen() {
@@ -63,7 +62,7 @@ fun StatsCard(
                 Text(text = title)
                 Text(
                     text = value,
-                    style = top.yukonga.miuix.kmp.theme.MiuixTheme.textStyles.headline2
+                    style = MaterialTheme.typography.headlineMedium
                 )
             }
             Text(text = icon)
