@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../shared/models/user.dart';
 
+const Object _panelFieldUnset = Object();
+
+/// 面板配置信息
 class PanelConfig {
   final String url;
   final String name;
@@ -36,6 +40,30 @@ class PanelConfig {
     rememberPassword: json['rememberPassword'] as bool? ?? false,
     autoLogin: json['autoLogin'] as bool? ?? false,
   );
+
+  PanelConfig copyWith({
+    String? url,
+    String? name,
+    Object? username = _panelFieldUnset,
+    Object? password = _panelFieldUnset,
+    bool? rememberPassword,
+    bool? autoLogin,
+  }) {
+    return PanelConfig(
+      url: url ?? this.url,
+      name: name ?? this.name,
+      username: identical(username, _panelFieldUnset)
+          ? this.username
+          : username as String?,
+      password: identical(password, _panelFieldUnset)
+          ? this.password
+          : password as String?,
+      rememberPassword: rememberPassword ?? this.rememberPassword,
+      autoLogin: autoLogin ?? this.autoLogin,
+    );
+  }
+
+  PanelConfig sanitizedForStorage() => this;
 }
 
 class SecureStorage {
@@ -46,10 +74,13 @@ class SecureStorage {
   static const _trustedLoginUntilKey = 'trusted_login_until';
   static const _trustedLoginServerUrlKey = 'trusted_login_server_url';
   static const _serverUrlKey = 'server_url';
+  static const _serverListKey = 'server_list';
   static const _panelsKey = 'panels_config';
-  static const _userJsonKey = 'auth_user_json';
+  static const _userKey = 'auth_user';
   static const _appLockConfigKey = 'app_lock_config';
+  static const _prefsNamespaceKey = 'ui_state';
 
+  // Token
   static Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,
@@ -72,20 +103,11 @@ class SecureStorage {
     await _storage.delete(key: _refreshTokenKey);
   }
 
-  static Future<void> saveServerUrl(String url) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_serverUrlKey, url);
-  }
-
-  static Future<String?> getServerUrl() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_serverUrlKey);
-  }
-
   static Future<void> saveTrustedLoginSession({
     required String serverUrl,
     required DateTime expiresAt,
   }) async {
+    // 保存当前面板的本地可信登录有效期，7 天内启动不再重复走登录接口。
     await _storage.write(
       key: _trustedLoginUntilKey,
       value: expiresAt.toUtc().toIso8601String(),
@@ -95,7 +117,10 @@ class SecureStorage {
 
   static Future<DateTime?> getTrustedLoginUntil() async {
     final raw = await _storage.read(key: _trustedLoginUntilKey);
-    if (raw == null || raw.isEmpty) return null;
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+
     try {
       return DateTime.parse(raw);
     } catch (_) {
@@ -108,9 +133,15 @@ class SecureStorage {
 
   static Future<bool> hasValidTrustedLogin({required String serverUrl}) async {
     final trustedServerUrl = await getTrustedLoginServerUrl();
-    if (trustedServerUrl == null || trustedServerUrl != serverUrl) return false;
+    if (trustedServerUrl == null || trustedServerUrl != serverUrl) {
+      return false;
+    }
+
     final trustedUntil = await getTrustedLoginUntil();
-    if (trustedUntil == null) return false;
+    if (trustedUntil == null) {
+      return false;
+    }
+
     return DateTime.now().toUtc().isBefore(trustedUntil.toUtc());
   }
 
@@ -119,21 +150,29 @@ class SecureStorage {
     await _storage.delete(key: _trustedLoginServerUrlKey);
   }
 
-  static Future<void> saveUserJson(Map<String, dynamic> user) =>
-      _storage.write(key: _userJsonKey, value: jsonEncode(user));
+  static Future<void> saveUser(User user) =>
+      _storage.write(key: _userKey, value: jsonEncode(user.toJson()));
 
-  static Future<Map<String, dynamic>?> getUserJson() async {
-    final raw = await _storage.read(key: _userJsonKey);
-    if (raw == null || raw.isEmpty) return null;
+  static Future<User?> getUser() async {
+    final raw = await _storage.read(key: _userKey);
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+
     try {
       final data = jsonDecode(raw);
-      if (data is Map<String, dynamic>) return data;
-      if (data is Map) return Map<String, dynamic>.from(data);
+      if (data is Map<String, dynamic>) {
+        return User.fromJson(data);
+      }
+      if (data is Map) {
+        return User.fromJson(Map<String, dynamic>.from(data));
+      }
     } catch (_) {}
+
     return null;
   }
 
-  static Future<void> clearUser() => _storage.delete(key: _userJsonKey);
+  static Future<void> clearUser() => _storage.delete(key: _userKey);
 
   static Future<void> clearAuthSession() async {
     await clearTokens();
@@ -141,41 +180,148 @@ class SecureStorage {
     await clearTrustedLoginSession();
   }
 
-  static Future<void> savePanels(List<PanelConfig> panels) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      _panelsKey,
-      jsonEncode(panels.map((panel) => panel.toJson()).toList()),
-    );
-  }
-
-  static Future<List<PanelConfig>> getPanels() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_panelsKey);
-    if (raw == null || raw.isEmpty) return const [];
-    try {
-      final data = jsonDecode(raw);
-      if (data is List) {
-        return data
-            .whereType<Map>()
-            .map((item) => PanelConfig.fromJson(Map<String, dynamic>.from(item)))
-            .toList();
-      }
-    } catch (_) {}
-    return const [];
-  }
-
   static Future<void> saveAppLockConfig(Map<String, dynamic> config) =>
       _storage.write(key: _appLockConfigKey, value: jsonEncode(config));
 
   static Future<Map<String, dynamic>?> getAppLockConfig() async {
     final raw = await _storage.read(key: _appLockConfigKey);
-    if (raw == null || raw.isEmpty) return null;
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+
     try {
       final data = jsonDecode(raw);
-      if (data is Map<String, dynamic>) return data;
-      if (data is Map) return Map<String, dynamic>.from(data);
+      if (data is Map<String, dynamic>) {
+        return data;
+      }
+      if (data is Map) {
+        return Map<String, dynamic>.from(data);
+      }
     } catch (_) {}
     return null;
+  }
+
+  static Future<void> clearAppLockConfig() =>
+      _storage.delete(key: _appLockConfigKey);
+
+  // Server URL
+  static Future<void> saveServerUrl(String url) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_serverUrlKey, url);
+  }
+
+  static Future<String?> getServerUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_serverUrlKey);
+  }
+
+  // Server List (legacy)
+  static Future<void> saveServerList(List<String> servers) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_serverListKey, servers);
+  }
+
+  static Future<List<String>> getServerList() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(_serverListKey) ?? [];
+  }
+
+  // Panels
+  static Future<void> savePanels(List<PanelConfig> panels) async {
+    final sanitized = panels.map((p) => p.sanitizedForStorage()).toList();
+    final json = sanitized.map((p) => jsonEncode(p.toJson())).toList();
+    await _storage.write(key: _panelsKey, value: jsonEncode(json));
+  }
+
+  static Future<List<PanelConfig>> getPanels() async {
+    final raw = await _storage.read(key: _panelsKey);
+    if (raw == null) {
+      // 迁移旧数据
+      final oldList = await getServerList();
+      if (oldList.isNotEmpty) {
+        final panels = oldList
+            .map((url) => PanelConfig(url: url, name: url))
+            .toList();
+        await savePanels(panels);
+        return panels;
+      }
+      return [];
+    }
+    try {
+      final list = jsonDecode(raw) as List;
+      final panels = list
+          .map((e) => PanelConfig.fromJson(jsonDecode(e as String)))
+          .map((panel) => panel.sanitizedForStorage())
+          .toList();
+      await savePanels(panels);
+      return panels;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  static Future<void> savePanel(PanelConfig panel) async {
+    final panels = await getPanels();
+    final sanitized = panel.sanitizedForStorage();
+    final idx = panels.indexWhere((p) => p.url == sanitized.url);
+    if (idx >= 0) {
+      panels[idx] = sanitized;
+    } else {
+      panels.insert(0, sanitized);
+    }
+    await savePanels(panels);
+  }
+
+  static Future<void> removePanel(String url) async {
+    final panels = await getPanels();
+    panels.removeWhere((p) => p.url == url);
+    await savePanels(panels);
+  }
+
+  static Future<PanelConfig?> getCurrentPanel() async {
+    // 当前活跃面板由 server_url 决定，再回 panels 列表里取完整配置。
+    final currentUrl = await getServerUrl();
+    if (currentUrl == null || currentUrl.isEmpty) {
+      return null;
+    }
+
+    final panels = await getPanels();
+    for (final panel in panels) {
+      if (panel.url == currentUrl) {
+        return panel;
+      }
+    }
+
+    return null;
+  }
+
+  static Future<void> writeValue(String key, String value) =>
+      _storage.write(key: key, value: value);
+
+  static Future<String?> readValue(String key) => _storage.read(key: key);
+
+  static Future<void> saveUiState(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('${_prefsNamespaceKey}_$key', value);
+  }
+
+  static Future<String?> getUiState(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('${_prefsNamespaceKey}_$key');
+  }
+
+  static Future<void> removeUiState(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('${_prefsNamespaceKey}_$key');
+  }
+
+  static Future<void> saveUiStateList(String key, List<String> values) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('${_prefsNamespaceKey}_$key', values);
+  }
+
+  static Future<List<String>> getUiStateList(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList('${_prefsNamespaceKey}_$key') ?? const [];
   }
 }

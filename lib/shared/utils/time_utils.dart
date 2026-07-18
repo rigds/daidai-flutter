@@ -1,15 +1,17 @@
-String formatDateTime(DateTime? value) {
-  if (value == null) return '-';
-  final local = value.toLocal();
-  return '${local.year.toString().padLeft(4, '0')}-'
-      '${local.month.toString().padLeft(2, '0')}-'
-      '${local.day.toString().padLeft(2, '0')} '
-      '${local.hour.toString().padLeft(2, '0')}:'
-      '${local.minute.toString().padLeft(2, '0')}';
-}
+import 'package:intl/intl.dart';
 
-String formatDurationShort(Duration duration) {
-  if (duration.inHours > 0) return '${duration.inHours}h ${duration.inMinutes.remainder(60)}m';
-  if (duration.inMinutes > 0) return '${duration.inMinutes}m ${duration.inSeconds.remainder(60)}s';
-  return '${duration.inSeconds}s';
+final DateFormat _timeFullFormatter = DateFormat('yyyy年M月d日 HH:mm:ss');
+final DateFormat _timeShortFormatter = DateFormat('M月d日 HH:mm');
+
+String formatTimeCn(DateTime? value, {bool short = false}) {
+  // 统一中文时间格式，避免页面里混用 MM-dd、yyyy/MM/dd 之类的显示方式。
+  if (value == null) {
+    return '-';
+  }
+
+  final localTime = value.toLocal();
+  if (short) {
+    return _timeShortFormatter.format(localTime);
+  }
+  return _timeFullFormatter.format(localTime);
 }

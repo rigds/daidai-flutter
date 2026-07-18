@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_service.dart';
@@ -7,16 +7,16 @@ import '../../../core/network/dio_client.dart';
 import '../../../core/storage/secure_storage.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 
-class ServerConfigPage extends StatefulWidget {
+class ServerConfigPage extends ConsumerStatefulWidget {
   const ServerConfigPage({super.key, this.manageMode = false});
 
   final bool manageMode;
 
   @override
-  State<ServerConfigPage> createState() => _ServerConfigPageState();
+  ConsumerState<ServerConfigPage> createState() => _ServerConfigPageState();
 }
 
-class _ServerConfigPageState extends State<ServerConfigPage> {
+class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
   final _controller = TextEditingController();
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -168,7 +168,7 @@ class _ServerConfigPageState extends State<ServerConfigPage> {
     ref.invalidate(dashboardProvider);
 
     if (!mounted) return;
-    Provider.of<AuthNotifier>(context, listen: false).setUnauthenticated();
+    ref.read(authProvider.notifier).setUnauthenticated();
     context.go(skipAutoLogin ? '/login?manual=1' : '/boot');
   }
 
@@ -246,7 +246,7 @@ class _ServerConfigPageState extends State<ServerConfigPage> {
     }
 
     final isAuthenticated =
-        Provider.of<AuthNotifier>(context, listen: false).state.status == AuthStatus.authenticated;
+        ref.read(authProvider).status == AuthStatus.authenticated;
     if (_isManageMode && isAuthenticated) {
       await _loadPanels();
       if (!mounted) return;
@@ -269,7 +269,7 @@ class _ServerConfigPageState extends State<ServerConfigPage> {
 
   Future<void> _deletePanel(PanelConfig panel) async {
     final isAuthenticated =
-        Provider.of<AuthNotifier>(context, listen: false).state.status == AuthStatus.authenticated;
+        ref.read(authProvider).status == AuthStatus.authenticated;
     if (_isManageMode && isAuthenticated && panel.url == _activeServerUrl) {
       _showMessage('当前使用中的服务器暂时不能删除');
       return;
@@ -311,7 +311,7 @@ class _ServerConfigPageState extends State<ServerConfigPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isAuthenticated =
-        context.watch<AuthNotifier>().state.status == AuthStatus.authenticated;
+        ref.watch(authProvider).status == AuthStatus.authenticated;
 
     return Scaffold(
       appBar: _isManageMode ? AppBar(title: const Text('服务器管理')) : null,

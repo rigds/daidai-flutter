@@ -1,18 +1,19 @@
 class ApiResponse<T> {
-  final bool success;
-  final String? message;
+  final int code;
+  final String message;
   final T? data;
 
-  const ApiResponse({required this.success, this.message, this.data});
+  const ApiResponse({required this.code, this.message = '', this.data});
 
-  factory ApiResponse.fromJson(
-    Map<String, dynamic> json,
-    T Function(Object? value)? parseData,
-  ) {
-    return ApiResponse<T>(
-      success: json['success'] == true || json['code'] == 200,
-      message: json['message']?.toString(),
-      data: parseData == null ? json['data'] as T? : parseData(json['data']),
-    );
-  }
+  bool get isSuccess => code == 200;
+}
+
+class PaginatedData<T> {
+  final List<T> items;
+  final int total;
+
+  const PaginatedData({required this.items, required this.total});
+
+  bool get isEmpty => items.isEmpty;
+  int get length => items.length;
 }

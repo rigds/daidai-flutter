@@ -6,6 +6,10 @@ import 'app_user_agent.dart';
 final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
 
 class DioClient {
+  static DioClient? _instance;
+  late final Dio dio;
+  String _baseUrl = '';
+
   DioClient._() {
     dio = Dio(
       BaseOptions(
@@ -20,6 +24,7 @@ class DioClient {
         },
       ),
     );
+
     if (kDebugMode) {
       dio.interceptors.add(
         LogInterceptor(
@@ -34,10 +39,10 @@ class DioClient {
     }
   }
 
-  static final DioClient instance = DioClient._();
-
-  late final Dio dio;
-  String _baseUrl = '';
+  static DioClient get instance {
+    _instance ??= DioClient._();
+    return _instance!;
+  }
 
   String get baseUrl => _baseUrl;
 

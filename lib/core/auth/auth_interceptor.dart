@@ -6,23 +6,30 @@ import '../storage/secure_storage.dart';
 String _extractAccessToken(dynamic responseData) {
   if (responseData is Map) {
     final directToken = responseData['access_token']?.toString();
-    if (directToken != null && directToken.isNotEmpty) return directToken;
+    if (directToken != null && directToken.isNotEmpty) {
+      return directToken;
+    }
+
     final nestedData = responseData['data'];
     if (nestedData is Map) {
       final nestedToken = nestedData['access_token']?.toString();
-      if (nestedToken != null && nestedToken.isNotEmpty) return nestedToken;
+      if (nestedToken != null && nestedToken.isNotEmpty) {
+        return nestedToken;
+      }
     }
   }
+
   throw StateError('Missing access_token in refresh response');
 }
 
 class AuthInterceptor extends Interceptor {
-  AuthInterceptor({this.onAuthFailed});
-
-  final void Function()? onAuthFailed;
   bool _isRefreshing = false;
   final List<({RequestOptions options, ErrorInterceptorHandler handler})>
-      _pendingRequests = [];
+  _pendingRequests = [];
+
+  final void Function()? onAuthFailed;
+
+  AuthInterceptor({this.onAuthFailed});
 
   @override
   void onRequest(
@@ -57,26 +64,33 @@ class AuthInterceptor extends Interceptor {
     }
 
     _isRefreshing = true;
+
     try {
-      final response = await DioClient.instance.rawDio.post(
+      final rawDio = DioClient.instance.rawDio;
+      final response = await rawDio.post(
         ApiEndpoints.refresh,
         options: Options(headers: {'Authorization': 'Bearer $refreshToken'}),
       );
+
       final newAccessToken = _extractAccessToken(response.data);
       await SecureStorage.saveAccessToken(newAccessToken);
 
+      // 重发原始请求
       err.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
-      final retryResponse = await DioClient.instance.dio.fetch(err.requestOptions);
+      final retryResponse = await DioClient.instance.dio.fetch(
+        err.requestOptions,
+      );
       handler.resolve(retryResponse);
 
+      // 重发所有排队中的请求
       for (final pending in _pendingRequests) {
         pending.options.headers['Authorization'] = 'Bearer $newAccessToken';
         try {
-          final retry = await DioClient.instance.dio.fetch(pending.options);
-          pending.handler.resolve(retry);
-        } catch (error) {
+          final r = await DioClient.instance.dio.fetch(pending.options);
+          pending.handler.resolve(r);
+        } catch (e) {
           pending.handler.reject(
-            DioException(requestOptions: pending.options, error: error),
+            DioException(requestOptions: pending.options, error: e),
           );
         }
       }
