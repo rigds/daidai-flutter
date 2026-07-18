@@ -186,7 +186,11 @@ class _LogStreamPageState extends State<LogStreamPage> {
 
   @override
   Widget build(BuildContext context) {
-    final logTheme = resolveLogSurfaceTheme(_logBackgroundColor);
+    final theme = Theme.of(context);
+    final logTheme = resolveLogSurfaceTheme(
+      _logBackgroundColor,
+      appBrightness: theme.brightness,
+    );
     final chipBackground = logTheme.brightness == Brightness.dark
         ? AppColors.slate800
         : AppColors.slate100;

@@ -7,6 +7,7 @@ import '../../../core/network/dio_client.dart';
 import '../../../core/services/app_update_service.dart';
 import '../../../core/storage/secure_storage.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_provider.dart';
 
 class MorePage extends ConsumerStatefulWidget {
   const MorePage({super.key});
@@ -75,6 +76,7 @@ class _MorePageState extends ConsumerState<MorePage> {
     final user = auth.user;
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
+    final themeMode = ref.watch(themeProvider);
 
     return Scaffold(
       body: ListView(
@@ -285,6 +287,12 @@ class _MorePageState extends ConsumerState<MorePage> {
                         )
                       : null),
             onTap: () => _checkUpdate(),
+          ),
+          const SizedBox(height: 6),
+          _ThemeModeItem(
+            isLight: isLight,
+            currentMode: themeMode,
+            onChanged: (mode) => ref.read(themeProvider.notifier).setThemeMode(mode),
           ),
           _SettingsItem(
             icon: Icons.info_outline,
@@ -693,6 +701,111 @@ class _RepoInfoRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ThemeModeItem extends StatelessWidget {
+  final bool isLight;
+  final ThemeMode currentMode;
+  final ValueChanged<ThemeMode> onChanged;
+
+  const _ThemeModeItem({
+    required this.isLight,
+    required this.currentMode,
+    required this.onChanged,
+  });
+
+  String _modeLabel(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return '浅色';
+      case ThemeMode.dark:
+        return '深色';
+      case ThemeMode.system:
+        return '跟随系统';
+    }
+  }
+
+  IconData _modeIcon(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return Icons.light_mode;
+      case ThemeMode.dark:
+        return Icons.dark_mode;
+      case ThemeMode.system:
+        return Icons.settings_brightness;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: isLight ? AppColors.miuixCard : AppColors.slate900,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isLight ? AppColors.miuixCardBorder : AppColors.slate800,
+          width: 0.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            _modeIcon(currentMode),
+            size: 20,
+            color: isLight ? AppColors.slate500 : AppColors.slate400,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              '主题模式',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          DropdownButton<ThemeMode>(
+            value: currentMode,
+            underline: const SizedBox.shrink(),
+            isDense: true,
+            icon: Icon(
+              Icons.chevron_right,
+              size: 18,
+              color: isLight ? AppColors.slate400 : AppColors.slate600,
+            ),
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: isLight ? AppColors.slate600 : AppColors.slate300,
+            ),
+            dropdownColor: isLight ? AppColors.miuixCard : AppColors.slate900,
+            items: ThemeMode.values.map((mode) {
+              return DropdownMenuItem(
+                value: mode,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _modeIcon(mode),
+                      size: 16,
+                      color: isLight ? AppColors.slate500 : AppColors.slate400,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(_modeLabel(mode)),
+                  ],
+                ),
+              );
+            }).toList(),
+            onChanged: (mode) {
+              if (mode != null) onChanged(mode);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

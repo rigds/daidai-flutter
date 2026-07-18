@@ -81,8 +81,14 @@ Color? parseColorSetting(String? raw) {
   return null;
 }
 
-LogSurfaceTheme resolveLogSurfaceTheme(Color? configuredColor) {
-  final background = configuredColor ?? AppColors.termBg;
+LogSurfaceTheme resolveLogSurfaceTheme(
+  Color? configuredColor, {
+  Brightness appBrightness = Brightness.light,
+}) {
+  final background = configuredColor ??
+      (appBrightness == Brightness.dark
+          ? AppColors.termBgDark
+          : AppColors.termBg);
   final brightness = ThemeData.estimateBrightnessForColor(background);
   final isDark = brightness == Brightness.dark;
 
