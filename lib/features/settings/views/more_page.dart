@@ -194,6 +194,12 @@ class _MorePageState extends ConsumerState<MorePage> {
             onTap: () => context.push('/notifications'),
           ),
           _SettingsItem(
+            icon: Icons.notifications_active_outlined,
+            title: '本地通知',
+            isLight: isLight,
+            onTap: () => context.push('/local-notifications'),
+          ),
+          _SettingsItem(
             icon: Icons.lock_outline,
             title: '应用锁',
             isLight: isLight,

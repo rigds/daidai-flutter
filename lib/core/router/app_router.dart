@@ -16,6 +16,7 @@ import '../../features/settings/views/sponsor_page.dart';
 import '../../features/subscriptions/views/subscription_list_page.dart';
 import '../../features/scripts/views/script_list_page.dart';
 import '../../features/notifications/views/notification_list_page.dart';
+import '../../features/notifications/views/local_notification_settings_page.dart';
 import '../../features/deps/views/dep_list_page.dart';
 import '../../features/users/views/user_list_page.dart';
 import '../../features/security/views/security_page.dart';
@@ -193,6 +194,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/notifications',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, state) => const NotificationListPage(),
+      ),
+      GoRoute(
+        path: '/local-notifications',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, state) => const LocalNotificationSettingsPage(),
       ),
       GoRoute(
         path: '/deps',
