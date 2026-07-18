@@ -12,13 +12,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://maven.pkg.github.com/compose-miuix-ui/miuix")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR") ?: "public"
-                password = System.getenv("GITHUB_TOKEN") ?: ""
-            }
-        }
-        maven {
             url = uri("https://jitpack.io")
         }
     }
