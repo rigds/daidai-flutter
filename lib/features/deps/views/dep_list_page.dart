@@ -1206,7 +1206,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
             ),
             const SizedBox(height: 10),
             if (state.selectedType == 'python') ...[
-              _buildPythonRuntimePanel(state, isLight),
+              _buildPythonRuntimePanel(state, isLight, glassMode),
               const SizedBox(height: 10),
             ],
             Padding(
