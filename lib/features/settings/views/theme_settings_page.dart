@@ -162,7 +162,7 @@ class _ThemeModeSelector extends ConsumerWidget {
     );
 
     if (glassMode) {
-      return GlassCard(
+      return GlassCard(useOwnLayer: true, 
         padding: EdgeInsets.zero,
         child: rowContent,
       );
@@ -263,7 +263,7 @@ class _GlassModeCard extends ConsumerWidget {
     );
 
     if (glassMode) {
-      return GlassCard(padding: const EdgeInsets.all(16), child: content);
+      return GlassCard(useOwnLayer: true, padding: const EdgeInsets.all(16), child: content);
     }
 
     return Container(
@@ -384,7 +384,7 @@ class _BackgroundImageCard extends ConsumerWidget {
     return GestureDetector(
       onTap: currentPath != null ? null : onPick,
       child: glassMode
-          ? GlassCard(padding: const EdgeInsets.all(16), child: content)
+          ? GlassCard(useOwnLayer: true, padding: const EdgeInsets.all(16), child: content)
           : Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -465,7 +465,7 @@ class _BlurSliderCard extends ConsumerWidget {
     );
 
     if (glassMode) {
-      return GlassCard(padding: const EdgeInsets.all(16), child: content);
+      return GlassCard(useOwnLayer: true, padding: const EdgeInsets.all(16), child: content);
     }
 
     return Container(

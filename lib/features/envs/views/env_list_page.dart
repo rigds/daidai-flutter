@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_provider.dart';
 import '../../../shared/models/env_var.dart';
 import '../../../shared/utils/api_utils.dart';
+import '../../../shared/widgets/app_card.dart';
 
 final envListProvider = StateNotifierProvider<EnvListNotifier, EnvListState>((
   ref,
@@ -942,7 +944,7 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                       height: 44,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
-                        color: isLight ? Colors.white : AppColors.slate900,
+                        color: glassCardColor(glassMode: glassMode, isLight: isLight),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isLight
@@ -989,7 +991,7 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isLight ? Colors.white : AppColors.slate900,
+                    color: glassCardColor(glassMode: glassMode, isLight: isLight),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: isLight ? AppColors.slate200 : AppColors.slate800,
@@ -1244,6 +1246,7 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                           return _EnvCard(
                             env: env,
                             isLight: isLight,
+                            glassMode: glassMode,
                             selectionMode: _selectionMode,
                             selected: _isSelected(env.id),
                             onTap: () {
@@ -1728,7 +1731,7 @@ class _EnvValueSheetEditor extends StatelessWidget {
                       hintText: '在这里编辑完整变量值',
                       alignLabelWithHint: true,
                       filled: true,
-                      fillColor: isLight ? Colors.white : AppColors.slate900,
+                      fillColor: glassFillColor(glassMode: glassMode, isLight: isLight),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -1775,7 +1778,7 @@ class _EnvValueSheetEditor extends StatelessWidget {
   }
 }
 
-class _HeaderChipButton extends StatelessWidget {
+class _HeaderChipButton extends ConsumerWidget {
   final String label;
   final IconData icon;
   final bool isLight;
@@ -1789,13 +1792,14 @@ class _HeaderChipButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
-          color: isLight ? Colors.white : AppColors.slate900,
+          color: glassCardColor(glassMode: glassMode, isLight: isLight),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
             color: isLight ? AppColors.slate200 : AppColors.slate800,
@@ -1879,6 +1883,7 @@ class _BatchActionButton extends StatelessWidget {
 class _EnvCard extends StatefulWidget {
   final EnvVar env;
   final bool isLight;
+  final bool glassMode;
   final bool selectionMode;
   final bool selected;
   final VoidCallback onTap;
@@ -2038,7 +2043,7 @@ class _EnvCardState extends State<_EnvCard> {
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: widget.isLight ? Colors.white : AppColors.slate900,
+                  color: glassCardColor(glassMode: widget.glassMode, isLight: widget.isLight),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: widget.selected

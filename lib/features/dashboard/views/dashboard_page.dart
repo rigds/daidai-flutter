@@ -479,7 +479,7 @@ class _ServerInfoCard extends ConsumerWidget {
     );
 
     if (glassMode) {
-      return GlassCard(
+      return GlassCard(useOwnLayer: true, 
         padding: const EdgeInsets.all(20),
         child: content,
       );
@@ -605,7 +605,7 @@ class _StatCard extends ConsumerWidget {
     );
 
     if (glassMode) {
-      return GlassCard(
+      return GlassCard(useOwnLayer: true, 
         padding: const EdgeInsets.all(16),
         child: content,
       );
@@ -663,7 +663,7 @@ class _QuickAction extends ConsumerWidget {
       return Expanded(
         child: GestureDetector(
           onTap: onTap,
-          child: GlassCard(
+          child: GlassCard(useOwnLayer: true, 
             padding: const EdgeInsets.symmetric(vertical: 14),
             child: content,
           ),

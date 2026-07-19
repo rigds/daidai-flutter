@@ -6,9 +6,11 @@ import 'package:go_router/go_router.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_provider.dart';
 import '../../../shared/models/task_log.dart';
 import '../../../shared/utils/api_utils.dart';
 import '../../../shared/utils/time_utils.dart';
+import '../../../shared/widgets/app_card.dart';
 
 final logListProvider = StateNotifierProvider<LogListNotifier, LogListState>((
   ref,
@@ -510,7 +512,7 @@ class _LogListPageState extends ConsumerState<LogListPage> {
                     color: AppColors.slate400,
                   ),
                   filled: true,
-                  fillColor: isLight ? Colors.white : AppColors.slate900,
+                  fillColor: glassFillColor(glassMode: glassMode, isLight: isLight),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
@@ -721,7 +723,7 @@ class _LogItem extends StatelessWidget {
               ? (isLight
                     ? AppColors.primary.withAlpha(12)
                     : AppColors.primary.withAlpha(20))
-              : (isLight ? Colors.white : AppColors.slate900),
+              : glassCardColor(glassMode: glassMode, isLight: isLight),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: selected

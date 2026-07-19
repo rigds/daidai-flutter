@@ -89,7 +89,7 @@ class TaskStatsCard extends ConsumerWidget {
     if (glassMode) {
       return GestureDetector(
         onTap: onTap,
-        child: GlassCard(
+        child: GlassCard(useOwnLayer: true, 
           padding: const EdgeInsets.all(16),
           child: content,
         ),

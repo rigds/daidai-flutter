@@ -30,6 +30,7 @@ class AppCard extends ConsumerWidget {
 
     if (settings.glassMode) {
       card = GlassCard(
+        useOwnLayer: true,
         padding: padding ?? const EdgeInsets.all(16),
         child: child,
       );
@@ -208,4 +209,35 @@ class GlassAwareContainer extends ConsumerWidget {
       child: child,
     );
   }
+}
+
+/// 获取玻璃感知的卡片背景色
+/// glassMode=true 时返回半透明色，glassMode=false 时返回实体色
+Color glassCardColor({
+  required bool glassMode,
+  required bool isLight,
+  Color? lightColor,
+  Color? darkColor,
+}) {
+  if (glassMode) {
+    return isLight
+        ? (lightColor ?? Colors.white.withAlpha(160))
+        : (darkColor ?? AppColors.slate800.withAlpha(140));
+  }
+  return isLight
+      ? (lightColor ?? AppColors.glassCard)
+      : (darkColor ?? AppColors.slate900);
+}
+
+/// 获取玻璃感知的输入框填充色
+Color glassFillColor({
+  required bool glassMode,
+  required bool isLight,
+}) {
+  if (glassMode) {
+    return isLight
+        ? Colors.white.withAlpha(120)
+        : AppColors.slate800.withAlpha(100);
+  }
+  return isLight ? Colors.white : AppColors.slate900;
 }

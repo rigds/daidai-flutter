@@ -127,7 +127,7 @@ class TrendChart extends ConsumerWidget {
     );
 
     if (glassMode) {
-      return GlassCard(
+      return GlassCard(useOwnLayer: true, 
         padding: const EdgeInsets.all(16),
         child: chartContent,
       );

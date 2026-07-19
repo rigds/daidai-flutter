@@ -11,11 +11,13 @@ import '../../../core/storage/secure_storage.dart';
 import '../../../core/network/sse_client.dart';
 import '../../../core/services/local_notification_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_provider.dart';
 import '../../../shared/models/task.dart';
 import '../../../shared/utils/ansi_text.dart';
 import '../../../shared/utils/api_utils.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/utils/log_background.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/task_cron_list.dart';
 import '../providers/task_provider.dart';
 
@@ -613,7 +615,7 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
                     color: AppColors.slate400,
                   ),
                   filled: true,
-                  fillColor: isLight ? Colors.white : AppColors.slate900,
+                  fillColor: glassFillColor(glassMode: glassMode, isLight: isLight),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
@@ -1229,7 +1231,7 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
                   vertical: 14,
                 ),
                 decoration: BoxDecoration(
-                  color: isLight ? Colors.white : AppColors.slate900,
+                  color: glassCardColor(glassMode: glassMode, isLight: isLight),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isLight ? AppColors.slate200 : AppColors.slate800,
@@ -1285,7 +1287,7 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
-            color: isLight ? Colors.white : AppColors.slate900,
+            color: glassCardColor(glassMode: glassMode, isLight: isLight),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isLight ? AppColors.slate200 : AppColors.slate800,
@@ -1345,7 +1347,7 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
         Container(
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
-            color: isLight ? Colors.white : AppColors.slate900,
+            color: glassCardColor(glassMode: glassMode, isLight: isLight),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isLight ? AppColors.slate200 : AppColors.slate800,
@@ -1434,6 +1436,7 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
               key: ValueKey('task-card-${task.id}'),
               task: task,
               isLight: isLight,
+              glassMode: glassMode,
               selectionMode: _selectionMode,
               selected: _selectedTaskIds.contains(task.id),
               onTap: () => _selectionMode
@@ -1546,6 +1549,7 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
 class _TaskCard extends StatefulWidget {
   final Task task;
   final bool isLight;
+  final bool glassMode;
   final bool selectionMode;
   final bool selected;
   final VoidCallback onTap;
@@ -1563,6 +1567,7 @@ class _TaskCard extends StatefulWidget {
     super.key,
     required this.task,
     required this.isLight,
+    required this.glassMode,
     required this.selectionMode,
     required this.selected,
     required this.onTap,
@@ -1835,7 +1840,7 @@ class _TaskCardState extends State<_TaskCard> {
                 transform: Matrix4.translationValues(_dragOffset, 0, 0),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: widget.isLight ? Colors.white : AppColors.slate900,
+                  color: glassCardColor(glassMode: widget.glassMode, isLight: widget.isLight),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: widget.selected
@@ -2180,21 +2185,22 @@ class _TaskScheduleSummary extends StatelessWidget {
   }
 }
 
-class _TaskSubscriptionSummary extends StatelessWidget {
+class _TaskSubscriptionSummary extends ConsumerWidget {
   final List<String> labels;
   final bool isLight;
 
   const _TaskSubscriptionSummary({required this.labels, required this.isLight});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     final visibleLabels = labels.take(3).toList();
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: isLight ? Colors.white : AppColors.slate900,
+        color: glassCardColor(glassMode: glassMode, isLight: isLight),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isLight ? AppColors.slate200 : AppColors.slate800,
@@ -2427,6 +2433,7 @@ class _MetaChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     final background = active
         ? (isLight ? AppColors.slate50 : AppColors.slate800)
         : (isLight ? AppColors.slate100 : AppColors.slate900);
@@ -2460,7 +2467,7 @@ class _MetaChip extends StatelessWidget {
   }
 }
 
-class _TaskHeaderChipButton extends StatelessWidget {
+class _TaskHeaderChipButton extends ConsumerWidget {
   final String label;
   final IconData icon;
   final bool isLight;
@@ -2474,13 +2481,14 @@ class _TaskHeaderChipButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
-          color: isLight ? Colors.white : AppColors.slate900,
+          color: glassCardColor(glassMode: glassMode, isLight: isLight),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
             color: isLight ? AppColors.slate200 : AppColors.slate800,

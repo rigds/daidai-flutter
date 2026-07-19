@@ -90,41 +90,32 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
       barHeight: 58,
       horizontalPadding: 16,
       verticalPadding: 10,
-      selectedIconColor: AppColors.primary,
-      indicatorColor: AppColors.primary.withAlpha(60),
-      glowOpacity: 0.4,
-      glowBlurRadius: 24,
-      magnification: 1.1,
+      magnification: 1.05,
       tabs: const [
         GlassTab(
           icon: Icon(Icons.space_dashboard_outlined),
           activeIcon: Icon(Icons.space_dashboard),
           label: '主页',
-          glowColor: AppColors.primary,
         ),
         GlassTab(
           icon: Icon(Icons.schedule_outlined),
           activeIcon: Icon(Icons.schedule),
           label: '任务',
-          glowColor: AppColors.primary,
         ),
         GlassTab(
           icon: Icon(Icons.terminal_outlined),
           activeIcon: Icon(Icons.terminal),
           label: '日志',
-          glowColor: AppColors.primary,
         ),
         GlassTab(
           icon: Icon(Icons.key_outlined),
           activeIcon: Icon(Icons.key),
           label: '变量',
-          glowColor: AppColors.primary,
         ),
         GlassTab(
           icon: Icon(Icons.menu_outlined),
           activeIcon: Icon(Icons.menu),
           label: '更多',
-          glowColor: AppColors.primary,
         ),
       ],
     );

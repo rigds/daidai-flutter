@@ -81,7 +81,7 @@ class _LocalNotificationSettingsPageState
         padding: const EdgeInsets.all(16),
         children: [
           ref.watch(appStyleProvider).glassMode
-              ? GlassCard(
+              ? GlassCard(useOwnLayer: true, 
                   padding: const EdgeInsets.all(16),
                   child: _buildPermissionCard(isLight),
                 )
@@ -286,7 +286,7 @@ class _ChannelTile extends ConsumerWidget {
     );
 
     if (glassMode) {
-      return GlassCard(padding: const EdgeInsets.all(16), child: content);
+      return GlassCard(useOwnLayer: true, padding: const EdgeInsets.all(16), child: content);
     }
 
     return Container(

@@ -96,7 +96,7 @@ class _MorePageState extends ConsumerState<MorePage> {
           // User Card
           if (user != null)
             ref.watch(appStyleProvider).glassMode
-                ? GlassCard(
+                ? GlassCard(useOwnLayer: true, 
                     padding: const EdgeInsets.all(16),
                     child: _buildUserCardContent(user, isLight),
                   )
@@ -653,7 +653,7 @@ class _SettingsItem extends ConsumerWidget {
     if (glassMode) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 6),
-        child: GlassCard(
+        child: GlassCard(useOwnLayer: true, 
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: GestureDetector(onTap: onTap, child: rowContent),
         ),
