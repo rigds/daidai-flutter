@@ -21,8 +21,16 @@ class DaidaiApp extends ConsumerWidget {
       themeMode: styleSettings.themeMode,
       routerConfig: router,
       locale: const Locale('zh', 'CN'),
-      builder: (context, child) =>
-          AppLockGate(child: child ?? const SizedBox.shrink()),
+      // 🌟 修改：在 builder 中注入 MediaQuery 实现全局字体缩放，同时保留原有的 AppLockGate
+      builder: (context, child) {
+        final mediaQueryData = MediaQuery.of(context);
+        return MediaQuery(
+          data: mediaQueryData.copyWith(
+            textScaler: TextScaler.linear(styleSettings.textScale),
+          ),
+          child: AppLockGate(child: child ?? const SizedBox.shrink()),
+        );
+      },
     );
   }
 }
