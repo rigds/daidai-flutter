@@ -850,7 +850,7 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
                         children: [_buildEmpty()],
                       )
                     : _taskSortMode
-                    ? _buildTaskReorderView(state.tasks, isLight)
+                    ? _buildTaskReorderView(state.tasks, isLight, glassMode)
                     : _groupReorderMode
                     ? _buildGroupReorderView(groupedTasks, isLight, glassMode)
                     : ListView(
@@ -2431,7 +2431,7 @@ class _MetaChip extends ConsumerWidget {
   const _MetaChip({required this.label, this.active = true});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
     final glassMode = ref.watch(appStyleProvider).glassMode;

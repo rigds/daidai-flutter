@@ -1656,7 +1656,8 @@ class _EnvValueSheetEditor extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     final isLight = Theme.of(context).brightness == Brightness.light;
     final screenHeight = MediaQuery.of(context).size.height;
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
