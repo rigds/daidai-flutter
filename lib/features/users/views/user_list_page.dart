@@ -587,7 +587,8 @@ class _UserCard extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext _) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     final roleColor = user.role == 'admin'
         ? AppColors.red500
         : user.role == 'operator'

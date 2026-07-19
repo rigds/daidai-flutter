@@ -1417,7 +1417,7 @@ class _DepCard extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final glassMode = ref.watch(appStyleProvider).glassMode;
     return Container(

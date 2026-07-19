@@ -1085,7 +1085,8 @@ class _SubCard extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     return GestureDetector(
       onTap: onEdit,
       child: Container(
