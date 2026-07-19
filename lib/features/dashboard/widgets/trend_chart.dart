@@ -125,7 +125,7 @@ class TrendChart extends ConsumerWidget {
           ),
         ],
       ),
-    );
+    ;
 
     if (glassMode) {
       return GlassCard(

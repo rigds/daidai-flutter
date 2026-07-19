@@ -162,10 +162,10 @@ class _ThemeModeSelector extends ConsumerWidget {
                 ),
               ),
             ),
-          );
+    ;
         }).toList(),
       ),
-    );
+    ;
 
     if (glassMode) {
       return GlassCard(

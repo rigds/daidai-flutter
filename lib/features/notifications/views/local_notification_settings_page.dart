@@ -64,6 +64,10 @@ class _LocalNotificationSettingsPageState
     );
   }
 
+  Future<bool> _checkPermission() async {
+    return await _service.requestPermissions();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

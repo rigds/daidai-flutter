@@ -494,7 +494,7 @@ class _ServerInfoCard extends ConsumerWidget {
           ),
         ],
       ),
-    );
+    ;
 
     if (glassMode) {
       return GlassCard(
