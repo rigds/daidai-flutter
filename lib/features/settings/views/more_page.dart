@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/services/app_update_service.dart';
@@ -30,6 +31,20 @@ class _MorePageState extends ConsumerState<MorePage> {
   Future<void> _loadServerUrl() async {
     final url = await SecureStorage.getServerUrl();
     if (mounted) setState(() => _serverUrl = url);
+  }
+
+  Future<void> _pickBackgroundImage(WidgetRef ref) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
+      if (result != null && result.files.single.path != null) {
+        await ref
+            .read(appStyleProvider.notifier)
+            .setBackgroundImage(result.files.single.path!);
+      }
+    } catch (_) {}
   }
 
   String? _buildAvatarUrl(String? avatarPath) {
@@ -76,7 +91,7 @@ class _MorePageState extends ConsumerState<MorePage> {
     final user = auth.user;
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
-    final themeMode = ref.watch(themeProvider);
+    final themeMode = ref.watch(appStyleProvider).themeMode;
 
     return Scaffold(
       body: ListView(
@@ -263,6 +278,33 @@ class _MorePageState extends ConsumerState<MorePage> {
           const SizedBox(height: 24),
           _SectionLabel('其他'),
           const SizedBox(height: 8),
+
+          // 液态玻璃模式开关
+          _GlassModeToggle(
+            isLight: isLight,
+            enabled: ref.watch(appStyleProvider).glassMode,
+            onChanged: (v) =>
+                ref.read(appStyleProvider.notifier).setGlassMode(v),
+          ),
+
+          // 背景图片选择
+          _BackgroundImageItem(
+            isLight: isLight,
+            currentPath: ref.watch(appStyleProvider).backgroundImagePath,
+            onPick: () => _pickBackgroundImage(ref),
+            onClear: () =>
+                ref.read(appStyleProvider.notifier).setBackgroundImage(null),
+          ),
+
+          // 背景模糊程度
+          if (ref.watch(appStyleProvider).backgroundImagePath != null)
+            _BlurSliderItem(
+              isLight: isLight,
+              value: ref.watch(appStyleProvider).blurIntensity,
+              onChanged: (v) =>
+                  ref.read(appStyleProvider.notifier).setBlurIntensity(v),
+            ),
+
           _SettingsItem(
             icon: Icons.volunteer_activism_outlined,
             title: '赞助名单',
@@ -298,7 +340,7 @@ class _MorePageState extends ConsumerState<MorePage> {
           _ThemeModeItem(
             isLight: isLight,
             currentMode: themeMode,
-            onChanged: (mode) => ref.read(themeProvider.notifier).setThemeMode(mode),
+            onChanged: (mode) => ref.read(appStyleProvider.notifier).setThemeMode(mode),
           ),
           _SettingsItem(
             icon: Icons.info_outline,
@@ -809,6 +851,210 @@ class _ThemeModeItem extends StatelessWidget {
             onChanged: (mode) {
               if (mode != null) onChanged(mode);
             },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GlassModeToggle extends StatelessWidget {
+  final bool isLight;
+  final bool enabled;
+  final ValueChanged<bool> onChanged;
+
+  const _GlassModeToggle({
+    required this.isLight,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: isLight ? AppColors.glassCard : AppColors.slate900,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
+          width: 0.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.blur_on,
+            size: 20,
+            color: isLight ? AppColors.slate500 : AppColors.slate400,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '液态玻璃风格',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'iOS 26 液态玻璃效果',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isLight ? AppColors.slate400 : AppColors.slate500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: enabled,
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BackgroundImageItem extends StatelessWidget {
+  final bool isLight;
+  final String? currentPath;
+  final VoidCallback onPick;
+  final VoidCallback onClear;
+
+  const _BackgroundImageItem({
+    required this.isLight,
+    required this.currentPath,
+    required this.onPick,
+    required this.onClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: currentPath != null ? null : onPick,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isLight ? AppColors.glassCard : AppColors.slate900,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
+            width: 0.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.wallpaper_outlined,
+              size: 20,
+              color: isLight ? AppColors.slate500 : AppColors.slate400,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '背景图片',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                  if (currentPath != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      '已设置自定义背景',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (currentPath != null)
+              IconButton(
+                icon: Icon(Icons.delete_outline,
+                    size: 18, color: AppColors.red500),
+                onPressed: onClear,
+              )
+            else
+              Icon(Icons.chevron_right,
+                  size: 18,
+                  color: isLight ? AppColors.slate400 : AppColors.slate600),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BlurSliderItem extends StatelessWidget {
+  final bool isLight;
+  final double value;
+  final ValueChanged<double> onChanged;
+
+  const _BlurSliderItem({
+    required this.isLight,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: isLight ? AppColors.glassCard : AppColors.slate900,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
+          width: 0.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.blur_on,
+            size: 20,
+            color: isLight ? AppColors.slate500 : AppColors.slate400,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      '背景模糊',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${value.round()}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isLight ? AppColors.slate500 : AppColors.slate400,
+                      ),
+                    ),
+                  ],
+                ),
+                Slider(
+                  value: value,
+                  min: 0,
+                  max: 50,
+                  divisions: 50,
+                  onChanged: onChanged,
+                ),
+              ],
+            ),
           ),
         ],
       ),
