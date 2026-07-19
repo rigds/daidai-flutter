@@ -409,91 +409,73 @@ class _ServerInfoCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final glassMode = ref.watch(appStyleProvider).glassMode;
 
-    final content = Stack(
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 装饰圆
-        Positioned(
-          top: -30,
-          right: -30,
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withAlpha(isLight ? 20 : 10),
-              shape: BoxShape.circle,
+        Row(
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withAlpha(180),
+                    blurRadius: 8,
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(width: 10),
+            Text(
+              data.hostname,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isLight ? AppColors.slate600 : AppColors.slate400,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        Text(
+          '${data.os} ${data.system['arch'] ?? ''}',
+          style: const TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w700,
           ),
         ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withAlpha(180),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    data.hostname,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: isLight ? AppColors.slate600 : AppColors.slate400,
-                    ),
-                  ),
-                ],
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Text(
+              '已运行：${data.uptime}',
+              style: TextStyle(
+                fontSize: 12,
+                color: isLight ? AppColors.slate500 : AppColors.slate400,
               ),
-              const SizedBox(height: 14),
+            ),
+            if (data.panelVersion.isNotEmpty) ...[
+              Container(
+                width: 1,
+                height: 10,
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                color: isLight ? AppColors.slate300 : AppColors.slate700,
+              ),
               Text(
-                '${data.os} ${data.system['arch'] ?? ''}',
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w700,
+                'v${data.panelVersion}',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
                 ),
               ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  Text(
-                    '已运行：${data.uptime}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isLight ? AppColors.slate500 : AppColors.slate400,
-                    ),
-                  ),
-                  if (data.panelVersion.isNotEmpty) ...[
-                    Container(
-                      width: 1,
-                      height: 10,
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      color: isLight ? AppColors.slate300 : AppColors.slate700,
-                    ),
-                    Text(
-                      'v${data.panelVersion}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
             ],
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
 
     if (glassMode) {

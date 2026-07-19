@@ -36,19 +36,19 @@ class TrendChart extends ConsumerWidget {
           children: [
             Text(
               '近7天执行统计',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: isLight ? AppColors.slate700 : AppColors.slate300,
-                ),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isLight ? AppColors.slate700 : AppColors.slate300,
               ),
-              const Spacer(),
-              _LegendDot(color: AppColors.primary, label: '成功', isLight: isLight),
-              const SizedBox(width: 12),
-              _LegendDot(color: AppColors.red500, label: '失败', isLight: isLight),
-            ],
-          ),
-          const SizedBox(height: 16),
+            ),
+            const Spacer(),
+            _LegendDot(color: AppColors.primary, label: '成功', isLight: isLight),
+            const SizedBox(width: 12),
+            _LegendDot(color: AppColors.red500, label: '失败', isLight: isLight),
+          ],
+        ),
+        const SizedBox(height: 16),
           SizedBox(
             height: 180,
             child: LineChart(

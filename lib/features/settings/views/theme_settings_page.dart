@@ -132,38 +132,33 @@ class _ThemeModeSelector extends ConsumerWidget {
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(16),
               ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      _modeIcon(mode),
-                      size: 22,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    _modeIcon(mode),
+                    size: 22,
+                    color: isSelected
+                        ? AppColors.primary
+                        : (isLight ? AppColors.slate400 : AppColors.slate500),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _modeLabel(mode),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                       color: isSelected
                           ? AppColors.primary
-                          : (isLight
-                              ? AppColors.slate400
-                              : AppColors.slate500),
+                          : (isLight ? AppColors.slate500 : AppColors.slate400),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _modeLabel(mode),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected
-                            ? AppColors.primary
-                            : (isLight
-                                ? AppColors.slate500
-                                : AppColors.slate400),
-                      ),
-                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-        }).toList(),
-      ),
+          ),
+        );
+      }).toList(),
     );
 
     if (glassMode) {
