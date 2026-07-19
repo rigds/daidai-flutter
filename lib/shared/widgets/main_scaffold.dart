@@ -85,8 +85,8 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     return GlassTabBar.bottom(
       selectedIndex: idx,
       onTabSelected: _onTabSelected,
-      iconSize: 22,
-      labelFontSize: 10,
+      iconSize: 24, // 🌟 修改：玻璃模式图标放大
+      labelFontSize: 11, // 🌟 修改：玻璃模式字体放大
       barHeight: 58,
       horizontalPadding: 16,
       verticalPadding: 10,
@@ -179,7 +179,11 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     return List.generate(items.length, (i) {
       final (icon, activeIcon, label) = items[i];
       final isActive = i == idx;
-      final color = isActive ? AppColors.primary : AppColors.slate400;
+      
+      // 🌟 核心修改：大幅加深未选中状态的颜色
+      final color = isActive 
+          ? AppColors.primary 
+          : (isLight ? AppColors.slate700 : AppColors.slate400);
 
       return Expanded(
         child: GestureDetector(
@@ -203,7 +207,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
                   child: Icon(
                     isActive ? activeIcon : icon,
                     key: ValueKey('$i-$isActive'),
-                    size: 21,
+                    size: 24, // 🌟 修改：图标放大至 24
                     color: color,
                   ),
                 ),
@@ -211,9 +215,10 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 11, // 🌟 修改：字体放大至 11
                     color: color,
-                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                    // 🌟 修改：未选中时也加粗（w600），选中时更粗（w700）
+                    fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                   ),
                 ),
               ],
