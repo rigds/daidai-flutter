@@ -888,6 +888,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
     String label,
     bool selected,
     bool isLight,
+    bool glassMode,
   ) {
     final count = _counts[type] ?? 0;
     return GestureDetector(
@@ -934,7 +935,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
     );
   }
 
-  Widget _buildPythonRuntimePanel(DepListState state, bool isLight) {
+  Widget _buildPythonRuntimePanel(DepListState state, bool isLight, bool glassMode) {
     final runtimes = state.pythonRuntimes;
     final hasSelected = runtimes.any(
       (runtime) => runtime.version == state.selectedPythonVersion,
@@ -1361,7 +1362,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
 
 // ── Card ──
 
-class _DepCard extends StatelessWidget {
+class _DepCard extends ConsumerWidget {
   final Dependency dep;
   final bool isLight;
   final bool selected;

@@ -173,7 +173,7 @@ class _OpenApiPageState extends ConsumerState<OpenApiPage> {
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                         itemCount: _apps.length,
                         itemBuilder: (_, i) =>
-                            _buildAppCard(app: _apps[i], isLight: isLight),
+                            _buildAppCard(app: _apps[i], isLight: isLight, glassMode: glassMode),
                       ),
               ),
             ),
@@ -354,6 +354,7 @@ class _OpenApiPageState extends ConsumerState<OpenApiPage> {
   Widget _buildAppCard({
     required Map<String, dynamic> app,
     required bool isLight,
+    required bool glassMode,
   }) {
     final id = (app['id'] as num?)?.toInt() ?? 0;
     final name = app['name']?.toString() ?? '';

@@ -1043,7 +1043,7 @@ class _SubscriptionListPageState extends ConsumerState<SubscriptionListPage> {
 
 // ── Card ──
 
-class _SubCard extends StatelessWidget {
+class _SubCard extends ConsumerWidget {
   final Subscription sub;
   final bool isLight;
   final VoidCallback onPull;
