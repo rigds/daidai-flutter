@@ -1674,6 +1674,7 @@ class _FileTreeItemState extends ConsumerState<_FileTreeItem> {
 
   @override
   Widget build(BuildContext context) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     final file = widget.file;
     final indent = widget.depth * 16.0;
 
