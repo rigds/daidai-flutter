@@ -8,12 +8,14 @@ class AppStyleSettings {
   final bool glassMode;
   final String? backgroundImagePath;
   final double blurIntensity;
+  final double textScale; // 🌟 新增：全局字体缩放比例
 
   const AppStyleSettings({
     this.themeMode = ThemeMode.system,
     this.glassMode = true,
     this.backgroundImagePath,
     this.blurIntensity = 20.0,
+    this.textScale = 1.0, // 🌟 新增：默认比例为 1.0
   });
 
   AppStyleSettings copyWith({
@@ -21,6 +23,7 @@ class AppStyleSettings {
     bool? glassMode,
     String? backgroundImagePath,
     double? blurIntensity,
+    double? textScale, // 🌟 新增
     bool clearBackground = false,
   }) {
     return AppStyleSettings(
@@ -30,6 +33,7 @@ class AppStyleSettings {
           ? null
           : (backgroundImagePath ?? this.backgroundImagePath),
       blurIntensity: blurIntensity ?? this.blurIntensity,
+      textScale: textScale ?? this.textScale, // 🌟 新增
     );
   }
 }
@@ -45,12 +49,14 @@ class AppStyleNotifier extends StateNotifier<AppStyleSettings> {
     final glassMode = prefs.getBool('glass_mode') ?? true;
     final bgPath = prefs.getString('bg_image_path');
     final blur = prefs.getDouble('blur_intensity') ?? 20.0;
+    final scale = prefs.getDouble('text_scale') ?? 1.0; // 🌟 新增：读取本地字体大小设置
 
     state = AppStyleSettings(
       themeMode: ThemeMode.values[themeIndex],
       glassMode: glassMode,
       backgroundImagePath: bgPath,
       blurIntensity: blur,
+      textScale: scale, // 🌟 新增
     );
   }
 
@@ -83,6 +89,13 @@ class AppStyleNotifier extends StateNotifier<AppStyleSettings> {
     state = state.copyWith(blurIntensity: value);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('blur_intensity', value);
+  }
+
+  // 🌟 新增：设置字体缩放比例并保存到本地
+  Future<void> setTextScale(double scale) async {
+    state = state.copyWith(textScale: scale);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('text_scale', scale);
   }
 
   bool get isDarkMode => state.themeMode == ThemeMode.dark;
