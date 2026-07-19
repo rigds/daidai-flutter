@@ -34,6 +34,17 @@ class ThemeSettingsPage extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
 
+          // 🌟 新增：全局字体大小调节
+          _buildSectionTitle('全局字体大小', isLight),
+          const SizedBox(height: 8),
+          _TextScaleSliderCard(
+            isLight: isLight,
+            value: settings.textScale,
+            onChanged: (v) =>
+                ref.read(appStyleProvider.notifier).setTextScale(v),
+          ),
+          const SizedBox(height: 24),
+
           // 界面风格
           _buildSectionTitle('界面风格', isLight),
           const SizedBox(height: 8),
@@ -97,6 +108,86 @@ class ThemeSettingsPage extends ConsumerWidget {
             .setBackgroundImage(result.files.single.path!);
       }
     } catch (_) {}
+  }
+}
+
+// 🌟 新增：字体调节卡片组件
+class _TextScaleSliderCard extends ConsumerWidget {
+  final bool isLight;
+  final double value;
+  final ValueChanged<double> onChanged;
+
+  const _TextScaleSliderCard({
+    required this.isLight,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
+
+    final content = Column(
+      children: [
+        Row(
+          children: [
+            Icon(Icons.text_fields,
+                size: 18,
+                color: isLight ? AppColors.slate500 : AppColors.slate400),
+            const SizedBox(width: 8),
+            const Text('缩放比例',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withAlpha(20),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '${value.toStringAsFixed(1)}x',
+                style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary),
+              ),
+            ),
+          ],
+        ),
+        SliderTheme(
+          data: SliderThemeData(
+            activeTrackColor: AppColors.primary,
+            inactiveTrackColor: isLight ? AppColors.slate200 : AppColors.slate700,
+            thumbColor: AppColors.primary,
+            overlayColor: AppColors.primary.withAlpha(30),
+          ),
+          child: Slider(
+            value: value,
+            min: 0.8,
+            max: 1.5,
+            divisions: 7,
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+
+    if (glassMode) {
+      return GlassCard(useOwnLayer: true, padding: const EdgeInsets.all(16), child: content);
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isLight ? AppColors.glassCard : AppColors.slate900,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
+          width: 0.5,
+        ),
+      ),
+      child: content,
+    );
   }
 }
 
