@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/theme_provider.dart';
 
@@ -28,27 +29,9 @@ class AppCard extends ConsumerWidget {
     Widget card;
 
     if (settings.glassMode) {
-      card = ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isLight
-                  ? Colors.white.withAlpha(160)
-                  : AppColors.slate800.withAlpha(140),
-              borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(
-                color: isLight
-                    ? Colors.white.withAlpha(180)
-                    : Colors.white.withAlpha(15),
-                width: 0.5,
-              ),
-            ),
-            child: child,
-          ),
-        ),
+      card = GlassCard(
+        padding: padding ?? const EdgeInsets.all(16),
+        child: child,
       );
     } else {
       card = Container(
@@ -98,36 +81,18 @@ class AppListTile extends ConsumerWidget {
     if (settings.glassMode) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 6),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isLight
-                    ? Colors.white.withAlpha(160)
-                    : AppColors.slate800.withAlpha(140),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: isLight
-                      ? Colors.white.withAlpha(180)
-                      : Colors.white.withAlpha(15),
-                  width: 0.5,
-                ),
-              ),
-              child: ListTile(
-                leading: Icon(icon, size: 20),
-                title: Text(title),
-                trailing: trailing ??
-                    Icon(Icons.chevron_right,
-                        size: 18,
-                        color:
-                            isLight ? AppColors.slate400 : AppColors.slate600),
-                onTap: onTap,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
+        child: GlassCard(
+          padding: EdgeInsets.zero,
+          child: ListTile(
+            leading: Icon(icon, size: 20),
+            title: Text(title),
+            trailing: trailing ??
+                Icon(Icons.chevron_right,
+                    size: 18,
+                    color: isLight ? AppColors.slate400 : AppColors.slate600),
+            onTap: onTap,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
             ),
           ),
         ),

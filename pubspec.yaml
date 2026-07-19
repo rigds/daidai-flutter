@@ -1,7 +1,7 @@
 name: daidai_app
 description: "呆呆面板 Flutter 客户端 - 轻量级定时任务管理"
 publish_to: 'none'
-version: 0.0.74
+version: 0.0.75
 
 environment:
   sdk: ^3.11.3
@@ -42,6 +42,9 @@ dependencies:
 
   # 本地通知
   flutter_local_notifications: ^18.0.1
+
+  # 液态玻璃 UI
+  liquid_glass_widgets: ^0.22.1
 
 dev_dependencies:
   flutter_test:
