@@ -63,7 +63,8 @@ class AppTheme {
       secondary: AppColors.blue500,
       surface: Colors.white,
       onSurface: AppColors.slate900,
-      onSurfaceVariant: AppColors.slate500,
+      // 🌟 修改：全局副文本颜色加深，从 slate500 变更为 slate700
+      onSurfaceVariant: AppColors.slate700,
       outline: AppColors.glassCardBorder,
       outlineVariant: AppColors.slate100,
       error: AppColors.red500,
@@ -81,7 +82,8 @@ class AppTheme {
       secondary: AppColors.blue500,
       surface: AppColors.slate950,
       onSurface: AppColors.slate50,
-      onSurfaceVariant: AppColors.slate400,
+      // 🌟 修改：暗色模式副文本提亮（加深对比度），从 slate400 变更为 slate300
+      onSurfaceVariant: AppColors.slate300,
       outline: AppColors.slate800,
       outlineVariant: AppColors.slate800,
       error: AppColors.red500,
@@ -142,13 +144,14 @@ class AppTheme {
           vertical: 14,
         ),
         hintStyle: TextStyle(
-          color: isLight ? AppColors.slate300 : AppColors.slate600,
+          // 🌟 修改：输入框提示文字颜色加深
+          color: isLight ? AppColors.slate400 : AppColors.slate500,
           fontSize: 14,
         ),
         labelStyle: TextStyle(
           color: cs.onSurfaceVariant,
           fontSize: 12,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600, // 🌟 修改：标签字体加粗
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -198,19 +201,27 @@ class AppTheme {
         indicatorColor: Colors.transparent,
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: AppColors.primary, size: 22);
+            return const IconThemeData(color: AppColors.primary, size: 24);
           }
-          return IconThemeData(color: cs.onSurfaceVariant, size: 22);
+          // 🌟 修改：底栏未选中图标颜色加深
+          return IconThemeData(
+              color: isLight ? AppColors.slate700 : AppColors.slate300, 
+              size: 24);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return const TextStyle(
               color: AppColors.primary,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
+              fontSize: 11, // 🌟 修改：字体微微放大
+              fontWeight: FontWeight.w700, // 🌟 修改：选中字体更粗
             );
           }
-          return TextStyle(color: cs.onSurfaceVariant, fontSize: 10);
+          return TextStyle(
+            // 🌟 修改：底栏未选中字体颜色显著加深，字体加粗
+            color: isLight ? AppColors.slate700 : AppColors.slate300, 
+            fontSize: 11, // 🌟 修改：字体微微放大
+            fontWeight: FontWeight.w600, // 🌟 修改：未选中也加粗保证清晰度
+          );
         }),
       ),
       dividerTheme: DividerThemeData(
@@ -248,7 +259,7 @@ class AppTheme {
       dialogBackgroundColor: cardColor,
       snackBarTheme: SnackBarThemeData(
         backgroundColor: isLight ? AppColors.slate900 : AppColors.slate800,
-        contentTextStyle: const TextStyle(color: Colors.white, fontSize: 14),
+        contentTextStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
       ),
