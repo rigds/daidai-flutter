@@ -686,7 +686,7 @@ class _LogListPageState extends ConsumerState<LogListPage> {
   }
 }
 
-class _LogItem extends StatelessWidget {
+class _LogItem extends ConsumerWidget {
   final TaskLog log;
   final bool isLight;
   final VoidCallback onView;
@@ -712,7 +712,8 @@ class _LogItem extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     final color = _statusColor();
     return GestureDetector(
       onLongPress: onLongPress,
