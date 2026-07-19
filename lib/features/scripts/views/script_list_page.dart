@@ -1666,7 +1666,7 @@ class _FileTreeItem extends ConsumerStatefulWidget {
   });
 
   @override
-  State<_FileTreeItem> createState() => _FileTreeItemState();
+  ConsumerState<_FileTreeItem> createState() => _FileTreeItemState();
 }
 
 class _FileTreeItemState extends ConsumerState<_FileTreeItem> {
