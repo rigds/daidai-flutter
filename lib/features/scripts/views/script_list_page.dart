@@ -17,6 +17,8 @@ import '../../../shared/utils/ansi_text.dart';
 import '../../../shared/utils/log_background.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../tasks/views/task_form_page.dart';
+import '../../../core/theme/theme_provider.dart';
+import '../../../shared/widgets/app_card.dart';
 
 final scriptProvider = StateNotifierProvider<ScriptNotifier, ScriptState>((
   ref,
@@ -587,6 +589,7 @@ class _ScriptListPageState extends ConsumerState<ScriptListPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(scriptProvider);
     final isLight = Theme.of(context).brightness == Brightness.light;
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     final visibleTree = _sortScriptTree(_filterTree(state.tree, state.keyword));
 
     return Scaffold(
@@ -1695,7 +1698,7 @@ class _FileTreeItemState extends State<_FileTreeItem> {
               bottom: 10,
             ),
             decoration: BoxDecoration(
-              color: widget.isLight ? Colors.white : AppColors.slate900,
+              color: glassCardColor(glassMode: glassMode, isLight: isLight),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: widget.isLight ? AppColors.slate100 : AppColors.slate800,

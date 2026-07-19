@@ -12,6 +12,8 @@ import '../../../shared/utils/api_utils.dart';
 import '../../../shared/utils/ansi_text.dart';
 import '../../../shared/utils/log_background.dart';
 import '../../../shared/utils/time_utils.dart';
+import '../../../core/theme/theme_provider.dart';
+import '../../../shared/widgets/app_card.dart';
 
 // ── Provider ──
 
@@ -156,6 +158,7 @@ class _SubscriptionListPageState extends ConsumerState<SubscriptionListPage> {
     final state = ref.watch(subscriptionListProvider);
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
+    final glassMode = ref.watch(appStyleProvider).glassMode;
 
     return Scaffold(
       body: Padding(
@@ -224,7 +227,7 @@ class _SubscriptionListPageState extends ConsumerState<SubscriptionListPage> {
                       color: AppColors.slate400,
                     ),
                     filled: true,
-                    fillColor: isLight ? Colors.white : AppColors.slate900,
+                    fillColor: glassCardColor(glassMode: glassMode, isLight: isLight),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
@@ -1089,7 +1092,7 @@ class _SubCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: isLight ? Colors.white : AppColors.slate900,
+          color: glassCardColor(glassMode: glassMode, isLight: isLight),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isLight ? AppColors.slate200 : AppColors.slate800,

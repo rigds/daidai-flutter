@@ -6,6 +6,8 @@ import '../../../core/network/dio_client.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/utils/api_utils.dart';
+import '../../../core/theme/theme_provider.dart';
+import '../../../shared/widgets/app_card.dart';
 
 class SystemSettingsPage extends ConsumerStatefulWidget {
   const SystemSettingsPage({super.key});
@@ -531,6 +533,7 @@ class _SystemSettingsPageState extends ConsumerState<SystemSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
+    final glassMode = ref.watch(appStyleProvider).glassMode;
 
     return Scaffold(
       body: Padding(
@@ -980,7 +983,7 @@ class _Card extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isLight ? Colors.white : AppColors.slate900,
+        color: glassCardColor(glassMode: glassMode, isLight: isLight),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isLight ? AppColors.slate200 : AppColors.slate800,
@@ -1195,7 +1198,7 @@ class _ActionBtn extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: isLight ? Colors.white : AppColors.slate900,
+          color: glassCardColor(glassMode: glassMode, isLight: isLight),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isLight ? AppColors.slate200 : AppColors.slate800,

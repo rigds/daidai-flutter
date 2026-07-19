@@ -6,6 +6,8 @@ import '../../../core/network/api_endpoints.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/utils/api_utils.dart';
 import '../../../shared/utils/time_utils.dart';
+import '../../../core/theme/theme_provider.dart';
+import '../../../shared/widgets/app_card.dart';
 
 // ── Security Page (Tabbed) ──
 
@@ -35,6 +37,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage>
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
+    final glassMode = ref.watch(appStyleProvider).glassMode;
 
     return Scaffold(
       body: Padding(
@@ -557,7 +560,7 @@ class _SessionsTabState extends ConsumerState<_SessionsTab>
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: widget.isLight ? Colors.white : AppColors.slate900,
+                    color: glassCardColor(glassMode: glassMode, isLight: isLight),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: widget.isLight
@@ -804,7 +807,7 @@ class _IpWhitelistTabState extends ConsumerState<_IpWhitelistTab>
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: widget.isLight ? Colors.white : AppColors.slate900,
+                    color: glassCardColor(glassMode: glassMode, isLight: isLight),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: widget.isLight
@@ -1001,7 +1004,7 @@ class _TwoFaTabState extends ConsumerState<_TwoFaTab>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: widget.isLight ? Colors.white : AppColors.slate900,
+              color: glassCardColor(glassMode: glassMode, isLight: isLight),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: widget.isLight ? AppColors.slate200 : AppColors.slate800,
@@ -1065,7 +1068,7 @@ class _TwoFaTabState extends ConsumerState<_TwoFaTab>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: widget.isLight ? Colors.white : AppColors.slate900,
+                color: glassCardColor(glassMode: glassMode, isLight: isLight),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: widget.isLight

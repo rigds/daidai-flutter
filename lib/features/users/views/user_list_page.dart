@@ -7,6 +7,8 @@ import '../../../core/network/api_endpoints.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/utils/api_utils.dart';
 import '../../../shared/utils/time_utils.dart';
+import '../../../core/theme/theme_provider.dart';
+import '../../../shared/widgets/app_card.dart';
 
 // ── Provider ──
 
@@ -149,6 +151,7 @@ class _UserListPageState extends ConsumerState<UserListPage> {
     final state = ref.watch(userListProvider);
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     final currentUsername = ref.watch(authProvider).user?.username;
 
     return Scaffold(
@@ -596,7 +599,7 @@ class _UserCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: isLight ? Colors.white : AppColors.slate900,
+        color: glassCardColor(glassMode: glassMode, isLight: isLight),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isLight ? AppColors.slate200 : AppColors.slate800,

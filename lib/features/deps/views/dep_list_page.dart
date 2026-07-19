@@ -11,6 +11,8 @@ import '../../../shared/utils/api_utils.dart';
 import '../../../shared/utils/ansi_text.dart';
 import '../../../shared/utils/log_background.dart';
 import '../../../shared/utils/time_utils.dart';
+import '../../../core/theme/theme_provider.dart';
+import '../../../shared/widgets/app_card.dart';
 
 // ── Provider ──
 
@@ -895,7 +897,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
         decoration: BoxDecoration(
           color: selected
               ? AppColors.primary.withAlpha(isLight ? 18 : 24)
-              : (isLight ? Colors.white : AppColors.slate900),
+              : (glassCardColor(glassMode: glassMode, isLight: isLight)),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: selected
@@ -947,7 +949,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isLight ? Colors.white : AppColors.slate900,
+          color: glassCardColor(glassMode: glassMode, isLight: isLight),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isLight ? AppColors.slate200 : AppColors.slate800,
@@ -1091,6 +1093,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
     final state = ref.watch(depListProvider);
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     final screenWidth = MediaQuery.of(context).size.width;
     final isNarrow = screenWidth < 420;
 
@@ -1415,7 +1418,7 @@ class _DepCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: isLight ? Colors.white : AppColors.slate900,
+        color: glassCardColor(glassMode: glassMode, isLight: isLight),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isLight ? AppColors.slate200 : AppColors.slate800,

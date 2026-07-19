@@ -1808,6 +1808,7 @@ class _HeaderChipButton extends ConsumerWidget {
           ),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 16, color: AppColors.slate400),
             const SizedBox(width: 6),
