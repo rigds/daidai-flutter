@@ -33,10 +33,10 @@ class _AppBootPageState extends ConsumerState<AppBootPage> {
 
     _jumping = true;
 
-    // 先确认有没有当前服务器，没有就直接去服务器配置页。
+    // 先确认有没有当前服务器，没有就直接去登录页（登录页会显示服务器地址输入框）。
     final serverUrl = await SecureStorage.getServerUrl();
     if (serverUrl == null || serverUrl.isEmpty) {
-      _go('/server-config');
+      _go('/login');
       return;
     }
 

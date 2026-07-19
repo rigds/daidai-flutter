@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/auth/auth_provider.dart';
+import '../../../core/auth/auth_service.dart';
 import '../../../core/storage/secure_storage.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/theme/app_theme.dart';
@@ -19,6 +20,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _totpController = TextEditingController();
+  final _serverUrlController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   bool _loading = false;
@@ -27,6 +29,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   bool _needsTotp = false;
   bool _rememberPassword = false;
   bool _autoLogin = false;
+  bool _needsServerUrl = false;
   String? _error;
   String? _currentUrl;
   List<PanelConfig> _panels = [];
@@ -73,7 +76,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _initCheck() async {
     final serverUrl = await SecureStorage.getServerUrl();
     if (serverUrl == null || serverUrl.isEmpty) {
-      if (mounted) context.go('/server-config');
+      // 没有已保存的服务器地址，显示服务器地址输入框
+      _needsServerUrl = true;
+      _panels = await SecureStorage.getPanels();
+      if (mounted) setState(() {});
       return;
     }
     _currentUrl = serverUrl;
@@ -120,10 +126,48 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       _error = null;
     });
 
-    final auth = ref.read(authProvider.notifier);
-    final initializing = _needsInit;
-
     try {
+      // 需要先配置服务器地址
+      if (_needsServerUrl) {
+        final rawUrl = _serverUrlController.text.trim();
+        if (rawUrl.isEmpty) {
+          setState(() {
+            _error = '请输入服务器地址';
+            _loading = false;
+          });
+          return;
+        }
+
+        var finalUrl = rawUrl;
+        if (!finalUrl.startsWith('http')) {
+          finalUrl = 'https://$finalUrl';
+        }
+        if (finalUrl.endsWith('/')) {
+          finalUrl = finalUrl.substring(0, finalUrl.length - 1);
+        }
+
+        final authService = AuthService();
+        final ok = await authService.checkHealth(finalUrl);
+        if (!ok) {
+          setState(() {
+            _error = '无法连接到服务器，请检查地址';
+            _loading = false;
+          });
+          return;
+        }
+
+        _currentUrl = finalUrl;
+        DioClient.instance.setBaseUrl(finalUrl);
+        await SecureStorage.saveServerUrl(finalUrl);
+        await SecureStorage.savePanel(
+          PanelConfig(url: finalUrl, name: finalUrl),
+        );
+        _needsServerUrl = false;
+      }
+
+      final auth = ref.read(authProvider.notifier);
+      final initializing = _needsInit;
+
       if (initializing) {
         try {
           await auth.initAdmin(
@@ -225,6 +269,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     _usernameController.dispose();
     _passwordController.dispose();
     _totpController.dispose();
+    _serverUrlController.dispose();
     super.dispose();
   }
 
@@ -296,8 +341,35 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ),
                       const SizedBox(height: 32),
 
+                      // Server URL input (when no saved server)
+                      if (_needsServerUrl) ...[
+                        _FieldLabel('服务器地址'),
+                        const SizedBox(height: 6),
+                        _IconInput(
+                          icon: Icons.dns_outlined,
+                          child: TextFormField(
+                            controller: _serverUrlController,
+                            decoration: const InputDecoration(
+                              hintText: 'dd.19850214.xyz',
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                            ),
+                            textAlignVertical: TextAlignVertical.center,
+                            keyboardType: TextInputType.url,
+                            textInputAction: TextInputAction.next,
+                            validator: (v) => v == null || v.trim().isEmpty
+                                ? '请输入服务器地址'
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
                       // Server selector
-                      if (_panels.isNotEmpty && !_needsInit) ...[
+                      if (_panels.isNotEmpty && !_needsInit && !_needsServerUrl) ...[
                         _FieldLabel('服务器'),
                         const SizedBox(height: 6),
                         _IconInput(
