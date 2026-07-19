@@ -456,7 +456,8 @@ class _MethodCard extends ConsumerWidget {
   final bool isLight;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

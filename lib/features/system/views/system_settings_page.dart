@@ -979,7 +979,8 @@ class _Card extends ConsumerWidget {
   const _Card({required this.isLight, required this.child});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1192,7 +1193,8 @@ class _ActionBtn extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     return GestureDetector(
       onTap: onTap,
       child: Container(
