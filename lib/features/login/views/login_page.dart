@@ -686,7 +686,7 @@ class _IconInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
-    final borderColor = isLight ? AppColors.slate200 : AppColors.slate800;
+    final borderColor = isLight ? AppColors.glassCardBorder : AppColors.slate800;
 
     return Container(
       height: 52,

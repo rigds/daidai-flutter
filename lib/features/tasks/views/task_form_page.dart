@@ -403,7 +403,7 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
     final isLight = theme.brightness == Brightness.light;
     final isNarrow = MediaQuery.of(context).size.width < 420;
     final cardColor = isLight ? Colors.white : AppColors.slate900;
-    final borderColor = isLight ? AppColors.slate200 : AppColors.slate800;
+    final borderColor = isLight ? AppColors.glassCardBorder : AppColors.slate800;
 
     Widget section(String title, List<Widget> children) {
       return Container(

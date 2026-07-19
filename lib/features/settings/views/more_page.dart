@@ -98,10 +98,10 @@ class _MorePageState extends ConsumerState<MorePage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isLight ? AppColors.miuixCard : AppColors.slate900,
+                color: isLight ? AppColors.glassCard : AppColors.slate900,
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: isLight ? AppColors.miuixCardBorder : AppColors.slate800,
+                  color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
                   width: 0.5,
                 ),
               ),
@@ -620,10 +620,10 @@ class _SettingsItem extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 6),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: isLight ? AppColors.miuixCard : AppColors.slate900,
+          color: isLight ? AppColors.glassCard : AppColors.slate900,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isLight ? AppColors.miuixCardBorder : AppColors.slate800,
+            color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
             width: 0.5,
           ),
         ),
@@ -750,10 +750,10 @@ class _ThemeModeItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: isLight ? AppColors.miuixCard : AppColors.slate900,
+        color: isLight ? AppColors.glassCard : AppColors.slate900,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isLight ? AppColors.miuixCardBorder : AppColors.slate800,
+          color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
           width: 0.5,
         ),
       ),
@@ -788,7 +788,7 @@ class _ThemeModeItem extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: isLight ? AppColors.slate600 : AppColors.slate300,
             ),
-            dropdownColor: isLight ? AppColors.miuixCard : AppColors.slate900,
+            dropdownColor: isLight ? AppColors.glassCard : AppColors.slate900,
             items: ThemeMode.values.map((mode) {
               return DropdownMenuItem(
                 value: mode,

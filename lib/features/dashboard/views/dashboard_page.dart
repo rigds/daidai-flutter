@@ -412,12 +412,12 @@ class _ServerInfoCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isLight
-              ? [AppColors.miuixCard, AppColors.slate50]
+              ? [AppColors.glassCard, AppColors.slate50]
               : [AppColors.slate900, AppColors.slate800],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isLight ? AppColors.miuixCardBorder : AppColors.slate800,
+          color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
           width: 0.5,
         ),
         boxShadow: isLight
@@ -551,10 +551,10 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isLight ? AppColors.miuixCard : AppColors.slate900,
+        color: isLight ? AppColors.glassCard : AppColors.slate900,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isLight ? AppColors.miuixCardBorder : AppColors.slate800,
+          color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
           width: 0.5,
         ),
         boxShadow: isLight
@@ -658,10 +658,10 @@ class _QuickAction extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: isLight ? AppColors.miuixCard : AppColors.slate900,
+            color: isLight ? AppColors.glassCard : AppColors.slate900,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isLight ? AppColors.miuixCardBorder : AppColors.slate800,
+              color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
               width: 0.5,
             ),
             boxShadow: isLight

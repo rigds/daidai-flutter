@@ -77,10 +77,10 @@ class _LocalNotificationSettingsPageState
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isLight ? AppColors.miuixCard : AppColors.slate900,
+              color: isLight ? AppColors.glassCard : AppColors.slate900,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isLight ? AppColors.miuixCardBorder : AppColors.slate800,
+                color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
                 width: 0.5,
               ),
               boxShadow: isLight
@@ -198,10 +198,10 @@ class _ChannelTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isLight ? AppColors.miuixCard : AppColors.slate900,
+        color: isLight ? AppColors.glassCard : AppColors.slate900,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isLight ? AppColors.miuixCardBorder : AppColors.slate800,
+          color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
           width: 0.5,
         ),
         boxShadow: isLight

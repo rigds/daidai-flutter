@@ -35,10 +35,11 @@ class TaskStatsCard extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isLight ? Colors.white : AppColors.slate900,
+            color: isLight ? AppColors.glassCard : AppColors.slate900,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isLight ? AppColors.slate200 : AppColors.slate800,
+              color: isLight ? AppColors.glassCardBorder : AppColors.slate800,
+              width: 0.5,
             ),
           ),
           child: Column(
@@ -75,7 +76,7 @@ class TaskStatsCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Divider(
                   height: 1,
-                  color: isLight ? AppColors.slate100 : AppColors.slate800,
+                  color: isLight ? AppColors.glassDivider : AppColors.slate800,
                 ),
               ),
               Row(

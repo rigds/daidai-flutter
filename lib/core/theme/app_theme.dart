@@ -20,10 +20,11 @@ class AppColors {
   static const slate900 = Color(0xFF0F172A);
   static const slate950 = Color(0xFF020617);
 
-  // MIUIX 风格色板
-  static const miuixBg = Color(0xFFF2F2F7);
-  static const miuixCard = Color(0xFFFFFFFF);
-  static const miuixCardBorder = Color(0xFFE8E8ED);
+  // 液态玻璃色板
+  static const glassBg = Color(0xFFF2F2F7);
+  static const glassCard = Color(0xFFFFFFFF);
+  static const glassCardBorder = Color(0xFFE5E5EA);
+  static const glassDivider = Color(0xFFE5E5EA);
   static const miuixRed = Color(0xFFE5534B);
   static const miuixGreen = Color(0xFF30A14E);
   static const miuixBlue = Color(0xFF3B82F6);
@@ -60,10 +61,10 @@ class AppTheme {
       primary: AppColors.primary,
       onPrimary: Colors.white,
       secondary: AppColors.blue500,
-      surface: AppColors.slate50,
+      surface: Colors.white,
       onSurface: AppColors.slate900,
       onSurfaceVariant: AppColors.slate500,
-      outline: AppColors.slate200,
+      outline: AppColors.glassCardBorder,
       outlineVariant: AppColors.slate100,
       error: AppColors.red500,
       surfaceContainerHighest: AppColors.slate100,
@@ -91,9 +92,9 @@ class AppTheme {
 
   static ThemeData _buildTheme(ColorScheme cs) {
     final isLight = cs.brightness == Brightness.light;
-    final cardColor = isLight ? AppColors.miuixCard : AppColors.slate900;
-    final borderColor = isLight ? AppColors.miuixCardBorder : AppColors.slate800;
-    final scaffoldBg = isLight ? AppColors.miuixBg : AppColors.slate950;
+    final cardColor = isLight ? AppColors.glassCard : AppColors.slate900;
+    final borderColor = isLight ? AppColors.glassCardBorder : AppColors.slate800;
+    final scaffoldBg = isLight ? AppColors.glassBg : AppColors.slate950;
 
     return ThemeData(
       useMaterial3: true,
@@ -103,7 +104,7 @@ class AppTheme {
         centerTitle: false,
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: cs.surface,
+        backgroundColor: scaffoldBg.withAlpha(200),
         foregroundColor: cs.onSurface,
         titleTextStyle: TextStyle(
           color: cs.onSurface,
@@ -114,11 +115,12 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         color: cardColor,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: borderColor, width: 0.5),
         ),
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 10),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
@@ -189,16 +191,16 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
-        height: 64,
+        height: 60,
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         indicatorColor: Colors.transparent,
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: AppColors.primary, size: 24);
+            return const IconThemeData(color: AppColors.primary, size: 22);
           }
-          return IconThemeData(color: cs.onSurfaceVariant, size: 24);
+          return IconThemeData(color: cs.onSurfaceVariant, size: 22);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
@@ -213,14 +215,21 @@ class AppTheme {
       ),
       dividerTheme: DividerThemeData(
         color: borderColor,
-        thickness: 1,
+        thickness: 0.5,
         space: 0,
       ),
       chipTheme: ChipThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
+      listTileTheme: ListTileThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: cardColor,
+        surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
@@ -228,15 +237,21 @@ class AppTheme {
       popupMenuTheme: PopupMenuThemeData(
         color: cardColor,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: cardColor,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         actionsPadding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
       ),
       dialogBackgroundColor: cardColor,
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: isLight ? AppColors.slate900 : AppColors.slate800,
+        contentTextStyle: const TextStyle(color: Colors.white, fontSize: 14),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 

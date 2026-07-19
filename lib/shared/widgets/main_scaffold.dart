@@ -63,33 +63,44 @@ class _MainScaffoldState extends State<MainScaffold> {
         extendBody: true,
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.only(
-            bottom: 12,
-            left: 16,
-            right: 16,
+            bottom: 10,
+            left: 14,
+            right: 14,
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(22),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+              filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isLight
-                      ? Colors.white.withAlpha(180)
-                      : AppColors.slate900.withAlpha(180),
-                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isLight
+                        ? [
+                            Colors.white.withAlpha(200),
+                            Colors.white.withAlpha(140),
+                          ]
+                        : [
+                            AppColors.slate800.withAlpha(180),
+                            AppColors.slate900.withAlpha(140),
+                          ],
+                  ),
+                  borderRadius: BorderRadius.circular(22),
                   border: Border.all(
                     color: isLight
-                        ? Colors.white.withAlpha(160)
-                        : AppColors.slate700.withAlpha(120),
+                        ? Colors.white.withAlpha(200)
+                        : Colors.white.withAlpha(25),
                     width: 0.5,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: isLight
-                          ? AppColors.slate900.withAlpha(25)
-                          : Colors.black.withAlpha(80),
-                      blurRadius: 20,
-                      offset: const Offset(0, 4),
+                          ? AppColors.slate900.withAlpha(18)
+                          : Colors.black.withAlpha(60),
+                      blurRadius: 24,
+                      spreadRadius: -2,
+                      offset: const Offset(0, 6),
                     ),
                   ],
                 ),
@@ -98,7 +109,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 4,
-                      vertical: 6,
+                      vertical: 4,
                     ),
                     child: Row(
                       children: [
@@ -167,10 +178,8 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
     final color = isActive ? AppColors.primary : AppColors.slate400;
-    final bgColor = isActive
-        ? AppColors.primary.withAlpha(20)
-        : Colors.transparent;
 
     return Expanded(
       child: GestureDetector(
@@ -181,25 +190,29 @@ class _NavItem extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
             decoration: BoxDecoration(
-              color: bgColor,
+              color: isActive
+                  ? (isLight
+                      ? AppColors.primary.withAlpha(18)
+                      : AppColors.primary.withAlpha(25))
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(isActive ? activeIcon : icon, size: 22, color: color),
-                const SizedBox(height: 2),
+                Icon(isActive ? activeIcon : icon, size: 20, color: color),
+                const SizedBox(height: 1),
                 SizedBox(
-                  height: 12,
+                  height: 11,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
                       label,
                       maxLines: 1,
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 10,
                         color: color,
                         fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                       ),
