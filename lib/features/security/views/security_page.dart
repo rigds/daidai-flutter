@@ -486,6 +486,8 @@ class _SessionsTabState extends ConsumerState<_SessionsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final glassMode = ref.watch(appStyleProvider).glassMode;
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: _load,

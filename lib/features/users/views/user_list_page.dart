@@ -565,7 +565,7 @@ class _UserListPageState extends ConsumerState<UserListPage> {
   }
 }
 
-class _UserCard extends StatelessWidget {
+class _UserCard extends ConsumerWidget {
   final _User user;
   final bool isLight;
   final String? currentUsername;
