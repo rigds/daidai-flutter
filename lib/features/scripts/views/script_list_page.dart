@@ -1698,7 +1698,7 @@ class _FileTreeItemState extends State<_FileTreeItem> {
               bottom: 10,
             ),
             decoration: BoxDecoration(
-              color: glassCardColor(glassMode: glassMode, isLight: isLight),
+              color: glassCardColor(glassMode: glassMode, isLight: widget.isLight),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: widget.isLight ? AppColors.slate100 : AppColors.slate800,

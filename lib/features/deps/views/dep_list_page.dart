@@ -1179,6 +1179,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
                           'NodeJS',
                           state.selectedType == 'nodejs',
                           isLight,
+                          glassMode,
                         ),
                       ),
                       SizedBox(
@@ -1188,6 +1189,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
                           'Python',
                           state.selectedType == 'python',
                           isLight,
+                          glassMode,
                         ),
                       ),
                       SizedBox(
@@ -1197,6 +1199,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
                           'Linux',
                           state.selectedType == 'linux',
                           isLight,
+                          glassMode,
                         ),
                       ),
                     ],
