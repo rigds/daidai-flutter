@@ -143,18 +143,18 @@ struct Task: Codable, Identifiable, Equatable {
     }
 
     static func isGroupLabel(_ label: String) -> Bool {
-        label.trimmingCharacters(in: .whitespaces).hasPrefix(groupLabelPrefix)
+        label.trimmingCharacters(in: .whitespaces).hasPrefix(Self.groupLabelPrefix)
     }
 
     static func toGroupLabel(_ group: String) -> String {
-        "\(groupLabelPrefix)\(group.trimmingCharacters(in: .whitespaces))"
+        "\(Self.groupLabelPrefix)\(group.trimmingCharacters(in: .whitespaces))"
     }
 
     var groupName: String? {
         for label in labelList {
             let trimmed = label.trimmingCharacters(in: .whitespaces)
             if Self.isGroupLabel(trimmed) {
-                let group = trimmed.dropFirst(groupLabelPrefix.count).trimmingCharacters(in: .whitespaces)
+                let group = trimmed.dropFirst(Self.groupLabelPrefix.count).trimmingCharacters(in: .whitespaces)
                 if !group.isEmpty { return String(group) }
             }
         }
@@ -179,9 +179,9 @@ private extension KeyedDecodingContainer {
     }
 
     func decodeIntIfPresent(forKey key: Key) throws -> Int? {
-        if let v = try? decode(Int?.self, forKey: key) { return v }
-        if let v = try? decode(Double?.self, forKey: key) { return v.map { Int($0) } }
-        if let s = try? decode(String?.self, forKey: key), let sv = s, let v = Int(sv) { return v }
+        if let v = try decodeIfPresent(Int.self, forKey: key) { return v }
+        if let v = try decodeIfPresent(Double.self, forKey: key) { return Int(v) }
+        if let s = try decodeIfPresent(String.self, forKey: key), let v = Int(s) { return v }
         return nil
     }
 
@@ -193,8 +193,8 @@ private extension KeyedDecodingContainer {
     }
 
     func decodeDoubleIfPresent(forKey key: Key) throws -> Double? {
-        if let v = try? decode(Double?.self, forKey: key) { return v }
-        if let v = try? decode(Int?.self, forKey: key) { return v.map { Double($0) } }
+        if let v = try decodeIfPresent(Double.self, forKey: key) { return v }
+        if let v = try decodeIfPresent(Int.self, forKey: key) { return Double(v) }
         return nil
     }
 

@@ -120,16 +120,6 @@ final class AuthInterceptor: NSObject, URLSessionTaskDelegate {
     }
 }
 
-private struct RefreshTokenData: Codable {
-    let accessToken: String
-    let refreshToken: String
-
-    enum CodingKeys: String, CodingKey {
-        case accessToken = "access_token"
-        case refreshToken = "refresh_token"
-    }
-}
-
 enum ApiError: Error, LocalizedError {
     case unauthorized
     case invalidURL
