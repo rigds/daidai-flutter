@@ -1277,7 +1277,6 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 110),
       itemCount: tasks.length,
       onReorder: (oldIndex, newIndex) {
-        // 只先调整本地顺序，等用户点击“完成”后再统一保存到后端，避免拖一下就请求多次。
         ref.read(taskProvider.notifier).reorderLocalTasks(oldIndex, newIndex);
         setState(() => _taskOrderDirty = true);
       },
@@ -1590,7 +1589,6 @@ class _TaskCard extends StatefulWidget {
 class _TaskCardState extends State<_TaskCard> {
   static const double _actionWidth = 52;
   static const double _actionGap = 6;
-  // ↓↓↓ 改动 1：宽度从 5 列改为 3 列
   static const double _actionsWidth = _actionWidth * 3 + _actionGap * 2 + 8;
 
   double _dragOffset = 0;
@@ -1734,15 +1732,13 @@ class _TaskCardState extends State<_TaskCard> {
         if (didPop || _dragOffset == 0) {
           return;
         }
-        // 侧滑按钮展开时，系统返回先收起按钮，避免用户回滑时误退出 APP。
         _closeActions();
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.only(bottom: 8), // 🌟 减小卡片间距
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            // ↓↓↓ 改动 2：侧滑按钮改为两行（上 3 下 2）
             Positioned.fill(
               child: Align(
                 alignment: Alignment.centerRight,
@@ -1824,7 +1820,6 @@ class _TaskCardState extends State<_TaskCard> {
               onHorizontalDragUpdate: widget.selectionMode
                   ? null
                   : (details) {
-                      // 左滑露出右侧次要操作；关闭时也限制在卡片内处理，避免和系统返回手势抢动作。
                       final nextOffset = (_dragOffset + details.delta.dx)
                           .clamp(-_actionsWidth, 0.0)
                           .toDouble();
@@ -1857,10 +1852,11 @@ class _TaskCardState extends State<_TaskCard> {
                     : const Duration(milliseconds: 160),
                 curve: Curves.easeOutCubic,
                 transform: Matrix4.translationValues(_dragOffset, 0, 0),
-                padding: const EdgeInsets.all(14),
+                // 🌟 核心优化：大幅压缩卡片内边距，让整体高度变窄
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: glassCardColor(glassMode: widget.glassMode, isLight: widget.isLight),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: widget.selected
                         ? AppColors.primary
@@ -1891,8 +1887,8 @@ class _TaskCardState extends State<_TaskCard> {
                           const SizedBox(width: 8),
                         ],
                         Container(
-                          width: 8,
-                          height: 8,
+                          width: 7,
+                          height: 7,
                           decoration: BoxDecoration(
                             color: dotColor,
                             shape: BoxShape.circle,
@@ -1900,18 +1896,18 @@ class _TaskCardState extends State<_TaskCard> {
                                 ? [
                                     BoxShadow(
                                       color: dotColor.withAlpha(140),
-                                      blurRadius: 8,
+                                      blurRadius: 6,
                                     ),
                                   ]
                                 : null,
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             task.name,
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w700,
                             ),
                             maxLines: 1,
@@ -1923,14 +1919,14 @@ class _TaskCardState extends State<_TaskCard> {
                             padding: EdgeInsets.only(right: 6),
                             child: Icon(
                               Icons.push_pin,
-                              size: 14,
+                              size: 13,
                               color: AppColors.amber500,
                             ),
                           ),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
+                            horizontal: 7,
+                            vertical: 2,
                           ),
                           decoration: BoxDecoration(
                             color: _statusBg(),
@@ -1947,7 +1943,7 @@ class _TaskCardState extends State<_TaskCard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6), // 🌟 缩短各模块间距
                     _TaskScheduleSummary(
                       taskType: task.taskType,
                       taskTypeLabel: _taskTypeLabel(),
@@ -1955,13 +1951,13 @@ class _TaskCardState extends State<_TaskCard> {
                       isLight: widget.isLight,
                     ),
                     if (labels.isNotEmpty) ...[
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       _TaskSubscriptionSummary(
                         labels: labels,
                         isLight: widget.isLight,
                       ),
                     ],
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6), // 🌟 缩短底部间距
                     Row(
                       children: [
                         Expanded(
@@ -1988,10 +1984,10 @@ class _TaskCardState extends State<_TaskCard> {
                                 ? widget.onStop
                                 : widget.onRun,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           const Icon(
                             Icons.swipe_left_alt_rounded,
-                            size: 18,
+                            size: 16,
                             color: AppColors.slate400,
                           ),
                         ],
@@ -2007,6 +2003,7 @@ class _TaskCardState extends State<_TaskCard> {
     );
   }
 }
+
 class _TaskPrimaryActionButton extends StatelessWidget {
   final String label;
   final IconData icon;
@@ -2030,16 +2027,17 @@ class _TaskPrimaryActionButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          // 🌟 压平运行按钮的上下高度
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 16, color: color),
-              const SizedBox(width: 4),
+              Icon(icon, size: 15, color: color),
+              const SizedBox(width: 3),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: FontWeight.w700,
                   color: color,
                 ),
@@ -2140,10 +2138,11 @@ class _TaskScheduleSummary extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+      // 🌟 极大地收窄 Cron 灰色框的上下留白
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: isLight ? AppColors.slate50 : AppColors.slate800,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: isLight ? AppColors.slate200 : AppColors.slate700,
         ),
@@ -2151,15 +2150,16 @@ class _TaskScheduleSummary extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 28,
-            height: 28,
+            // 🌟 缩小左侧图标容器尺寸
+            width: 24,
+            height: 24,
             decoration: BoxDecoration(
               color: color.withAlpha(isLight ? 22 : 36),
-              borderRadius: BorderRadius.circular(9),
+              borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(icon, size: 16, color: color),
+            child: Icon(icon, size: 14, color: color),
           ),
-          const SizedBox(width: 9),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2174,14 +2174,14 @@ class _TaskScheduleSummary extends StatelessWidget {
                     color: isLight ? AppColors.slate600 : AppColors.slate300,
                   ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 2),
                 Text(
                   value,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 12,
-                    height: 1.2,
+                    fontSize: 11,
+                    height: 1.1,
                     fontWeight: FontWeight.w600,
                     fontFamily: isCron ? 'monospace' : null,
                     color: isLight ? AppColors.slate800 : AppColors.slate100,
@@ -2216,10 +2216,10 @@ class _TaskSubscriptionSummary extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: glassCardColor(glassMode: glassMode, isLight: isLight),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: isLight ? AppColors.slate200 : AppColors.slate800,
         ),
@@ -2228,8 +2228,8 @@ class _TaskSubscriptionSummary extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 24,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 22,
+            padding: const EdgeInsets.symmetric(horizontal: 7),
             decoration: BoxDecoration(
               color: AppColors.blue500.withAlpha(isLight ? 18 : 30),
               borderRadius: BorderRadius.circular(999),
@@ -2237,8 +2237,8 @@ class _TaskSubscriptionSummary extends ConsumerWidget {
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.sync_rounded, size: 13, color: AppColors.blue500),
-                SizedBox(width: 4),
+                Icon(Icons.sync_rounded, size: 12, color: AppColors.blue500),
+                SizedBox(width: 3),
                 Text(
                   '订阅',
                   style: TextStyle(
@@ -2254,7 +2254,7 @@ class _TaskSubscriptionSummary extends ConsumerWidget {
           Expanded(
             child: Wrap(
               spacing: 6,
-              runSpacing: 6,
+              runSpacing: 4,
               children: [
                 ...visibleLabels.map(
                   (label) =>
@@ -2282,9 +2282,8 @@ class _TaskSubscriptionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 订阅标签只做轻量展示，不再做成大胶囊，避免任务卡片显得拥挤。
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: isLight ? AppColors.slate50 : AppColors.slate800,
         borderRadius: BorderRadius.circular(999),
@@ -2315,7 +2314,7 @@ class _TaskMiniCountChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
         color: isLight ? AppColors.slate100 : AppColors.slate800,
         borderRadius: BorderRadius.circular(999),
