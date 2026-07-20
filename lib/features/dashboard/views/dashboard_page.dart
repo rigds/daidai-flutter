@@ -234,7 +234,52 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      _buildDashboardAvatar(auth, isLight, 40),
+                      
+                      // 🌟 核心修改区：用 PopupMenuButton 包裹头像
+                      PopupMenuButton<String>(
+                        tooltip: '切换服务器',
+                        offset: const Offset(0, 48), // 让菜单在头像正下方弹出
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
+                        color: isLight ? AppColors.slate50 : AppColors.slate800,
+                        onSelected: (value) {
+                          if (value == 'manage_servers') {
+                            // 🚀 重点：这里填写你“服务器管理”页面的真实路由名称，比如 '/servers' 或 '/more/servers'
+                            context.push('/servers'); 
+                          } else if (value == 'logout') {
+                            // 触发退出登录
+                            ref.read(authProvider.notifier).setUnauthenticated();
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'manage_servers',
+                            child: Row(
+                              children: [
+                                Icon(Icons.dns_outlined, size: 20, color: isLight ? AppColors.slate700 : AppColors.slate200),
+                                const SizedBox(width: 12),
+                                Text('切换 / 管理面板', style: TextStyle(color: isLight ? AppColors.slate700 : AppColors.slate200)),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuDivider(),
+                          const PopupMenuItem(
+                            value: 'logout',
+                            child: Row(
+                              children: [
+                                Icon(Icons.logout, size: 20, color: Colors.redAccent),
+                                SizedBox(width: 12),
+                                Text('退出登录', style: TextStyle(color: Colors.redAccent)),
+                              ],
+                            ),
+                          ),
+                        ],
+                        child: _buildDashboardAvatar(auth, isLight, 40),
+                      ),
+                      // 🌟 核心修改结束
+                      
                     ],
                   ),
                   const SizedBox(height: 20),
