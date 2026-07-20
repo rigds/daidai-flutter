@@ -155,6 +155,7 @@ class _UserListPageState extends ConsumerState<UserListPage> {
     final currentUsername = ref.watch(authProvider).user?.username;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 12),
         child: Column(

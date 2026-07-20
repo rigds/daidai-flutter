@@ -593,6 +593,7 @@ class _ScriptListPageState extends ConsumerState<ScriptListPage> {
     final visibleTree = _sortScriptTree(_filterTree(state.tree, state.keyword));
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 12),
         child: Column(

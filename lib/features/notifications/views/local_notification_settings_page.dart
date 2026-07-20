@@ -74,6 +74,7 @@ class _LocalNotificationSettingsPageState
     final isLight = theme.brightness == Brightness.light;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('本地通知'),
       ),

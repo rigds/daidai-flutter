@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -67,18 +66,6 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
         context.go('/more');
         break;
     }
-  }
-
-  Widget? _buildBackgroundImage(AppStyleSettings settings) {
-    if (settings.backgroundImagePath != null &&
-        settings.backgroundImagePath!.isNotEmpty) {
-      return Image.file(
-        File(settings.backgroundImagePath!),
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-      );
-    }
-    return null;
   }
 
   Widget _buildGlassBottomBar(int idx) {
@@ -229,44 +216,28 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     final idx = _currentIndex(context);
     final settings = ref.watch(appStyleProvider);
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final bgImage = _buildBackgroundImage(settings);
-    final hasBg = bgImage != null;
 
     return PopScope<void>(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) => _handleBackPress(didPop),
       child: settings.glassMode
-          ? _buildGlassMode(idx, bgImage, hasBg)
-          : _buildClassicMode(idx, isLight, bgImage, hasBg, settings),
+          ? _buildGlassMode(idx)
+          : _buildClassicMode(idx, isLight),
     );
   }
 
-  /// 液态玻璃模式：GlassScaffold 自带背景处理
-  Widget _buildGlassMode(int idx, Widget? bgImage, bool hasBg) {
+  /// 液态玻璃模式：GlassScaffold
+  Widget _buildGlassMode(int idx) {
     return GlassScaffold(
-      background: hasBg ? bgImage : null,
       body: widget.child,
       bottomBar: _buildGlassBottomBar(idx),
     );
   }
 
-  /// 经典模式：用 GlassPage 包裹确保背景可见
-  Widget _buildClassicMode(
-      int idx, bool isLight, Widget? bgImage, bool hasBg, AppStyleSettings settings) {
-    if (hasBg) {
-      // 有背景图时用 GlassPage 让背景正确渲染
-      return GlassPage(
-        background: bgImage,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: widget.child,
-          extendBody: true,
-          bottomNavigationBar: _buildClassicBottomBar(idx, isLight),
-        ),
-      );
-    }
-    // 无背景图时直接用 Scaffold
+  /// 经典模式：普通 Scaffold
+  Widget _buildClassicMode(int idx, bool isLight) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: widget.child,
       extendBody: true,
       bottomNavigationBar: _buildClassicBottomBar(idx, isLight),

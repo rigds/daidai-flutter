@@ -85,6 +85,7 @@ class _OpenApiPageState extends ConsumerState<OpenApiPage> {
     final glassMode = ref.watch(appStyleProvider).glassMode;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 12),
         child: Column(
@@ -1107,6 +1108,7 @@ class _OpenApiLogsPageState extends ConsumerState<OpenApiLogsPage> {
     final isLight = Theme.of(context).brightness == Brightness.light;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 12),
         child: Column(

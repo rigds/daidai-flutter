@@ -40,6 +40,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage>
     final glassMode = ref.watch(appStyleProvider).glassMode;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 12),
         child: Column(

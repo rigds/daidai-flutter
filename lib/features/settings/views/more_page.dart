@@ -258,30 +258,45 @@ class _MorePageState extends ConsumerState<MorePage> {
           const SizedBox(height: 24),
           GestureDetector(
             onTap: () => _logout(context, ref),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
-                color: isLight
-                    ? AppColors.red50
-                    : AppColors.red500.withAlpha(12),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isLight
-                      ? AppColors.red500.withAlpha(50)
-                      : AppColors.red500.withAlpha(40),
-                ),
-              ),
-              child: const Center(
-                child: Text(
-                  '退出登录',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.red500,
+            child: ref.watch(appStyleProvider).glassMode
+                ? GlassCard(
+                    useOwnLayer: true,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    child: Center(
+                      child: Text(
+                        '退出登录',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.red500,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    decoration: BoxDecoration(
+                      color: isLight
+                          ? AppColors.red50
+                          : AppColors.red500.withAlpha(12),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isLight
+                            ? AppColors.red500.withAlpha(50)
+                            : AppColors.red500.withAlpha(40),
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '退出登录',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.red500,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
           ),
         ],
       ),

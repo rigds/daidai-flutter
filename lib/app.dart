@@ -4,6 +4,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'features/app_lock/widgets/app_lock_gate.dart';
+import 'shared/widgets/app_background.dart';
 
 class DaidaiApp extends ConsumerWidget {
   const DaidaiApp({super.key});
@@ -21,8 +22,9 @@ class DaidaiApp extends ConsumerWidget {
       themeMode: styleSettings.themeMode,
       routerConfig: router,
       locale: const Locale('zh', 'CN'),
-      builder: (context, child) =>
-          AppLockGate(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) => AppBackground(
+        child: AppLockGate(child: child ?? const SizedBox.shrink()),
+      ),
     );
   }
 }
