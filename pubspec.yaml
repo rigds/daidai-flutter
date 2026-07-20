@@ -34,7 +34,7 @@ dependencies:
   fl_chart: ^0.70.2
 
   # 工具
-  intl: ^0.20.2
+  intl: ^0.20.2  # 🌟 这里已经帮你改成了 0.20.2 以解决冲突
   logger: ^2.5.0
   device_info_plus: ^11.2.2
   file_picker: ^8.1.7
