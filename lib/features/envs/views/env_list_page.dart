@@ -1140,7 +1140,7 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                           final env = state.envs[i];
                           return Container(
                             key: ValueKey(env.id),
-                            margin: const EdgeInsets.only(bottom: 8),
+                            margin: const EdgeInsets.only(bottom: 10),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 14,
@@ -1896,16 +1896,16 @@ class _EnvCardState extends State<_EnvCard> {
         }
       },
       onLongPress: widget.onLongPress,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        curve: Curves.easeOutCubic,
+      child: Container(
+        // 🌟 核心修改：统一圆角 (14) 与其他界面完美一致，使用 bottom: 10 留出空白行隔开
+        margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(
           horizontal: 14,
           vertical: 12,
         ),
         decoration: BoxDecoration(
           color: glassCardColor(glassMode: widget.glassMode, isLight: isLight),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: widget.selected
                 ? AppColors.primary
@@ -1913,75 +1913,79 @@ class _EnvCardState extends State<_EnvCard> {
             width: widget.selected ? 1.4 : 1,
           ),
         ),
-        // 🌟 核心修改：采用左右分栏布局，左侧内容，右侧竖排按钮
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.selectionMode) ...[
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: Checkbox(
-                  value: widget.selected,
-                  onChanged: (_) => widget.onSelectedChanged(),
-                  activeColor: AppColors.primary,
-                  visualDensity: VisualDensity.compact,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            // 第一行：状态点 + 变量名 + 右上角“已启用/已禁用”状态标签
+            Row(
+              children: [
+                if (widget.selectionMode) ...[
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: Checkbox(
+                      value: widget.selected,
+                      onChanged: (_) => widget.onSelectedChanged(),
+                      activeColor: AppColors.primary,
+                      visualDensity: VisualDensity.compact,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Container(
+                  width: 7,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    color: env.enabled ? AppColors.primary : AppColors.slate300,
+                    shape: BoxShape.circle,
+                  ),
                 ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    env.name,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: isLight ? AppColors.blue600 : AppColors.blue500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // 🌟 白衣骑俑（已启用 / 已禁用状态胶囊）放在右上角
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: env.enabled
+                        ? (isLight ? AppColors.blue100 : AppColors.blue500.withAlpha(25))
+                        : (isLight ? AppColors.slate100 : AppColors.slate800),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    env.enabled ? '已启用' : '已禁用',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: env.enabled
+                          ? (isLight ? AppColors.blue600 : AppColors.blue500)
+                          : AppColors.slate500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            
+            // 第二行：中间的值与备注信息
+            Padding(
+              padding: EdgeInsets.only(
+                left: widget.selectionMode ? 32 : 15,
               ),
-              const SizedBox(width: 8),
-            ],
-            // 左侧主信息区域
-            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          color: env.enabled ? AppColors.primary : AppColors.slate300,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          env.name,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: isLight ? AppColors.blue600 : AppColors.blue500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      // 右上角状态胶囊标签
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: env.enabled
-                              ? (isLight ? AppColors.blue100 : AppColors.blue500.withAlpha(25))
-                              : (isLight ? AppColors.slate100 : AppColors.slate800),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          env.enabled ? '已启用' : '已禁用',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: env.enabled
-                                ? (isLight ? AppColors.blue600 : AppColors.blue500)
-                                : AppColors.slate500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 6),
                   Text(
                     env.value.replaceAll('\n', ' '),
@@ -2010,18 +2014,18 @@ class _EnvCardState extends State<_EnvCard> {
               ),
             ),
             
-            // 右侧独立分栏：复制和详情按钮（模仿运行日志的右侧操作按钮布局）
+            // 🌟 第三行：两个图标按钮放在右下角并排
             if (!widget.selectionMode) ...[
-              const SizedBox(width: 12),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   _MiniBtn(
                     icon: Icons.copy_outlined,
                     label: '复制',
                     onTap: widget.onCopy,
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(width: 6),
                   _MiniBtn(
                     icon: Icons.open_in_new,
                     label: '详情',
@@ -2050,7 +2054,7 @@ class _MiniBtn extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: isLight ? AppColors.slate50 : AppColors.slate800,
           borderRadius: BorderRadius.circular(8),
@@ -2058,7 +2062,7 @@ class _MiniBtn extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 12, color: AppColors.slate400),
+            Icon(icon, size: 13, color: AppColors.slate400),
             const SizedBox(width: 3),
             Text(
               label,
