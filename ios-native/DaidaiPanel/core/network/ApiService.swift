@@ -192,7 +192,7 @@ final class ApiService: ObservableObject {
 
     // MARK: - Tasks
 
-    func getTasks(page: Int = 1, pageSize: Int = 50, keyword: String? = nil, status: String? = nil, labels: String? = nil) async throws -> ApiResponse<PaginatedData<Task>> {
+    func getTasks(page: Int = 1, pageSize: Int = 50, keyword: String? = nil, status: String? = nil, labels: String? = nil) async throws -> ApiResponse<PaginatedData<TaskItem>> {
         var items = [
             URLQueryItem(name: "page", value: "\(page)"),
             URLQueryItem(name: "page_size", value: "\(pageSize)"),
@@ -203,15 +203,15 @@ final class ApiService: ObservableObject {
         return try await get(endpoints.tasks, queryItems: items)
     }
 
-    func getTask(_ id: Int) async throws -> ApiResponse<Task> {
+    func getTask(_ id: Int) async throws -> ApiResponse<TaskItem> {
         try await get(endpoints.task(id))
     }
 
-    func createTask(_ body: [String: Any]) async throws -> ApiResponse<Task> {
+    func createTask(_ body: [String: Any]) async throws -> ApiResponse<TaskItem> {
         try await post(endpoints.tasks, body: body)
     }
 
-    func updateTask(_ id: Int, body: [String: Any]) async throws -> ApiResponse<Task> {
+    func updateTask(_ id: Int, body: [String: Any]) async throws -> ApiResponse<TaskItem> {
         try await put(endpoints.task(id), body: body)
     }
 
@@ -243,7 +243,7 @@ final class ApiService: ObservableObject {
         try await post(endpoints.taskUnpin(id))
     }
 
-    func copyTask(_ id: Int) async throws -> ApiResponse<Task> {
+    func copyTask(_ id: Int) async throws -> ApiResponse<TaskItem> {
         try await post(endpoints.taskCopy(id))
     }
 

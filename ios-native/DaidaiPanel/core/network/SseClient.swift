@@ -202,9 +202,9 @@ final class SseClient: NSObject, URLSessionDataDelegate {
     // MARK: - Reconnect
 
     private func scheduleReconnect() {
-        Swift.Task { [weak self] in
+        Task { [weak self] in
             guard let self else { return }
-            try? await Swift.Task.sleep(nanoseconds: UInt64(self.reconnectDelay * 1_000_000_000))
+            try? await Task.sleep(nanoseconds: UInt64(self.reconnectDelay * 1_000_000_000))
             guard self.shouldReconnect else { return }
             self.reconnectDelay = min(self.reconnectDelay * 2, self.maxReconnectDelay)
             self.doConnect()

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct DepListView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = DepViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = DepViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
     @State private var showInstallAlert = false
     @State private var installName = ""
     @State private var installVersion = ""
@@ -55,7 +55,7 @@ struct DepListView: View {
                 installVersion = ""
             }
             Button("安装") {
-                Swift.Task {
+                Task {
                     try? await viewModel.install(name: installName, version: installVersion)
                     installName = ""
                     installVersion = ""
@@ -68,7 +68,7 @@ struct DepListView: View {
             Button("取消", role: .cancel) {}
             Button("卸载", role: .destructive) {
                 if let dep = depToUninstall {
-                    Swift.Task { try? await viewModel.uninstall(dep.id) }
+                    Task { try? await viewModel.uninstall(dep.id) }
                 }
             }
         } message: {
@@ -105,7 +105,7 @@ struct DepListView: View {
                             .disabled(dep.isBusy)
 
                             Button {
-                                Swift.Task { try? await viewModel.reinstall(dep.id) }
+                                Task { try? await viewModel.reinstall(dep.id) }
                             } label: {
                                 Label("重装", systemImage: "arrow.clockwise")
                             }

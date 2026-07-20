@@ -109,7 +109,7 @@ final class AuthViewModel: ObservableObject, AuthInterceptorDelegate {
     // MARK: - AuthInterceptorDelegate
 
     nonisolated func authInterceptorDidFailAuth(_ interceptor: AuthInterceptor) {
-        Swift.Task { @MainActor in
+        Task { @MainActor in
             keychain.clearAuth()
             state = AuthState(status: .unauthenticated, error: "认证已过期，请重新登录")
         }

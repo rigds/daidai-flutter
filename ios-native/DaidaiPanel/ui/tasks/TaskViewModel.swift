@@ -2,7 +2,7 @@ import Foundation
 
 @MainActor
 final class TaskViewModel: ObservableObject {
-    @Published var tasks: [Task] = []
+    @Published var tasks: [TaskItem] = []
     @Published var isLoading = false
     @Published var keyword = ""
     @Published var statusFilter: String = ""
@@ -22,19 +22,19 @@ final class TaskViewModel: ObservableObject {
         self.api = api
     }
 
-    var filteredTasks: [Task] {
+    var filteredTasks: [TaskItem] {
         tasks
     }
 
     func load() async {
         loadTask?.cancel()
-        loadTask = Swift.Task {
+        loadTask = Task {
             isLoading = true
             error = nil
             currentPage = 1
 
             do {
-                let result: ApiResponse<PaginatedData<Task>> = try await api.getTasks(
+                let result: ApiResponse<PaginatedData<TaskItem>> = try await api.getTasks(
                     page: 1,
                     pageSize: 50,
                     keyword: keyword.isEmpty ? nil : keyword,
@@ -60,7 +60,7 @@ final class TaskViewModel: ObservableObject {
         let nextPage = currentPage + 1
 
         do {
-            let result: ApiResponse<PaginatedData<Task>> = try await api.getTasks(
+            let result: ApiResponse<PaginatedData<TaskItem>> = try await api.getTasks(
                 page: nextPage,
                 pageSize: 50,
                 keyword: keyword.isEmpty ? nil : keyword,
@@ -74,12 +74,12 @@ final class TaskViewModel: ObservableObject {
     }
 
     func createTask(body: [String: Any]) async throws {
-        let _: ApiResponse<Task> = try await api.createTask(body)
+        let _: ApiResponse<TaskItem> = try await api.createTask(body)
         await load()
     }
 
     func updateTask(_ id: Int, body: [String: Any]) async throws {
-        let _: ApiResponse<Task> = try await api.updateTask(id, body: body)
+        let _: ApiResponse<TaskItem> = try await api.updateTask(id, body: body)
         await load()
     }
 
@@ -134,7 +134,7 @@ final class TaskViewModel: ObservableObject {
         await load()
     }
 
-    func statusType(for task: Task) -> StatusType {
+    func statusType(for task: TaskItem) -> StatusType {
         if task.isRunning { return .running }
         if task.isQueued { return .queued }
         if task.isEnabled { return .success }

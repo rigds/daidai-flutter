@@ -1,6 +1,6 @@
 import Foundation
 
-struct Task: Codable, Identifiable, Equatable {
+struct TaskItem: Codable, Identifiable, Equatable {
     static let groupLabelPrefix = "分组:"
 
     let id: Int

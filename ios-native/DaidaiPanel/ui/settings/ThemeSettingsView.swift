@@ -21,7 +21,7 @@ struct ThemeSettingsView: View {
         .navigationTitle("主题设置")
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: selectedPhoto) { _, newItem in
-            Swift.Task { await loadImage(from: newItem) }
+            Task { await loadImage(from: newItem) }
         }
     }
 

@@ -115,7 +115,7 @@ final class AuthInterceptor: NSObject, URLSessionTaskDelegate {
     }
 
     private func waitForRefreshAndRetry(originalRequest: URLRequest, session: URLSession) async throws -> (Data, URLResponse) {
-        try await Swift.Task.sleep(nanoseconds: 100_000_000)
+        try await Task.sleep(nanoseconds: 100_000_000)
         return try await intercept(originalRequest)
     }
 }

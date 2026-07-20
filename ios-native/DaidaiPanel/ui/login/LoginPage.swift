@@ -245,7 +245,7 @@ struct LoginPage: View {
 
     private var loginButton: some View {
         Button {
-            Swift.Task { await performLogin() }
+            Task { await performLogin() }
         } label: {
             HStack {
                 if isLoading {
@@ -324,7 +324,7 @@ struct LoginPage: View {
                 }
 
                 Button {
-                    Swift.Task { await performInitAdmin() }
+                    Task { await performInitAdmin() }
                 } label: {
                     HStack {
                         if isLoading {

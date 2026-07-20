@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PanelLogView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = SystemViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = SystemViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
     @State private var searchText = ""
     @State private var levelFilter: String = ""
 

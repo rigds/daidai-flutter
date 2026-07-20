@@ -63,7 +63,7 @@ struct BootPage: View {
         }
         .task {
             statusText = "正在检查服务器..."
-            try? await Swift.Task.sleep(nanoseconds: 800_000_000)
+            try? await Task.sleep(nanoseconds: 800_000_000)
 
             await proceedFromBoot()
         }
@@ -75,7 +75,7 @@ struct BootPage: View {
             await authViewModel.restoreTrustedLocalSession()
         } else {
             statusText = "请选择服务器..."
-            try? await Swift.Task.sleep(nanoseconds: 500_000_000)
+            try? await Task.sleep(nanoseconds: 500_000_000)
             authViewModel.state = AuthState(status: .unauthenticated)
         }
     }

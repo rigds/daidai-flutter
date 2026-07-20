@@ -2,7 +2,7 @@ import SwiftUI
 
 struct OpenApiView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = OpenApiViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = OpenApiViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
     @State private var showAddSheet = false
     @State private var editingApp: OpenApiAppData?
     @State private var showDeleteConfirm = false
@@ -45,7 +45,7 @@ struct OpenApiView: View {
             Button("创建") {
                 let name = newAppName
                 newAppName = ""
-                Swift.Task { try? await viewModel.create(name: name) }
+                Task { try? await viewModel.create(name: name) }
             }
             .disabled(newAppName.isEmpty)
         }
@@ -56,7 +56,7 @@ struct OpenApiView: View {
             Button("取消", role: .cancel) {}
             Button("删除", role: .destructive) {
                 if let app = appToDelete {
-                    Swift.Task { try? await viewModel.delete(app.id) }
+                    Task { try? await viewModel.delete(app.id) }
                 }
             }
         } message: {
@@ -93,7 +93,7 @@ struct OpenApiView: View {
                         .tint(AppColors.error)
 
                         Button {
-                            Swift.Task { try? await viewModel.toggle(app) }
+                            Task { try? await viewModel.toggle(app) }
                         } label: {
                             Label(app.enabled ? "禁用" : "启用",
                                   systemImage: app.enabled ? "pause.circle.fill" : "play.circle.fill")
@@ -102,7 +102,7 @@ struct OpenApiView: View {
                     }
                     .contextMenu {
                         Button {
-                            Swift.Task {
+                            Task {
                                 await viewModel.viewSecret(app.id)
                                 secretTitle = "查看密钥"
                                 showSecretSheet = true
@@ -111,7 +111,7 @@ struct OpenApiView: View {
                             Label("查看密钥", systemImage: "eye.fill")
                         }
                         Button {
-                            Swift.Task {
+                            Task {
                                 try? await viewModel.resetSecret(app.id)
                                 secretTitle = "新密钥"
                                 showSecretSheet = true
@@ -121,7 +121,7 @@ struct OpenApiView: View {
                         }
                         Divider()
                         Button {
-                            Swift.Task { try? await viewModel.toggle(app) }
+                            Task { try? await viewModel.toggle(app) }
                         } label: {
                             Label(app.enabled ? "禁用" : "启用", systemImage: app.enabled ? "pause" : "play")
                         }

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ScriptListView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = ScriptViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = ScriptViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
     @State private var showCreateDirSheet = false
     @State private var newDirName = ""
     @State private var showDeleteConfirm = false
@@ -50,7 +50,7 @@ struct ScriptListView: View {
             TextField("目录名称", text: $newDirName)
             Button("取消", role: .cancel) { newDirName = "" }
             Button("创建") {
-                Swift.Task {
+                Task {
                     try? await viewModel.createDirectory(path: newDirName)
                     newDirName = ""
                 }
@@ -60,7 +60,7 @@ struct ScriptListView: View {
             TextField("新名称", text: $renameNewName)
             Button("取消", role: .cancel) {}
             Button("确认") {
-                Swift.Task {
+                Task {
                     let parent = (renameTarget as NSString).deletingLastPathComponent
                     let newPath = (parent as NSString).appendingPathComponent(renameNewName)
                     try? await viewModel.rename(from: renameTarget, to: newPath)
@@ -70,7 +70,7 @@ struct ScriptListView: View {
         .alert("确认删除", isPresented: $showDeleteConfirm) {
             Button("取消", role: .cancel) {}
             Button("删除", role: .destructive) {
-                Swift.Task { try? await viewModel.delete(paths: pathsToDelete) }
+                Task { try? await viewModel.delete(paths: pathsToDelete) }
             }
         } message: {
             Text("确定要删除选中的文件吗？此操作不可撤销。")

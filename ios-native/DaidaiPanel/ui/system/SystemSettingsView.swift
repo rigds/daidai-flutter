@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SystemSettingsView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = SystemViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = SystemViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
     @State private var concurrentTasks = 1
     @State private var logRetention = 30
     @State private var proxyUrl = ""
@@ -92,7 +92,7 @@ struct SystemSettingsView: View {
     private var updateSection: some View {
         Section {
             Button {
-                Swift.Task {
+                Task {
                     do {
                         let response: ApiResponse<UpdateData> = try await apiService.checkUpdate()
                         if let data = response.data, data.hasUpdate == true {
@@ -124,7 +124,7 @@ struct SystemSettingsView: View {
     }
 
     private func save() {
-        Swift.Task {
+        Task {
             do {
                 try await viewModel.saveSettings([
                     "concurrent_tasks": concurrentTasks,

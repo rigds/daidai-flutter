@@ -2,7 +2,7 @@ import SwiftUI
 
 struct UserListView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = UserViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = UserViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
     @State private var showAddSheet = false
     @State private var editingUser: User?
     @State private var showDeleteConfirm = false
@@ -48,7 +48,7 @@ struct UserListView: View {
             Button("取消", role: .cancel) {}
             Button("删除", role: .destructive) {
                 if let user = userToDelete {
-                    Swift.Task { try? await viewModel.delete(user.id) }
+                    Task { try? await viewModel.delete(user.id) }
                 }
             }
         } message: {
@@ -59,7 +59,7 @@ struct UserListView: View {
             Button("取消", role: .cancel) { newPassword = "" }
             Button("确认") {
                 if let user = userToReset, !newPassword.isEmpty {
-                    Swift.Task { try? await viewModel.resetPassword(user.id, password: newPassword) }
+                    Task { try? await viewModel.resetPassword(user.id, password: newPassword) }
                     newPassword = ""
                 }
             }
@@ -243,7 +243,7 @@ struct UserFormView: View {
     }
 
     private func save() {
-        Swift.Task {
+        Task {
             do {
                 if let u = user {
                     try await viewModel.update(u.id, body: [

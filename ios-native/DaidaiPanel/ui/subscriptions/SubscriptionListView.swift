@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SubscriptionListView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = SubscriptionViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = SubscriptionViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
     @State private var showAddSheet = false
     @State private var editingSub: Subscription?
     @State private var showDeleteConfirm = false
@@ -42,7 +42,7 @@ struct SubscriptionListView: View {
             Button("取消", role: .cancel) {}
             Button("删除", role: .destructive) {
                 if let sub = subToDelete {
-                    Swift.Task { try? await viewModel.delete(sub.id) }
+                    Task { try? await viewModel.delete(sub.id) }
                 }
             }
         } message: {
@@ -84,7 +84,7 @@ struct SubscriptionListView: View {
                         .tint(AppColors.error)
 
                         Button {
-                            Swift.Task { try? await viewModel.toggle(sub) }
+                            Task { try? await viewModel.toggle(sub) }
                         } label: {
                             Label(sub.enabled ? "禁用" : "启用",
                                   systemImage: sub.enabled ? "pause.circle.fill" : "play.circle.fill")
@@ -93,7 +93,7 @@ struct SubscriptionListView: View {
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: false) {
                         Button {
-                            Swift.Task { try? await viewModel.pull(sub.id) }
+                            Task { try? await viewModel.pull(sub.id) }
                         } label: {
                             Label("拉取", systemImage: "arrow.down.circle.fill")
                         }
@@ -252,7 +252,7 @@ struct SubscriptionFormView: View {
             "schedule": schedule,
             "auto_add_task": autoAddTask
         ]
-        Swift.Task {
+        Task {
             do {
                 if let sub = subscription {
                     try await viewModel.update(sub.id, body: body)

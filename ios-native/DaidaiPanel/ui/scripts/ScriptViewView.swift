@@ -60,7 +60,7 @@ struct ScriptViewView: View {
     private var toolbarView: some View {
         HStack(spacing: 16) {
             Button {
-                Swift.Task { await viewModel.format() }
+                Task { await viewModel.format() }
                 editedContent = viewModel.fileContent
             } label: {
                 Label("格式化", systemImage: "text.alignleft")
@@ -68,7 +68,7 @@ struct ScriptViewView: View {
             }
 
             Button {
-                Swift.Task { await viewModel.run(path: filePath) }
+                Task { await viewModel.run(path: filePath) }
                 showRunOutput = true
             } label: {
                 Label("运行", systemImage: "play.fill")
@@ -127,7 +127,7 @@ struct ScriptViewView: View {
 
     private func save() {
         viewModel.fileContent = editedContent
-        Swift.Task {
+        Task {
             await viewModel.save()
             hasUnsavedChanges = false
         }

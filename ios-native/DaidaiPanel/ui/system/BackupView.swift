@@ -2,7 +2,7 @@ import SwiftUI
 
 struct BackupView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = SystemViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = SystemViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
     @State private var showDeleteConfirm = false
     @State private var backupToDelete: BackupData?
     @State private var showRestoreConfirm = false
@@ -29,7 +29,7 @@ struct BackupView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
-                        Swift.Task {
+                        Task {
                             do {
                                 try await viewModel.createBackup()
                             } catch {
@@ -57,7 +57,7 @@ struct BackupView: View {
             Button("取消", role: .cancel) {}
             Button("恢复", role: .destructive) {
                 if let backup = backupToRestore {
-                    Swift.Task { await restoreBackup(backup) }
+                    Task { await restoreBackup(backup) }
                 }
             }
         } message: {
@@ -67,7 +67,7 @@ struct BackupView: View {
             Button("取消", role: .cancel) {}
             Button("删除", role: .destructive) {
                 if let backup = backupToDelete {
-                    Swift.Task { try? await deleteBackup(backup) }
+                    Task { try? await deleteBackup(backup) }
                 }
             }
         } message: {
@@ -92,7 +92,7 @@ struct BackupView: View {
                             .foregroundColor(.secondary)
                         Spacer()
                         Button("查看进度") {
-                            Swift.Task { await viewModel.checkRestoreProgress() }
+                            Task { await viewModel.checkRestoreProgress() }
                         }
                         .font(.caption)
                     }

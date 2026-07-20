@@ -203,7 +203,7 @@ struct ServerConfigPage: View {
                             .disableAutocorrection(true)
 
                         Button {
-                            Swift.Task { await viewModel.healthCheck(url: viewModel.newURL) }
+                            Task { await viewModel.healthCheck(url: viewModel.newURL) }
                         } label: {
                             if viewModel.isChecking {
                                 ProgressView()

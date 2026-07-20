@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SponsorView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = SponsorViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = SponsorViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
 
     var body: some View {
         GlassScaffold {

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct NotificationListView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = NotificationViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = NotificationViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
     @State private var showAddSheet = false
     @State private var editingChannel: NotifyChannel?
     @State private var showDeleteConfirm = false
@@ -44,7 +44,7 @@ struct NotificationListView: View {
             Button("取消", role: .cancel) {}
             Button("删除", role: .destructive) {
                 if let ch = channelToDelete {
-                    Swift.Task { try? await viewModel.delete(ch.id) }
+                    Task { try? await viewModel.delete(ch.id) }
                 }
             }
         } message: {
@@ -89,7 +89,7 @@ struct NotificationListView: View {
                         .tint(AppColors.error)
 
                         Button {
-                            Swift.Task { try? await viewModel.toggle(channel) }
+                            Task { try? await viewModel.toggle(channel) }
                         } label: {
                             Label(channel.enabled ? "禁用" : "启用",
                                   systemImage: channel.enabled ? "pause.circle.fill" : "play.circle.fill")
@@ -98,7 +98,7 @@ struct NotificationListView: View {
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: false) {
                         Button {
-                            Swift.Task {
+                            Task {
                                 do {
                                     try await viewModel.test(channel.id)
                                     testMessage = "测试消息已发送"
@@ -277,7 +277,7 @@ struct NotificationFormView: View {
             "type": selectedType,
             "config": configValues
         ]
-        Swift.Task {
+        Task {
             do {
                 if let ch = channel {
                     try await viewModel.update(ch.id, body: body)

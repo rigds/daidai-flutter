@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SecurityView: View {
     @EnvironmentObject var apiService: ApiService
-    @StateObject private var viewModel = SecurityViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage()))
+    @StateObject private var viewModel = SecurityViewModel(api: ApiService(baseURL: "", keychain: KeychainStorage.shared))
 
     var body: some View {
         GlassScaffold {
@@ -117,7 +117,7 @@ struct SecurityView: View {
                                 .clipShape(Capsule())
                         } else {
                             Button("踢出") {
-                                Swift.Task {
+                                Task {
                                     if let sid = session["id"]?.value as? String {
                                         try? await viewModel.kickSession(sid)
                                     }
@@ -146,7 +146,7 @@ struct SecurityView: View {
                             .font(.system(.body, design: .monospaced))
                         Spacer()
                         Button {
-                            Swift.Task { try? await viewModel.removeWhitelist(ip: ip) }
+                            Task { try? await viewModel.removeWhitelist(ip: ip) }
                         } label: {
                             Image(systemName: "minus.circle.fill")
                                 .foregroundColor(AppColors.error)
@@ -159,7 +159,7 @@ struct SecurityView: View {
 
             Section {
                 AddIPRow { ip in
-                    Swift.Task { try? await viewModel.addWhitelist(ip: ip) }
+                    Task { try? await viewModel.addWhitelist(ip: ip) }
                 }
             } header: {
                 Text("添加 IP")
@@ -187,14 +187,14 @@ struct SecurityView: View {
             if viewModel.twoFaEnabled {
                 Section {
                     Button("关闭二步验证") {
-                        Swift.Task { try? await viewModel.disable2Fa() }
+                        Task { try? await viewModel.disable2Fa() }
                     }
                     .foregroundColor(AppColors.error)
                 }
             } else {
                 Section {
                     Button("开启二步验证") {
-                        Swift.Task { await viewModel.setup2Fa() }
+                        Task { await viewModel.setup2Fa() }
                     }
                     .foregroundColor(AppColors.primary)
                 }
@@ -211,7 +211,7 @@ struct SecurityView: View {
                             }
                         }
                         TwoFaVerifyRow { code in
-                            Swift.Task { try? await viewModel.verify2Fa(code: code) }
+                            Task { try? await viewModel.verify2Fa(code: code) }
                         }
                     }
                 }

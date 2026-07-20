@@ -15,7 +15,7 @@ struct EnvListView: View {
                 VStack(spacing: 0) {
                     SearchBar(text: $searchText, placeholder: "搜索环境变量...") {
                         viewModel.keyword = searchText
-                        Swift.Task { await viewModel.load() }
+                        Task { await viewModel.load() }
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
@@ -72,7 +72,7 @@ struct EnvListView: View {
     private func filterChip(label: String, value: String) -> some View {
         Button {
             viewModel.selectedGroup = value
-            Swift.Task { await viewModel.load() }
+            Task { await viewModel.load() }
         } label: {
             Text(label)
                 .font(.subheadline)
@@ -135,7 +135,7 @@ struct EnvListView: View {
 
                     Toggle("", isOn: Binding(
                         get: { env.enabled },
-                        set: { _ in Swift.Task { try? await viewModel.toggleEnv(env) } }
+                        set: { _ in Task { try? await viewModel.toggleEnv(env) } }
                     ))
                     .tint(AppColors.primary)
                     .labelsHidden()
@@ -200,13 +200,13 @@ struct EnvListView: View {
             Divider()
 
             Button {
-                Swift.Task { try? await viewModel.toggleEnv(env) }
+                Task { try? await viewModel.toggleEnv(env) }
             } label: {
                 Label(env.enabled ? "禁用" : "启用", systemImage: env.enabled ? "pause.circle" : "checkmark.circle")
             }
 
             Button(role: .destructive) {
-                Swift.Task { try? await viewModel.deleteEnv(env.id) }
+                Task { try? await viewModel.deleteEnv(env.id) }
             } label: {
                 Label("删除", systemImage: "trash")
             }
@@ -276,7 +276,7 @@ struct EnvFormSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存") {
-                        Swift.Task { await save() }
+                        Task { await save() }
                     }
                     .disabled(name.isEmpty || value.isEmpty || isLoading)
                 }

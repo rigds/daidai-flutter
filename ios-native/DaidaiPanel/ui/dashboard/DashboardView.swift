@@ -42,7 +42,7 @@ struct DashboardView: View {
             )) {
                 Button("确定") { viewModel.error = nil }
                 Button("重试") {
-                    Swift.Task { await viewModel.load() }
+                    Task { await viewModel.load() }
                 }
             } message: {
                 Text(viewModel.error ?? "")

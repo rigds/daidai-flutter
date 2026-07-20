@@ -62,7 +62,7 @@ struct TaskListView: View {
             }
             .alert("错误", isPresented: $showError) {
                 Button("确定") { viewModel.error = nil }
-                Button("重试") { Swift.Task { await viewModel.load() } }
+                Button("重试") { Task { await viewModel.load() } }
             } message: {
                 Text(viewModel.error ?? "")
             }
@@ -82,13 +82,13 @@ struct TaskListView: View {
                 .textFieldStyle(.plain)
                 .onSubmit {
                     viewModel.keyword = searchText
-                    Swift.Task { await viewModel.load() }
+                    Task { await viewModel.load() }
                 }
             if !searchText.isEmpty {
                 Button {
                     searchText = ""
                     viewModel.keyword = ""
-                    Swift.Task { await viewModel.load() }
+                    Task { await viewModel.load() }
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.secondary)
@@ -118,7 +118,7 @@ struct TaskListView: View {
                 ForEach(statusFilters, id: \.value) { filter in
                     Button {
                         viewModel.statusFilter = filter.value
-                        Swift.Task { await viewModel.load() }
+                        Task { await viewModel.load() }
                     } label: {
                         Text(filter.label)
                             .font(.subheadline)
@@ -185,7 +185,7 @@ struct TaskListView: View {
         }
     }
 
-    private func taskRow(_ task: Task) -> some View {
+    private func taskRow(_ task: TaskItem) -> some View {
         HStack {
             if isEditing {
                 Button {
@@ -252,9 +252,9 @@ struct TaskListView: View {
         }
     }
 
-    private func swipeRunButton(_ task: Task) -> some View {
+    private func swipeRunButton(_ task: TaskItem) -> some View {
         Button {
-            Swift.Task {
+            Task {
                 if task.isRunning {
                     try? await viewModel.stopTask(task.id)
                 } else {
@@ -267,9 +267,9 @@ struct TaskListView: View {
         .tint(task.isRunning ? AppColors.warning : AppColors.success)
     }
 
-    private func swipeEnableButton(_ task: Task) -> some View {
+    private func swipeEnableButton(_ task: TaskItem) -> some View {
         Button {
-            Swift.Task {
+            Task {
                 if task.isEnabled || task.isRunning {
                     try? await viewModel.disableTask(task.id)
                 } else {
@@ -285,9 +285,9 @@ struct TaskListView: View {
         .tint(task.isEnabled || task.isRunning ? AppColors.slate400 : AppColors.primary)
     }
 
-    private func swipeDeleteButton(_ task: Task) -> some View {
+    private func swipeDeleteButton(_ task: TaskItem) -> some View {
         Button(role: .destructive) {
-            Swift.Task { try? await viewModel.deleteTask(task.id) }
+            Task { try? await viewModel.deleteTask(task.id) }
         } label: {
             Label("删除", systemImage: "trash")
         }
@@ -303,25 +303,25 @@ struct TaskListView: View {
             Divider().frame(height: 20)
 
             Button("运行") {
-                Swift.Task { try? await viewModel.batchRun(Array(selectedIds)) }
+                Task { try? await viewModel.batchRun(Array(selectedIds)) }
             }
             .font(.subheadline)
             .foregroundColor(AppColors.success)
 
             Button("启用") {
-                Swift.Task { try? await viewModel.batchEnable(Array(selectedIds)) }
+                Task { try? await viewModel.batchEnable(Array(selectedIds)) }
             }
             .font(.subheadline)
             .foregroundColor(AppColors.primary)
 
             Button("禁用") {
-                Swift.Task { try? await viewModel.batchDisable(Array(selectedIds)) }
+                Task { try? await viewModel.batchDisable(Array(selectedIds)) }
             }
             .font(.subheadline)
             .foregroundColor(.secondary)
 
             Button("删除") {
-                Swift.Task { try? await viewModel.batchDelete(Array(selectedIds)) }
+                Task { try? await viewModel.batchDelete(Array(selectedIds)) }
             }
             .font(.subheadline)
             .foregroundColor(AppColors.error)

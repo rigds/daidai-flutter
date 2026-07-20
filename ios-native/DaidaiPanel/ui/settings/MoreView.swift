@@ -203,7 +203,7 @@ struct MoreView: View {
         .alert("确认退出", isPresented: $showLogoutConfirm) {
             Button("取消", role: .cancel) {}
             Button("退出", role: .destructive) {
-                Swift.Task { await authViewModel.logout() }
+                Task { await authViewModel.logout() }
             }
         } message: {
             Text("确定要退出登录吗？")
