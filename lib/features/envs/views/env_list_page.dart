@@ -754,7 +754,6 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                           isLight: isLight,
                           onTap: () async {
                             if (_sortMode) {
-                              // 保存排序：对比原始顺序和最终顺序，逐个发送移动请求
                               try {
                                 final currentOrder = state.envs.map((e) => e.id).toList();
                                 if (_originalOrder.isNotEmpty &&
@@ -779,7 +778,6 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                               }
                               _originalOrder = [];
                             } else {
-                              // 进入排序模式时保存原始顺序
                               _originalOrder = state.envs.map((e) => e.id).toList();
                             }
                             setState(() {
@@ -1140,33 +1138,9 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 110),
                         itemCount: state.envs.length,
                         onReorder: (oldIndex, newIndex) {
-                          final current = List<EnvVar>.from(state.envs);
-                          if (current.isEmpty || oldIndex >= current.length) {
-                            return;
-                          }
-                          final sourceEnv = current[oldIndex];
-                          final adjustedNewIndex = newIndex > oldIndex
-                              ? newIndex - 1
-                              : newIndex;
-                          int? targetId;
-                          if (adjustedNewIndex > 0 &&
-                              adjustedNewIndex - 1 < current.length) {
-                            final targetSourceIndex =
-                                adjustedNewIndex > oldIndex
-                                ? adjustedNewIndex
-                                : adjustedNewIndex - 1;
-                            if (targetSourceIndex >= 0 &&
-                                targetSourceIndex < current.length) {
-                              targetId = current[targetSourceIndex].id;
-                            }
-                          }
                           ref
                               .read(envListProvider.notifier)
                               .reorderLocal(oldIndex, newIndex);
-                          setState(() {
-                            _lastMovedSourceId = sourceEnv.id;
-                            _lastMovedTargetId = targetId;
-                          });
                         },
                         itemBuilder: (_, i) {
                           final env = state.envs[i];
@@ -1276,61 +1250,6 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
         ),
       ),
     );
-  }
-
-  bool _listsEqual(List<int> a, List<int> b) {
-    if (a.length != b.length) return false;
-    for (var i = 0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
-    }
-    return true;
-  }
-
-  /// 计算从 original -> target 需要的一系列移动操作
-  /// 返回 [(sourceId, targetId), ...]，targetId 为 null 表示移到末尾
-  List<(int, int?)> _computeMoves(List<int> original, List<int> target) {
-    final moves = <(int, int?)>[];
-    final working = List<int>.from(original);
-
-    for (var i = 0; i < target.length; i++) {
-      if (working[i] == target[i]) continue;
-
-      // 找到 target[i] 当前在 working 中的位置
-      final fromIndex = working.indexOf(target[i]);
-      if (fromIndex == -1) continue;
-
-      final sourceId = working[fromIndex];
-      int? targetId;
-      // targetId = 应该插入到哪个元素前面
-      // 如果当前位置不是最后一个，则 targetId = working 中 i 位置的元素
-      // 但这是在移动之前... 让我重新想
-
-      // 实际上，我们要把 sourceId 移动到位置 i
-      // 在 working 中，位置 i 当前是 working[i]
-      // 移动后，sourceId 应该在 working[i] 前面
-      // 但如果 fromIndex < i，移除后后面的元素会前移
-
-      // 简化：先移除，再看 i 位置是什么
-      working.removeAt(fromIndex);
-      if (i < working.length) {
-        targetId = working[i]; // 插入到 working[i] 前面
-      } else {
-        targetId = null; // 插入到末尾
-      }
-      working.insert(i, sourceId);
-
-      moves.add((sourceId, targetId));
-    }
-
-    return moves;
-  }
-
-  Future<void> _saveOrderChanges(List<int> original, List<int> target) async {
-    final moves = _computeMoves(original, target);
-    final notifier = ref.read(envListProvider.notifier);
-    for (final (sourceId, targetId) in moves) {
-      await notifier.sortEnvs(sourceId, targetId);
-    }
   }
 
   void _showDetailSheet(EnvVar env) {
