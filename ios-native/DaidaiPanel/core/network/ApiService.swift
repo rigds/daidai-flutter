@@ -279,8 +279,8 @@ final class ApiService: ObservableObject {
         try await get(endpoints.taskLogFiles(id))
     }
 
-    func taskStats() async throws -> ApiResponse<TaskStatsData> {
-        try await get(endpoints.taskStats)
+    func taskStats(_ id: Int) async throws -> ApiResponse<TaskStatsData> {
+        try await get(endpoints.taskStats(id))
     }
 
     func batchEnableTasks(_ ids: [Int]) async throws -> ApiResponse<EmptyData> {

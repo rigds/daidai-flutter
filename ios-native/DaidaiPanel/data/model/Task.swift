@@ -74,7 +74,13 @@ struct TaskItem: Codable, Identifiable, Equatable {
         taskType = try c.decodeStringDefault(forKey: .taskType, defaultValue: "cron")
         pythonVersion = try c.decodeStringDefault(forKey: .pythonVersion, defaultValue: "3.12")
         status = try c.decodeDouble(forKey: .status)
-        labels = try c.decodeString(forKey: .labels)
+        if let labelStr = try? c.decode(String.self, forKey: .labels) {
+            labels = labelStr
+        } else if let labelArr = try? c.decode([String].self, forKey: .labels) {
+            labels = labelArr.joined(separator: ",")
+        } else {
+            labels = ""
+        }
         displayLabels = (try? c.decode([String].self, forKey: .displayLabels)) ?? []
         lastRunAt = try c.decodeDateIfPresent(forKey: .lastRunAt)
         nextRunAt = try c.decodeDateIfPresent(forKey: .nextRunAt)
