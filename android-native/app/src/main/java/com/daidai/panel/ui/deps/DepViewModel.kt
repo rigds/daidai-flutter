@@ -42,8 +42,8 @@ class DepViewModel @Inject constructor(
             try {
                 val api = networkModule.getApiService()
                 val params = mutableMapOf<String, String>()
-                if (_state.value.selectedTab == 0) params["type"] = "1"
-                else params["type"] = "0"
+                if (_state.value.selectedTab == 0) params["type"] = "nodejs"
+                else params["type"] = "python"
                 val response = api.getDependencies(params)
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     _state.value = _state.value.copy(

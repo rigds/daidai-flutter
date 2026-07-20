@@ -16,17 +16,20 @@ import com.daidai.panel.core.auth.AuthStatus
 import com.daidai.panel.core.auth.AuthViewModel
 import com.daidai.panel.ui.dashboard.DashboardPage
 import com.daidai.panel.ui.deps.DepListPage
+import com.daidai.panel.ui.envs.EnvFormPage
 import com.daidai.panel.ui.envs.EnvListPage
 import com.daidai.panel.ui.login.BootPage
 import com.daidai.panel.ui.login.LoginPage
 import com.daidai.panel.ui.login.ServerConfigPage
 import com.daidai.panel.ui.logs.LogListPage
+import com.daidai.panel.ui.logs.LogStreamPage
 import com.daidai.panel.ui.main.MainScaffold
 import com.daidai.panel.ui.notifications.NotificationListPage
 import com.daidai.panel.ui.openapi.OpenApiPage
 import com.daidai.panel.ui.scripts.ScriptListPage
 import com.daidai.panel.ui.scripts.ScriptViewPage
 import com.daidai.panel.ui.security.SecurityPage
+import com.daidai.panel.ui.settings.AboutPage
 import com.daidai.panel.ui.settings.AppLockSettingsPage
 import com.daidai.panel.ui.settings.MorePage
 import com.daidai.panel.ui.settings.SponsorPage
@@ -73,6 +76,11 @@ sealed class Screen(val route: String) {
     object ThemeSettings : Screen("themeSettings")
     object AppLock : Screen("appLock")
     object Sponsors : Screen("sponsors")
+    object About : Screen("about")
+    object EnvForm : Screen("envForm?envId={envId}") {
+        fun createRoute(envId: Int? = null) =
+            if (envId != null) "envForm?envId=$envId" else "envForm"
+    }
 }
 
 @Composable
@@ -171,7 +179,7 @@ fun AppNavigation(
             route = Screen.LogStream.route,
             arguments = listOf(navArgument("logId") { type = NavType.IntType })
         ) {
-            PlaceholderPage("Log Stream")
+            LogStreamPage(onBack = { navController.popBackStack() })
         }
 
         composable(Screen.Subscriptions.route) {
@@ -228,6 +236,18 @@ fun AppNavigation(
         }
         composable(Screen.Sponsors.route) {
             SponsorPage(onBack = { navController.popBackStack() })
+        }
+        composable(Screen.About.route) {
+            AboutPage(onBack = { navController.popBackStack() })
+        }
+        composable(
+            route = Screen.EnvForm.route,
+            arguments = listOf(navArgument("envId") {
+                type = NavType.IntType
+                defaultValue = -1
+            })
+        ) {
+            EnvFormPage(onBack = { navController.popBackStack() })
         }
     }
 }

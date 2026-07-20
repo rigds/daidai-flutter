@@ -54,6 +54,13 @@ fun MainScaffold(
         }
     }
 
+    val handleNavigation: (String) -> Unit = { route ->
+        when (route) {
+            "dashboard", "tasks", "logs", "envs", "more" -> currentTab = route
+            else -> onNavigateToSubPage(route)
+        }
+    }
+
     GlassScaffold(
         backgroundImagePath = backgroundImagePath,
         glassMode = glassMode,
@@ -80,27 +87,27 @@ fun MainScaffold(
                 "dashboard" -> DashboardPage(
                     contentPadding = contentPadding,
                     glassMode = glassMode,
-                    onNavigate = onNavigateToSubPage
+                    onNavigate = handleNavigation
                 )
                 "tasks" -> TaskListPage(
                     contentPadding = contentPadding,
                     glassMode = glassMode,
-                    onNavigate = onNavigateToSubPage
+                    onNavigate = handleNavigation
                 )
                 "logs" -> LogListPage(
                     contentPadding = contentPadding,
                     glassMode = glassMode,
-                    onNavigate = onNavigateToSubPage
+                    onNavigate = handleNavigation
                 )
                 "envs" -> EnvListPage(
                     contentPadding = contentPadding,
                     glassMode = glassMode,
-                    onNavigate = onNavigateToSubPage
+                    onNavigate = handleNavigation
                 )
                 "more" -> MorePage(
                     contentPadding = contentPadding,
                     glassMode = glassMode,
-                    onNavigate = onNavigateToSubPage,
+                    onNavigate = handleNavigation,
                     onLogout = onLogout
                 )
             }
