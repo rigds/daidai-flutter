@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 import '../../../core/auth/auth_provider.dart';
+import '../../../core/network/dio_client.dart'; // 🌟 新增：为了切换服务器时改变 BaseUrl
 import '../../../core/services/app_update_service.dart';
 import '../../../core/storage/secure_storage.dart';
 import '../../../core/theme/app_theme.dart';
@@ -20,13 +21,12 @@ class DashboardPage extends ConsumerStatefulWidget {
 
 class _DashboardPageState extends ConsumerState<DashboardPage> {
   String? _serverUrl;
+  List<PanelConfig> _panels = []; // 🌟 新增：存放读取到的面板列表
 
   @override
   void initState() {
     super.initState();
-    SecureStorage.getServerUrl().then((url) {
-      if (mounted) setState(() => _serverUrl = url);
-    });
+    _loadServerInfo(); // 🌟 修改：合并为一个加载方法
     Future.microtask(() async {
       await ref.read(dashboardProvider.notifier).load();
       if (ref.read(authProvider).user == null) {
@@ -35,6 +35,69 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       _silentUpdateCheck();
     });
   }
+
+  // 🌟 新增：一次性读取当前地址和所有保存的面板列表
+  Future<void> _loadServerInfo() async {
+    final url = await SecureStorage.getServerUrl();
+    final panels = await SecureStorage.getPanels();
+    if (mounted) {
+      setState(() {
+        _serverUrl = url;
+        _panels = panels;
+      });
+    }
+  }
+
+  // 🌟 新增：处理服务器切换的逻辑（从 ServerConfigPage 借用过来的灵魂）
+  Future<void> _handleSwitchServer(PanelConfig panel) async {
+    // 弹窗确认
+    final panelLabel = panel.name.isNotEmpty ? panel.name : panel.url;
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('切换服务器'),
+        content: Text('切换到“$panelLabel”需要退出当前账号后重新登录，是否继续？'),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 44,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(dialogCtx, false),
+                    child: const Text('取消'),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SizedBox(
+                  height: 44,
+                  child: FilledButton(
+                    onPressed: () => Navigator.pop(dialogCtx, true),
+                    child: const Text('切换登录'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true || !mounted) return;
+
+    // 执行切换流程
+    await SecureStorage.clearAuthSession();
+    DioClient.instance.setBaseUrl(panel.url);
+    await SecureStorage.saveServerUrl(panel.url);
+    ref.invalidate(dashboardProvider);
+
+    if (!mounted) return;
+    ref.read(authProvider.notifier).setUnauthenticated();
+    context.go(!panel.autoLogin ? '/server-config?manual=1' : '/boot');
+  }
+
 
   String? _buildAvatarUrl(String? avatarPath) {
     if (avatarPath == null || avatarPath.isEmpty || _serverUrl == null) {
@@ -166,7 +229,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return Scaffold(
       body: RefreshIndicator(
         color: AppColors.primary,
-        onRefresh: () => ref.read(dashboardProvider.notifier).load(),
+        onRefresh: () async {
+          await _loadServerInfo(); // 刷新时顺便也刷新一下面板列表
+          return ref.read(dashboardProvider.notifier).load();
+        },
         child: data.loading && data.system.isEmpty
             ? ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -235,50 +301,126 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       ),
                       const SizedBox(width: 12),
                       
-                      // 🌟 核心修改区：用 PopupMenuButton 包裹头像
+                      // 🌟 核心修改区：动态渲染面板列表的弹出菜单
                       PopupMenuButton<String>(
                         tooltip: '切换服务器',
-                        offset: const Offset(0, 48), // 让菜单在头像正下方弹出
+                        offset: const Offset(0, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                         elevation: 4,
                         color: isLight ? AppColors.slate50 : AppColors.slate800,
-                        onSelected: (value) {
-                          if (value == 'manage_servers') {
-                            // 🚀 重点：这里填写你“服务器管理”页面的真实路由名称，比如 '/servers' 或 '/more/servers'
-                            context.push('/servers'); 
+                        onSelected: (value) async {
+                          if (value == 'add_server') {
+                            context.push('/server-config?manage=1');
                           } else if (value == 'logout') {
-                            // 触发退出登录
-                            ref.read(authProvider.notifier).setUnauthenticated();
+                            await ref.read(authProvider.notifier).logout();
+                            if (context.mounted) {
+                              context.go('/server-config?manual=1');
+                            }
+                          } else if (value.startsWith('switch_')) {
+                            // 找到了用户选中的那个服务器配置
+                            final targetUrl = value.replaceAll('switch_', '');
+                            final targetPanel = _panels.firstWhere(
+                              (p) => p.url == targetUrl,
+                              orElse: () => PanelConfig(url: targetUrl, name: targetUrl),
+                            );
+                            _handleSwitchServer(targetPanel);
                           }
                         },
                         itemBuilder: (context) => [
+                          // 🌟 遍历生成已保存的面板列表
+                          ..._panels.map((panel) {
+                            final isCurrent = panel.url == _serverUrl;
+                            final displayName = panel.name.isNotEmpty ? panel.name : panel.url;
+                            return PopupMenuItem(
+                              value: isCurrent ? 'current' : 'switch_${panel.url}',
+                              enabled: !isCurrent, // 当前项置灰不可点
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    isCurrent ? Icons.dns : Icons.dns_outlined, 
+                                    size: 20, 
+                                    color: isCurrent 
+                                      ? AppColors.primary 
+                                      : (isLight ? AppColors.slate600 : AppColors.slate300)
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          displayName, 
+                                          style: TextStyle(
+                                            color: isCurrent 
+                                              ? AppColors.primary 
+                                              : (isLight ? AppColors.slate700 : AppColors.slate200),
+                                            fontWeight: isCurrent ? FontWeight.w600 : FontWeight.normal,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        if (panel.name.isNotEmpty) 
+                                          Text(
+                                            panel.url,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: isLight ? AppColors.slate500 : AppColors.slate500,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (isCurrent) ...[
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary.withAlpha(20),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        '当前',
+                                        style: TextStyle(fontSize: 10, color: AppColors.primary, fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  ]
+                                ],
+                              ),
+                            );
+                          }),
+                          
+                          if (_panels.isNotEmpty) const PopupMenuDivider(),
+                          
+                          // 🌟 底部固定按钮
                           PopupMenuItem(
-                            value: 'manage_servers',
+                            value: 'add_server',
                             child: Row(
                               children: [
-                                Icon(Icons.dns_outlined, size: 20, color: isLight ? AppColors.slate700 : AppColors.slate200),
+                                Icon(Icons.add_circle_outline, size: 20, color: isLight ? AppColors.slate700 : AppColors.slate200),
                                 const SizedBox(width: 12),
-                                Text('切换 / 管理面板', style: TextStyle(color: isLight ? AppColors.slate700 : AppColors.slate200)),
+                                Text('添加 / 管理面板', style: TextStyle(color: isLight ? AppColors.slate700 : AppColors.slate200)),
                               ],
                             ),
                           ),
-                          const PopupMenuDivider(),
                           const PopupMenuItem(
                             value: 'logout',
                             child: Row(
                               children: [
                                 Icon(Icons.logout, size: 20, color: Colors.redAccent),
                                 SizedBox(width: 12),
-                                Text('退出登录', style: TextStyle(color: Colors.redAccent)),
+                                Text('退出当前账号', style: TextStyle(color: Colors.redAccent)),
                               ],
                             ),
                           ),
                         ],
                         child: _buildDashboardAvatar(auth, isLight, 40),
                       ),
-                      // 🌟 核心修改结束
+                      // 🌟 核心修改区结束
                       
                     ],
                   ),
