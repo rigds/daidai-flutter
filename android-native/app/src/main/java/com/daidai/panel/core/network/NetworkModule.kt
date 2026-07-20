@@ -44,17 +44,13 @@ class NetworkModule @Inject constructor(
             return currentApiService!!
         }
 
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
         val okHttpClient = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
             .addInterceptor(userAgentInterceptor)
             .addInterceptor(authInterceptor)
-            .addInterceptor(loggingInterceptor)
             .build()
 
         val retrofit = Retrofit.Builder()
