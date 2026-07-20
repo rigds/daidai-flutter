@@ -239,6 +239,7 @@ class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
     final panelToSave = _panelForSave(finalUrl, existing);
     if (existing == null || panelToSave.name != existing.name) {
       await SecureStorage.savePanel(panelToSave);
+      await _loadPanels(); // 保存后重新加载一下列表，更新UI
     }
 
     if (mounted) {
@@ -288,6 +289,7 @@ class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogCtx, true),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             child: const Text('删除'),
           ),
         ],
@@ -337,7 +339,7 @@ class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
               ),
               const SizedBox(height: 6),
               Text(
-                _isManageMode ? '新增、删除或切换服务器，当前账号不会被直接中断。' : '选择已有面板或添加新面板',
+                _isManageMode ? '新增、修改、删除或切换服务器，当前账号不会被直接中断。' : '选择已有面板或添加新面板',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -385,6 +387,7 @@ class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
                                 horizontal: 8,
                                 vertical: 4,
                               ),
+                              margin: const EdgeInsets.only(right: 4),
                               decoration: BoxDecoration(
                                 color: theme.colorScheme.primaryContainer,
                                 borderRadius: BorderRadius.circular(999),
@@ -397,12 +400,33 @@ class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
                                 ),
                               ),
                             ),
+                            
+                          // 🌟 新增的编辑按钮
+                          IconButton(
+                            icon: Icon(
+                              Icons.edit_outlined,
+                              size: 20,
+                              color: theme.colorScheme.primary,
+                            ),
+                            tooltip: '编辑配置',
+                            onPressed: () {
+                              // 将信息填入下方表单
+                              setState(() {
+                                _nameController.text = panel.name == panel.url ? '' : panel.name;
+                                _controller.text = panel.url;
+                              });
+                              _showMessage('已将服务器信息填入下方表单，请修改后保存');
+                            },
+                          ),
+                          
+                          // 原本的删除按钮
                           IconButton(
                             icon: Icon(
                               Icons.delete_outline,
                               size: 20,
                               color: theme.colorScheme.error,
                             ),
+                            tooltip: '删除',
                             onPressed: () => _deletePanel(panel),
                           ),
                         ],
@@ -418,7 +442,7 @@ class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
                 const Divider(),
               ],
               const SizedBox(height: 20),
-              Text('添加新面板', style: theme.textTheme.titleSmall),
+              Text('添加 / 修改面板', style: theme.textTheme.titleSmall),
               const SizedBox(height: 12),
               Form(
                 key: _formKey,
@@ -469,7 +493,7 @@ class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
               if (_isManageMode && isAuthenticated) ...[
                 const SizedBox(height: 12),
                 Text(
-                  '新增服务器后会先保存配置，只有你确认切换时才会退出当前账号。',
+                  '保存配置后，只有在你确认切换时才会退出当前账号。',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
