@@ -79,10 +79,32 @@ final class AuthService {
     }
 
     func getUser() async throws -> User {
-        let result: ApiResponse<User> = try await api.getUser()
-        guard let user = result.data else {
+        let (data, response) = try await api.requestRaw(api.endpoints.getUser)
+        guard response.statusCode == 200 else {
+            throw ApiError.serverError(response.statusCode, "获取用户信息失败")
+        }
+
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw ApiError.invalidResponse
         }
+
+        // Server returns {"user": {...}} or {"data": {...}}
+        let userData = json["user"] as? [String: Any]
+            ?? json["data"] as? [String: Any]
+            ?? json
+
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: userData) else {
+            throw ApiError.invalidResponse
+        }
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let dateString = try container.decode(String.self)
+            return DateParser.parse(dateString) ?? Date()
+        }
+
+        let user = try decoder.decode(User.self, from: jsonData)
         keychain.authUser = user
         return user
     }

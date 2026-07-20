@@ -84,6 +84,27 @@ class AuthRepository @Inject constructor(
                 }
 
                 secureStorage.saveTokens(accessToken, refreshToken)
+
+                // Server returns user in login response - use it directly
+                @Suppress("UNCHECKED_CAST")
+                val userData = map["user"] as? Map<String, Any?>
+                if (userData != null) {
+                    val user = User(
+                        id = (userData["id"] as? Number)?.toInt() ?: 0,
+                        username = userData["username"] as? String ?: "",
+                        role = userData["role"] as? String ?: "viewer",
+                        enabled = userData["enabled"] as? Boolean ?: true,
+                        avatarUrl = userData["avatar_url"] as? String
+                    )
+                    secureStorage.saveAuthUser(mapOf(
+                        "id" to user.id,
+                        "username" to user.username,
+                        "role" to user.role
+                    ))
+                    return Result.success(user)
+                }
+
+                // Fallback: fetch user separately
                 val user = getUser()
                 user.onSuccess { return Result.success(it) }
                 Result.failure(user.exceptionOrNull() ?: Exception("获取用户信息失败"))
@@ -124,20 +145,33 @@ class AuthRepository @Inject constructor(
     suspend fun getUser(): Result<User> {
         return try {
             val response = networkModule.getApiService().getUser()
-            if (response.isSuccessful && response.body()?.isSuccess == true) {
-                val user = response.body()?.data
-                if (user != null) {
-                    secureStorage.saveAuthUser(mapOf(
-                        "id" to user.id,
-                        "username" to user.username,
-                        "role" to user.role
-                    ))
-                    Result.success(user)
-                } else {
-                    Result.failure(Exception("User data is null"))
-                }
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                val gson = Gson()
+                val mapType = object : TypeToken<Map<String, Any?>>() {}.type
+                val map: Map<String, Any?> = gson.fromJson(responseBody, mapType)
+
+                // Server returns {"user": {...}} or {"data": {...}} or direct user object
+                val userData = map["user"] as? Map<String, Any?>
+                    ?: map["data"] as? Map<String, Any?>
+                    ?: map
+
+                val user = User(
+                    id = (userData["id"] as? Number)?.toInt() ?: 0,
+                    username = userData["username"] as? String ?: "",
+                    role = userData["role"] as? String ?: "viewer",
+                    enabled = userData["enabled"] as? Boolean ?: true,
+                    avatarUrl = userData["avatar_url"] as? String
+                )
+
+                secureStorage.saveAuthUser(mapOf(
+                    "id" to user.id,
+                    "username" to user.username,
+                    "role" to user.role
+                ))
+                Result.success(user)
             } else {
-                Result.failure(Exception(response.body()?.message ?: "Get user failed"))
+                Result.failure(Exception("获取用户信息失败"))
             }
         } catch (e: Exception) {
             Result.failure(e)

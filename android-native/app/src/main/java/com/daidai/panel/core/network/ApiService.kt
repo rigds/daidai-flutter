@@ -27,7 +27,7 @@ interface ApiService {
     suspend fun refresh(@Body body: Map<String, String>): Response<ApiResponse<Map<String, String>>>
 
     @GET(ApiEndpoints.AUTH_USER)
-    suspend fun getUser(): Response<ApiResponse<User>>
+    suspend fun getUser(): Response<ResponseBody>
 
     @PUT(ApiEndpoints.AUTH_PASSWORD)
     suspend fun changePassword(@Body body: Map<String, String>): Response<ApiResponse<Any>>
