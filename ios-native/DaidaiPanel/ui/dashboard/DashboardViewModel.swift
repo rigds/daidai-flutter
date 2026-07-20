@@ -18,69 +18,55 @@ final class DashboardViewModel: ObservableObject {
     }
 
     var hostname: String {
-        systemInfo?.hostname ?? dashboardData?.systemInfo?.hostname ?? "-"
+        systemInfo?.hostname ?? "-"
     }
 
     var os: String {
-        systemInfo?.os ?? dashboardData?.systemInfo?.os ?? "-"
+        systemInfo?.os ?? "-"
     }
 
     var arch: String {
-        systemInfo?.arch ?? dashboardData?.systemInfo?.arch ?? ""
-    }
-
-    var uptime: Int64 {
-        systemInfo?.uptime ?? dashboardData?.systemInfo?.uptime ?? 0
+        systemInfo?.arch ?? ""
     }
 
     var uptimeText: String {
-        let seconds = uptime
-        if seconds <= 0 { return "-" }
-        let days = seconds / 86400
-        let hours = (seconds % 86400) / 3600
-        let minutes = (seconds % 3600) / 60
-        if days > 0 { return "\(days)天\(hours)小时" }
-        if hours > 0 { return "\(hours)小时\(minutes)分" }
-        return "\(minutes)分钟"
+        systemInfo?.uptime ?? "-"
     }
 
     var cpuUsage: Double {
-        systemInfo?.cpuUsage ?? dashboardData?.systemInfo?.cpuUsage ?? 0
+        systemInfo?.cpuUsage ?? 0
     }
 
     var memoryUsage: Double {
-        systemInfo?.memoryUsage ?? dashboardData?.systemInfo?.memoryUsage ?? 0
+        systemInfo?.memoryUsage ?? 0
     }
 
     var memoryUsed: Int64 {
-        systemInfo?.memoryUsed ?? dashboardData?.systemInfo?.memoryUsed ?? 0
+        systemInfo?.memoryUsed ?? 0
     }
 
     var memoryTotal: Int64 {
-        systemInfo?.memoryTotal ?? dashboardData?.systemInfo?.memoryTotal ?? 0
+        systemInfo?.memoryTotal ?? 0
     }
 
     var diskUsage: Double {
-        systemInfo?.diskUsage ?? dashboardData?.systemInfo?.diskUsage ?? 0
+        systemInfo?.diskUsage ?? 0
     }
 
     var diskUsed: Int64 {
-        systemInfo?.diskUsed ?? dashboardData?.systemInfo?.diskUsed ?? 0
+        systemInfo?.diskUsed ?? 0
     }
 
     var diskTotal: Int64 {
-        systemInfo?.diskTotal ?? dashboardData?.systemInfo?.diskTotal ?? 0
+        systemInfo?.diskTotal ?? 0
     }
 
     var taskCount: Int { dashboardData?.taskCount ?? 0 }
     var runningTaskCount: Int { dashboardData?.runningTaskCount ?? 0 }
     var enabledTaskCount: Int { dashboardData?.enabledTaskCount ?? 0 }
-    var disabledTaskCount: Int { dashboardData?.disabledTaskCount ?? 0 }
-    var todayRunCount: Int { dashboardData?.todayRunCount ?? 0 }
+    var todaySuccessCount: Int { dashboardData?.todaySuccessCount ?? 0 }
     var todayFailCount: Int { dashboardData?.todayFailCount ?? 0 }
-    var depCount: Int { dashboardData?.depCount ?? 0 }
-    var envCount: Int { dashboardData?.envCount ?? 0 }
-    var subscriptionCount: Int { dashboardData?.subscriptionCount ?? 0 }
+    var dailyStats: [DailyStat] { dashboardData?.dailyStats ?? [] }
 
     var memoryText: String {
         "\(TimeUtils.formatFileSize(memoryUsed)) / \(TimeUtils.formatFileSize(memoryTotal))"

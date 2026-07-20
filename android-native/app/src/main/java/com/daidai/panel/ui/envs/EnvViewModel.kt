@@ -2,6 +2,7 @@ package com.daidai.panel.ui.envs
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daidai.panel.core.network.ApiEndpoints
 import com.daidai.panel.core.network.NetworkModule
 import com.daidai.panel.data.model.EnvVar
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,10 +61,9 @@ class EnvViewModel @Inject constructor(
                 val params = mutableMapOf<String, String>()
                 val response = api.getEnvVars(params)
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val data = response.body()?.data
                     _state.value = _state.value.copy(
-                        envs = data?.items ?: emptyList(),
-                        total = data?.total ?: 0,
+                        envs = response.body()?.data ?: emptyList(),
+                        total = response.body()?.total ?: 0,
                         isLoading = false
                     )
                 } else {
@@ -129,7 +129,7 @@ class EnvViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.enableEnvVar(mapOf("id" to id))
+                api.enableEnvVar(ApiEndpoints.envEnable(id))
                 load()
             } catch (_: Exception) {}
         }
@@ -139,7 +139,7 @@ class EnvViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.disableEnvVar(mapOf("id" to id))
+                api.disableEnvVar(ApiEndpoints.envDisable(id))
                 load()
             } catch (_: Exception) {}
         }
@@ -149,7 +149,7 @@ class EnvViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.moveTopEnvVar(mapOf("id" to id))
+                api.moveTopEnvVar(ApiEndpoints.envMoveTop(id))
                 load()
             } catch (_: Exception) {}
         }
@@ -159,7 +159,7 @@ class EnvViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.cancelTopEnvVar(mapOf("id" to id))
+                api.cancelTopEnvVar(ApiEndpoints.envCancelTop(id))
                 load()
             } catch (_: Exception) {}
         }

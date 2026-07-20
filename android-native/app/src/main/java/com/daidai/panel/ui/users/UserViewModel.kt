@@ -2,6 +2,7 @@ package com.daidai.panel.ui.users
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daidai.panel.core.network.ApiEndpoints
 import com.daidai.panel.core.network.NetworkModule
 import com.daidai.panel.data.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -110,7 +111,8 @@ class UserViewModel @Inject constructor(
             try {
                 val api = networkModule.getApiService()
                 val response = api.resetPassword(
-                    mapOf("user_id" to id, "new_password" to newPassword)
+                    ApiEndpoints.userResetPassword(id),
+                    mapOf("new_password" to newPassword)
                 )
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     onResult(true)

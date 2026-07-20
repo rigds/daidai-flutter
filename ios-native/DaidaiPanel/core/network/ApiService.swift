@@ -279,8 +279,8 @@ final class ApiService: ObservableObject {
         try await get(endpoints.taskLogFiles(id))
     }
 
-    func taskStats() async throws -> ApiResponse<TaskStatsData> {
-        try await get(endpoints.taskStats)
+    func taskStats(_ id: Int) async throws -> ApiResponse<TaskStatsData> {
+        try await get(endpoints.taskStats(id))
     }
 
     func batchEnableTasks(_ ids: [Int]) async throws -> ApiResponse<EmptyData> {
@@ -813,7 +813,7 @@ struct SystemInfoData: Codable {
     let diskUsage: Double?
     let diskTotal: Int64?
     let diskUsed: Int64?
-    let uptime: Int64?
+    let uptime: String?
 
     enum CodingKeys: String, CodingKey {
         case hostname, os, arch
@@ -830,28 +830,26 @@ struct SystemInfoData: Codable {
 
 struct DashboardData: Codable {
     let taskCount: Int?
-    let runningTaskCount: Int?
     let enabledTaskCount: Int?
-    let disabledTaskCount: Int?
-    let todayRunCount: Int?
+    let runningTaskCount: Int?
+    let todaySuccessCount: Int?
     let todayFailCount: Int?
-    let depCount: Int?
-    let envCount: Int?
-    let subscriptionCount: Int?
-    let systemInfo: SystemInfoData?
+    let dailyStats: [DailyStat]?
 
     enum CodingKeys: String, CodingKey {
         case taskCount = "task_count"
-        case runningTaskCount = "running_task_count"
-        case enabledTaskCount = "enabled_task_count"
-        case disabledTaskCount = "disabled_task_count"
-        case todayRunCount = "today_run_count"
-        case todayFailCount = "today_fail_count"
-        case depCount = "dep_count"
-        case envCount = "env_count"
-        case subscriptionCount = "subscription_count"
-        case systemInfo = "system_info"
+        case enabledTaskCount = "enabled_tasks"
+        case runningTaskCount = "running_tasks"
+        case todaySuccessCount = "success_logs"
+        case todayFailCount = "failed_logs"
+        case dailyStats = "daily_stats"
     }
+}
+
+struct DailyStat: Codable {
+    let date: String?
+    let success: Int?
+    let failed: Int?
 }
 
 struct SystemStatsData: Codable {

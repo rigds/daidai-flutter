@@ -5,7 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class ApiResponse<T>(
     @SerializedName("code") val code: Int = 0,
     @SerializedName("message") val message: String = "",
-    @SerializedName("data") val data: T? = null
+    @SerializedName("data") val data: T? = null,
+    @SerializedName("total") val total: Int = 0
 ) {
     val isSuccess: Boolean get() = code == 0 || code == 200
 }

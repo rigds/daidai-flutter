@@ -1,6 +1,7 @@
 package com.daidai.panel.data.model
 
 import com.google.gson.annotations.SerializedName
+import com.google.gson.annotations.JsonAdapter
 
 data class Subscription(
     @SerializedName("id") val id: Int = 0,
@@ -10,8 +11,8 @@ data class Subscription(
     @SerializedName("branch") val branch: String = "",
     @SerializedName("sub_path") val subPath: String = "",
     @SerializedName("schedule") val schedule: String = "",
-    @SerializedName("whitelist") val whitelist: String = "",
-    @SerializedName("blacklist") val blacklist: String = "",
+    @SerializedName("whitelist") @JsonAdapter(LabelsDeserializer::class) val whitelist: String = "",
+    @SerializedName("blacklist") @JsonAdapter(LabelsDeserializer::class) val blacklist: String = "",
     @SerializedName("auto_add_task") val autoAddTask: Boolean = false,
     @SerializedName("auto_del_task") val autoDelTask: Boolean = false,
     @SerializedName("enabled") val enabled: Boolean = true,

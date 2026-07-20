@@ -21,26 +21,31 @@ data class DashboardState(
     val error: String? = null
 ) {
     val cpuUsage: Float
-        get() {
-            val cpu = systemInfo["cpu"] as? Map<*, *> ?: return 0f
-            return (cpu["usage"] as? Number)?.toFloat() ?: 0f
-        }
+        get() = (systemInfo["cpu_usage"] as? Number)?.toFloat() ?: 0f
 
     val memoryUsage: Float
-        get() {
-            val mem = systemInfo["mem"] as? Map<*, *> ?: return 0f
-            val used = (mem["used"] as? Number)?.toLong() ?: return 0f
-            val total = (mem["total"] as? Number)?.toLong() ?: return 1f
-            return if (total > 0) (used.toFloat() / total * 100f) else 0f
-        }
+        get() = (systemInfo["memory_usage"] as? Number)?.toFloat() ?: 0f
 
     val diskUsage: Float
-        get() {
-            val disk = systemInfo["disk"] as? Map<*, *> ?: return 0f
-            val used = (disk["used"] as? Number)?.toLong() ?: return 0f
-            val total = (disk["total"] as? Number)?.toLong() ?: return 1f
-            return if (total > 0) (used.toFloat() / total * 100f) else 0f
-        }
+        get() = (systemInfo["disk_usage"] as? Number)?.toFloat() ?: 0f
+
+    val memoryTotal: Long
+        get() = (systemInfo["memory_total"] as? Number)?.toLong() ?: 0L
+
+    val memoryUsed: Long
+        get() = (systemInfo["memory_used"] as? Number)?.toLong() ?: 0L
+
+    val diskTotal: Long
+        get() = (systemInfo["disk_total"] as? Number)?.toLong() ?: 0L
+
+    val diskUsed: Long
+        get() = (systemInfo["disk_used"] as? Number)?.toLong() ?: 0L
+
+    val memoryFormatted: String
+        get() = "${formatBytes(memoryUsed)} / ${formatBytes(memoryTotal)}"
+
+    val diskFormatted: String
+        get() = "${formatBytes(diskUsed)} / ${formatBytes(diskTotal)}"
 
     val hostname: String
         get() = systemInfo["hostname"] as? String ?: ""
@@ -49,17 +54,7 @@ data class DashboardState(
         get() = systemInfo["os"] as? String ?: ""
 
     val uptime: String
-        get() {
-            val uptimeSeconds = (systemInfo["uptime"] as? Number)?.toLong() ?: return ""
-            val days = uptimeSeconds / 86400
-            val hours = (uptimeSeconds % 86400) / 3600
-            val minutes = (uptimeSeconds % 3600) / 60
-            return when {
-                days > 0 -> "${days}天${hours}小时"
-                hours > 0 -> "${hours}小时${minutes}分钟"
-                else -> "${minutes}分钟"
-            }
-        }
+        get() = systemInfo["uptime"] as? String ?: ""
 
     val panelTitle: String
         get() = panelSettings["title"] as? String ?: "呆呆面板"
@@ -68,28 +63,36 @@ data class DashboardState(
         get() = versionInfo["version"] as? String ?: ""
 
     val totalTasks: Int
-        get() = (dashboardData["total"] as? Number)?.toInt() ?: 0
+        get() = (dashboardData["task_count"] as? Number)?.toInt() ?: 0
 
     val enabledTasks: Int
-        get() = (dashboardData["enabled"] as? Number)?.toInt() ?: 0
+        get() = (dashboardData["enabled_tasks"] as? Number)?.toInt() ?: 0
 
     val runningTasks: Int
-        get() = (dashboardData["running"] as? Number)?.toInt() ?: 0
+        get() = (dashboardData["running_tasks"] as? Number)?.toInt() ?: 0
 
     val disabledTasks: Int
-        get() = (dashboardData["disabled"] as? Number)?.toInt() ?: 0
+        get() = totalTasks - enabledTasks
 
     val todaySuccess: Int
-        get() = (dashboardData["today_success"] as? Number)?.toInt() ?: 0
+        get() = (dashboardData["success_logs"] as? Number)?.toInt() ?: 0
 
     val todayFailed: Int
-        get() = (dashboardData["today_failed"] as? Number)?.toInt() ?: 0
+        get() = (dashboardData["failed_logs"] as? Number)?.toInt() ?: 0
 
     val executionTrend: List<Map<String, Any>>
         get() {
             @Suppress("UNCHECKED_CAST")
-            return dashboardData["execution_trend"] as? List<Map<String, Any>> ?: emptyList()
+            return dashboardData["daily_stats"] as? List<Map<String, Any>> ?: emptyList()
         }
+
+    private fun formatBytes(bytes: Long): String {
+        if (bytes <= 0) return "0 B"
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (Math.log10(bytes.toDouble()) / Math.log10(1024.0)).toInt().coerceIn(0, units.size - 1)
+        val value = bytes / Math.pow(1024.0, digitGroups.toDouble())
+        return "%.1f %s".format(value, units[digitGroups])
+    }
 }
 
 @HiltViewModel

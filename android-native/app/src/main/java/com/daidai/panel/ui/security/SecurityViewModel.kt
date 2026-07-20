@@ -2,6 +2,7 @@ package com.daidai.panel.ui.security
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daidai.panel.core.network.ApiEndpoints
 import com.daidai.panel.core.network.NetworkModule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,7 +59,7 @@ class SecurityViewModel @Inject constructor(
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     @Suppress("UNCHECKED_CAST")
                     _state.value = _state.value.copy(
-                        loginLogs = response.body()?.data?.items as? List<Map<String, Any>> ?: emptyList(),
+                        loginLogs = response.body()?.data as? List<Map<String, Any>> ?: emptyList(),
                         isLoading = false
                     )
                 } else {
@@ -95,7 +96,7 @@ class SecurityViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.deleteSessionById(id)
+                api.deleteSessionById(ApiEndpoints.sessionById(id.toInt()))
                 loadSessions()
             } catch (_: Exception) {}
         }
@@ -146,7 +147,7 @@ class SecurityViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.deleteIpWhitelist(id)
+                api.deleteIpWhitelist(ApiEndpoints.ipWhitelistById(id))
                 loadIpWhitelist()
             } catch (_: Exception) {}
         }
@@ -229,7 +230,7 @@ class SecurityViewModel @Inject constructor(
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     @Suppress("UNCHECKED_CAST")
                     _state.value = _state.value.copy(
-                        auditLogs = response.body()?.data?.items as? List<Map<String, Any>> ?: emptyList(),
+                        auditLogs = response.body()?.data as? List<Map<String, Any>> ?: emptyList(),
                         isLoading = false
                     )
                 } else {

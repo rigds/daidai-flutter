@@ -51,10 +51,10 @@ struct ApiEndpoints {
     func taskPin(_ id: Int) -> String { path("/tasks/\(id)/pin") }
     func taskUnpin(_ id: Int) -> String { path("/tasks/\(id)/unpin") }
     func taskCopy(_ id: Int) -> String { path("/tasks/\(id)/copy") }
-    func taskLatestLog(_ id: Int) -> String { path("/tasks/\(id)/logs/latest") }
-    func taskLiveLogs(_ id: Int) -> String { path("/tasks/\(id)/logs/live") }
-    func taskLogFiles(_ id: Int) -> String { path("/tasks/\(id)/logs/files") }
-    var taskStats: String { path("/tasks/stats") }
+    func taskLatestLog(_ id: Int) -> String { path("/tasks/\(id)/latest-log") }
+    func taskLiveLogs(_ id: Int) -> String { path("/tasks/\(id)/live-logs") }
+    func taskLogFiles(_ id: Int) -> String { path("/tasks/\(id)/log-files") }
+    func taskStats(_ id: Int) -> String { path("/tasks/\(id)/stats") }
     var taskBatchEnable: String { path("/tasks/batch/enable") }
     var taskBatchDisable: String { path("/tasks/batch/disable") }
     var taskBatchRun: String { path("/tasks/batch/run") }
@@ -69,7 +69,7 @@ struct ApiEndpoints {
     // MARK: - Logs
     var logs: String { path("/logs") }
     func log(_ id: Int) -> String { path("/logs/\(id)") }
-    var logStream: String { path("/logs/stream") }
+    func logStream(_ id: Int) -> String { path("/v1/logs/\(id)/stream") }
     var logBatchDelete: String { path("/logs/batch") }
     var logClean: String { path("/logs/clean") }
 
@@ -112,7 +112,7 @@ struct ApiEndpoints {
     func subscriptionDisable(_ id: Int) -> String { path("/subscriptions/\(id)/disable") }
     func subscriptionPull(_ id: Int) -> String { path("/subscriptions/\(id)/pull") }
     func subscriptionPullStop(_ id: Int) -> String { path("/subscriptions/\(id)/pull/stop") }
-    func subscriptionPullStream(_ id: Int) -> String { path("/subscriptions/\(id)/pull/stream") }
+    func subscriptionPullStream(_ id: Int) -> String { path("/v1/subscriptions/\(id)/pull-stream") }
     func subscriptionLogs(_ id: Int) -> String { path("/subscriptions/\(id)/logs") }
     var subscriptionBatchDelete: String { path("/subscriptions/batch") }
 
@@ -131,7 +131,7 @@ struct ApiEndpoints {
     func depStatus(_ id: Int) -> String { path("/deps/\(id)/status") }
     func depReinstall(_ id: Int) -> String { path("/deps/\(id)/reinstall") }
     func depCancel(_ id: Int) -> String { path("/deps/\(id)/cancel") }
-    func depLogStream(_ id: Int) -> String { path("/deps/\(id)/log/stream") }
+    func depLogStream(_ id: Int) -> String { path("/v1/deps/\(id)/log-stream") }
     var depBatchDelete: String { path("/deps/batch") }
     var depPip: String { path("/deps/pip") }
     var depNpm: String { path("/deps/npm") }
@@ -142,12 +142,14 @@ struct ApiEndpoints {
     // MARK: - Users
     var users: String { path("/users") }
     func user(_ id: Int) -> String { path("/users/\(id)") }
-    func userResetPassword(_ id: Int) -> String { path("/users/\(id)/password") }
+    func userResetPassword(_ id: Int) -> String { path("/users/\(id)/reset-password") }
 
     // MARK: - Security
     var loginLogs: String { path("/security/login-logs") }
     var sessions: String { path("/security/sessions") }
+    func sessionById(_ id: Int) -> String { path("/security/sessions/\(id)") }
     var ipWhitelist: String { path("/security/ip-whitelist") }
+    func ipWhitelistById(_ id: Int) -> String { path("/security/ip-whitelist/\(id)") }
     var auditLogs: String { path("/security/audit-logs") }
     var loginStats: String { path("/security/login-stats") }
     var twoFaSetup: String { path("/security/2fa/setup") }
@@ -160,11 +162,11 @@ struct ApiEndpoints {
     var configBatch: String { path("/configs/batch") }
 
     // MARK: - OpenAPI Apps
-    var openApiApps: String { path("/openapi/apps") }
-    func openApiApp(_ id: Int) -> String { path("/openapi/apps/\(id)") }
-    func openApiAppEnable(_ id: Int) -> String { path("/openapi/apps/\(id)/enable") }
-    func openApiAppDisable(_ id: Int) -> String { path("/openapi/apps/\(id)/disable") }
-    func openApiAppResetSecret(_ id: Int) -> String { path("/openapi/apps/\(id)/secret/reset") }
-    func openApiAppViewSecret(_ id: Int) -> String { path("/openapi/apps/\(id)/secret") }
-    func openApiAppLogs(_ id: Int) -> String { path("/openapi/apps/\(id)/logs") }
+    var openApiApps: String { path("/open-api/apps") }
+    func openApiApp(_ id: Int) -> String { path("/open-api/apps/\(id)") }
+    func openApiAppEnable(_ id: Int) -> String { path("/open-api/apps/\(id)/enable") }
+    func openApiAppDisable(_ id: Int) -> String { path("/open-api/apps/\(id)/disable") }
+    func openApiAppResetSecret(_ id: Int) -> String { path("/open-api/apps/\(id)/reset-secret") }
+    func openApiAppViewSecret(_ id: Int) -> String { path("/open-api/apps/\(id)/view-secret") }
+    func openApiAppLogs(_ id: Int) -> String { path("/open-api/apps/\(id)/logs") }
 }

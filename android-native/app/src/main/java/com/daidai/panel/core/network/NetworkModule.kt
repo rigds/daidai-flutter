@@ -11,6 +11,7 @@ import javax.inject.Singleton
 
 object RetrofitClient {
     fun createPlainRetrofit(baseUrl: String): Retrofit {
+        val cleanUrl = baseUrl.trim().trimEnd('/')
         val client = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -18,7 +19,7 @@ object RetrofitClient {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl("$cleanUrl/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -35,8 +36,8 @@ class NetworkModule @Inject constructor(
     private var currentApiService: ApiService? = null
 
     fun getApiService(): ApiService {
-        val baseUrl = secureStorage.getServerUrlSync()
-        if (baseUrl == null || baseUrl.isBlank()) {
+        val baseUrl = secureStorage.getServerUrlSync()?.trim()?.trimEnd('/')
+        if (baseUrl.isNullOrBlank()) {
             throw IllegalStateException("Server URL not configured")
         }
 
@@ -54,7 +55,7 @@ class NetworkModule @Inject constructor(
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(if (baseUrl.endsWith("/")) baseUrl else "$baseUrl/")
+            .baseUrl("$baseUrl/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

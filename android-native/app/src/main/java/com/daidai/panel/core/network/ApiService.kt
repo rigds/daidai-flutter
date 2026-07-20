@@ -89,7 +89,7 @@ interface ApiService {
     // ==================== Tasks ====================
 
     @GET(ApiEndpoints.TASKS)
-    suspend fun getTasks(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<Task>>>
+    suspend fun getTasks(@QueryMap params: Map<String, String>): Response<ApiResponse<List<Task>>>
 
     @POST(ApiEndpoints.TASKS)
     suspend fun createTask(@Body body: Map<String, Any>): Response<ApiResponse<Task>>
@@ -103,38 +103,38 @@ interface ApiService {
     @DELETE("${ApiEndpoints.TASKS}/{id}")
     suspend fun deleteTask(@Path("id") id: Int): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.TASKS_RUN)
-    suspend fun runTask(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun runTask(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.TASKS_STOP)
-    suspend fun stopTask(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun stopTask(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.TASKS_ENABLE)
-    suspend fun enableTask(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun enableTask(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.TASKS_DISABLE)
-    suspend fun disableTask(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun disableTask(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.TASKS_PIN)
-    suspend fun pinTask(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun pinTask(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.TASKS_UNPIN)
-    suspend fun unpinTask(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun unpinTask(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.TASKS_COPY)
-    suspend fun copyTask(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun copyTask(@Url url: String): Response<ApiResponse<Any>>
 
-    @GET(ApiEndpoints.TASKS_LATEST_LOG)
-    suspend fun getLatestLog(@Query("task_id") taskId: Int): Response<ApiResponse<TaskLog>>
+    @GET
+    suspend fun getLatestLog(@Url url: String): Response<ApiResponse<TaskLog>>
 
-    @GET(ApiEndpoints.TASKS_LIVE_LOGS)
-    suspend fun getLiveLogs(@Query("task_id") taskId: Int): Response<ApiResponse<List<TaskLog>>>
+    @GET
+    suspend fun getLiveLogs(@Url url: String): Response<ApiResponse<List<TaskLog>>>
 
-    @GET(ApiEndpoints.TASKS_LOG_FILES)
-    suspend fun getLogFiles(@Query("task_id") taskId: Int): Response<ApiResponse<List<Map<String, Any>>>>
+    @GET
+    suspend fun getLogFiles(@Url url: String): Response<ApiResponse<List<Map<String, Any>>>>
 
-    @GET(ApiEndpoints.TASKS_STATS)
-    suspend fun getTaskStats(): Response<ApiResponse<Map<String, Any>>>
+    @GET
+    suspend fun getTaskStats(@Url url: String): Response<ApiResponse<Map<String, Any>>>
 
     @POST(ApiEndpoints.TASKS_BATCH)
     suspend fun batchTasks(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
@@ -161,7 +161,7 @@ interface ApiService {
     // ==================== Logs ====================
 
     @GET(ApiEndpoints.LOGS)
-    suspend fun getLogs(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<TaskLog>>>
+    suspend fun getLogs(@QueryMap params: Map<String, String>): Response<ApiResponse<List<TaskLog>>>
 
     @GET("${ApiEndpoints.LOGS}/{id}")
     suspend fun getLog(@Path("id") id: Int): Response<ApiResponse<TaskLog>>
@@ -169,8 +169,8 @@ interface ApiService {
     @DELETE("${ApiEndpoints.LOGS}/{id}")
     suspend fun deleteLog(@Path("id") id: Int): Response<ApiResponse<Any>>
 
-    @GET(ApiEndpoints.LOGS_STREAM)
-    suspend fun streamLogs(@QueryMap params: Map<String, String>): Response<ResponseBody>
+    @GET
+    suspend fun streamLogs(@Url url: String): Response<ResponseBody>
 
     @POST(ApiEndpoints.LOGS_BATCH_DELETE)
     suspend fun batchDeleteLogs(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
@@ -235,7 +235,7 @@ interface ApiService {
     // ==================== EnvVars ====================
 
     @GET(ApiEndpoints.ENVS)
-    suspend fun getEnvVars(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<EnvVar>>>
+    suspend fun getEnvVars(@QueryMap params: Map<String, String>): Response<ApiResponse<List<EnvVar>>>
 
     @POST(ApiEndpoints.ENVS)
     suspend fun createEnvVar(@Body body: Map<String, Any>): Response<ApiResponse<EnvVar>>
@@ -249,17 +249,17 @@ interface ApiService {
     @DELETE("${ApiEndpoints.ENVS}/{id}")
     suspend fun deleteEnvVar(@Path("id") id: Int): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.ENVS_ENABLE)
-    suspend fun enableEnvVar(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun enableEnvVar(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.ENVS_DISABLE)
-    suspend fun disableEnvVar(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun disableEnvVar(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.ENVS_MOVE_TOP)
-    suspend fun moveTopEnvVar(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun moveTopEnvVar(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.ENVS_CANCEL_TOP)
-    suspend fun cancelTopEnvVar(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun cancelTopEnvVar(@Url url: String): Response<ApiResponse<Any>>
 
     @POST(ApiEndpoints.ENVS_BATCH)
     suspend fun batchEnvVars(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
@@ -277,7 +277,7 @@ interface ApiService {
     // ==================== Subscriptions ====================
 
     @GET(ApiEndpoints.SUBSCRIPTIONS)
-    suspend fun getSubscriptions(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<Subscription>>>
+    suspend fun getSubscriptions(@QueryMap params: Map<String, String>): Response<ApiResponse<List<Subscription>>>
 
     @POST(ApiEndpoints.SUBSCRIPTIONS)
     suspend fun createSubscription(@Body body: Map<String, Any>): Response<ApiResponse<Subscription>>
@@ -291,23 +291,23 @@ interface ApiService {
     @DELETE("${ApiEndpoints.SUBSCRIPTIONS}/{id}")
     suspend fun deleteSubscription(@Path("id") id: Int): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.SUBSCRIPTIONS_ENABLE)
-    suspend fun enableSubscription(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun enableSubscription(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.SUBSCRIPTIONS_DISABLE)
-    suspend fun disableSubscription(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun disableSubscription(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.SUBSCRIPTIONS_PULL)
-    suspend fun pullSubscription(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun pullSubscription(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.SUBSCRIPTIONS_PULL_STOP)
-    suspend fun stopPullSubscription(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun stopPullSubscription(@Url url: String): Response<ApiResponse<Any>>
 
-    @GET(ApiEndpoints.SUBSCRIPTIONS_PULL_STREAM)
-    suspend fun streamPullSubscription(@QueryMap params: Map<String, String>): Response<ResponseBody>
+    @GET
+    suspend fun streamPullSubscription(@Url url: String): Response<ResponseBody>
 
-    @GET(ApiEndpoints.SUBSCRIPTIONS_LOGS)
-    suspend fun getSubscriptionLogs(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<Map<String, Any>>>>
+    @GET
+    suspend fun getSubscriptionLogs(@Url url: String): Response<ApiResponse<List<Map<String, Any>>>>
 
     @POST(ApiEndpoints.SUBSCRIPTIONS_BATCH_DELETE)
     suspend fun batchDeleteSubscriptions(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
@@ -315,7 +315,7 @@ interface ApiService {
     // ==================== Notifications ====================
 
     @GET(ApiEndpoints.NOTIFICATIONS)
-    suspend fun getNotifications(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<NotifyChannel>>>
+    suspend fun getNotifications(@QueryMap params: Map<String, String>): Response<ApiResponse<List<NotifyChannel>>>
 
     @POST(ApiEndpoints.NOTIFICATIONS)
     suspend fun createNotification(@Body body: Map<String, Any>): Response<ApiResponse<NotifyChannel>>
@@ -329,14 +329,14 @@ interface ApiService {
     @DELETE("${ApiEndpoints.NOTIFICATIONS}/{id}")
     suspend fun deleteNotification(@Path("id") id: Int): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.NOTIFICATIONS_ENABLE)
-    suspend fun enableNotification(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun enableNotification(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.NOTIFICATIONS_DISABLE)
-    suspend fun disableNotification(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun disableNotification(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.NOTIFICATIONS_TEST)
-    suspend fun testNotification(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun testNotification(@Url url: String): Response<ApiResponse<Any>>
 
     @GET(ApiEndpoints.NOTIFICATIONS_TYPES)
     suspend fun getNotificationTypes(): Response<ApiResponse<List<Map<String, Any>>>>
@@ -347,7 +347,7 @@ interface ApiService {
     // ==================== Dependencies ====================
 
     @GET(ApiEndpoints.DEPS)
-    suspend fun getDependencies(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<Dependency>>>
+    suspend fun getDependencies(@QueryMap params: Map<String, String>): Response<ApiResponse<List<Dependency>>>
 
     @POST(ApiEndpoints.DEPS)
     suspend fun createDependency(@Body body: Map<String, Any>): Response<ApiResponse<Dependency>>
@@ -355,17 +355,14 @@ interface ApiService {
     @DELETE("${ApiEndpoints.DEPS}/{id}")
     suspend fun deleteDependency(@Path("id") id: Int): Response<ApiResponse<Any>>
 
-    @GET(ApiEndpoints.DEPS_STATUS)
-    suspend fun getDepsStatus(): Response<ApiResponse<Map<String, Any>>>
+    @POST
+    suspend fun reinstallDep(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.DEPS_REINSTALL)
-    suspend fun reinstallDep(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun cancelDep(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.DEPS_CANCEL)
-    suspend fun cancelDep(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
-
-    @GET(ApiEndpoints.DEPS_LOG_STREAM)
-    suspend fun streamDepLog(@QueryMap params: Map<String, String>): Response<ResponseBody>
+    @GET
+    suspend fun streamDepLog(@Url url: String): Response<ResponseBody>
 
     @POST(ApiEndpoints.DEPS_BATCH_DELETE)
     suspend fun batchDeleteDeps(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
@@ -405,8 +402,8 @@ interface ApiService {
     @DELETE("${ApiEndpoints.USERS}/{id}")
     suspend fun deleteUser(@Path("id") id: Int): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.USERS_RESET_PASSWORD)
-    suspend fun resetPassword(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun resetPassword(@Url url: String, @Body body: Map<String, Any>): Response<ApiResponse<Any>>
 
     // ==================== Security ====================
 
@@ -417,7 +414,7 @@ interface ApiService {
     suspend fun updateSecurity(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
 
     @GET(ApiEndpoints.SECURITY_LOGIN_LOGS)
-    suspend fun getLoginLogs(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<Map<String, Any>>>>
+    suspend fun getLoginLogs(@QueryMap params: Map<String, String>): Response<ApiResponse<List<Map<String, Any>>>>
 
     @GET(ApiEndpoints.SECURITY_SESSIONS)
     suspend fun getSessions(): Response<ApiResponse<List<Map<String, Any>>>>
@@ -425,8 +422,8 @@ interface ApiService {
     @DELETE(ApiEndpoints.SECURITY_SESSIONS_OTHERS)
     suspend fun deleteOtherSessions(): Response<ApiResponse<Any>>
 
-    @DELETE(ApiEndpoints.SECURITY_SESSION_BY_ID)
-    suspend fun deleteSessionById(@Query("id") id: String): Response<ApiResponse<Any>>
+    @DELETE
+    suspend fun deleteSessionById(@Url url: String): Response<ApiResponse<Any>>
 
     @GET(ApiEndpoints.SECURITY_IP_WHITELIST)
     suspend fun getIpWhitelist(): Response<ApiResponse<List<Map<String, Any>>>>
@@ -434,11 +431,11 @@ interface ApiService {
     @POST(ApiEndpoints.SECURITY_IP_WHITELIST)
     suspend fun addIpWhitelist(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
 
-    @DELETE(ApiEndpoints.SECURITY_IP_WHITELIST_BY_ID)
-    suspend fun deleteIpWhitelist(@Query("id") id: Int): Response<ApiResponse<Any>>
+    @DELETE
+    suspend fun deleteIpWhitelist(@Url url: String): Response<ApiResponse<Any>>
 
     @GET(ApiEndpoints.SECURITY_AUDIT_LOGS)
-    suspend fun getAuditLogs(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<Map<String, Any>>>>
+    suspend fun getAuditLogs(@QueryMap params: Map<String, String>): Response<ApiResponse<List<Map<String, Any>>>>
 
     @GET(ApiEndpoints.SECURITY_LOGIN_STATS)
     suspend fun getLoginStats(@QueryMap params: Map<String, String>): Response<ApiResponse<Map<String, Any>>>
@@ -458,19 +455,19 @@ interface ApiService {
     // ==================== Configs ====================
 
     @GET(ApiEndpoints.CONFIGS)
-    suspend fun getConfigs(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<Map<String, Any>>>>
+    suspend fun getConfigs(@QueryMap params: Map<String, String>): Response<ApiResponse<List<Map<String, Any>>>>
 
     @POST(ApiEndpoints.CONFIGS)
     suspend fun createConfig(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
 
-    @GET("${ApiEndpoints.CONFIGS}/{id}")
-    suspend fun getConfig(@Path("id") id: Int): Response<ApiResponse<Map<String, Any>>>
+    @GET
+    suspend fun getConfig(@Url url: String): Response<ApiResponse<Map<String, Any>>>
 
-    @PUT("${ApiEndpoints.CONFIGS}/{id}")
-    suspend fun updateConfig(@Path("id") id: Int, @Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @PUT
+    suspend fun updateConfig(@Url url: String, @Body body: Map<String, Any>): Response<ApiResponse<Any>>
 
-    @DELETE("${ApiEndpoints.CONFIGS}/{id}")
-    suspend fun deleteConfig(@Path("id") id: Int): Response<ApiResponse<Any>>
+    @DELETE
+    suspend fun deleteConfig(@Url url: String): Response<ApiResponse<Any>>
 
     @POST(ApiEndpoints.CONFIGS_BATCH)
     suspend fun batchConfigs(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
@@ -501,7 +498,7 @@ interface ApiService {
     suspend fun generateOpenApiToken(@Body body: Map<String, Any>): Response<ApiResponse<Map<String, Any>>>
 
     @GET(ApiEndpoints.OPENAPI_APPS)
-    suspend fun getOpenApiApps(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<Map<String, Any>>>>
+    suspend fun getOpenApiApps(@QueryMap params: Map<String, String>): Response<ApiResponse<List<Map<String, Any>>>>
 
     @POST(ApiEndpoints.OPENAPI_APPS)
     suspend fun createOpenApiApp(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
@@ -515,18 +512,18 @@ interface ApiService {
     @DELETE("${ApiEndpoints.OPENAPI_APPS}/{id}")
     suspend fun deleteOpenApiApp(@Path("id") id: Int): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.OPENAPI_APPS_ENABLE)
-    suspend fun enableOpenApiApp(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun enableOpenApiApp(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.OPENAPI_APPS_DISABLE)
-    suspend fun disableOpenApiApp(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun disableOpenApiApp(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.OPENAPI_APPS_RESET_SECRET)
-    suspend fun resetOpenApiAppSecret(@Body body: Map<String, Any>): Response<ApiResponse<Any>>
+    @POST
+    suspend fun resetOpenApiAppSecret(@Url url: String): Response<ApiResponse<Any>>
 
-    @POST(ApiEndpoints.OPENAPI_APPS_VIEW_SECRET)
-    suspend fun viewOpenApiAppSecret(@Body body: Map<String, Any>): Response<ApiResponse<Map<String, Any>>>
+    @POST
+    suspend fun viewOpenApiAppSecret(@Url url: String): Response<ApiResponse<Map<String, Any>>>
 
-    @GET(ApiEndpoints.OPENAPI_APPS_LOGS)
-    suspend fun getOpenApiAppLogs(@QueryMap params: Map<String, String>): Response<ApiResponse<PaginatedData<Map<String, Any>>>>
+    @GET
+    suspend fun getOpenApiAppLogs(@Url url: String): Response<ApiResponse<List<Map<String, Any>>>>
 }

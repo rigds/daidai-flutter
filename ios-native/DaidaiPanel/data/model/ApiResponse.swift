@@ -20,7 +20,8 @@ struct PaginatedData<T: Codable>: Codable {
     var count: Int { items.count }
 
     enum CodingKeys: String, CodingKey {
-        case items, total
+        case items = "data"
+        case total
     }
 }
 

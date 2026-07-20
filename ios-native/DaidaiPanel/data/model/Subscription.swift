@@ -151,7 +151,7 @@ private extension KeyedDecodingContainer {
     }
 
     func decodeDateIfPresent(forKey key: Key) throws -> Date? {
-        guard let s = try decode(String?.self, forKey: key) else { return nil }
+        guard let s = try decodeIfPresent(String.self, forKey: key) else { return nil }
         return DateParser.parse(s)
     }
 }

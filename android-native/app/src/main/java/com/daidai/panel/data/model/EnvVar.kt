@@ -1,6 +1,7 @@
 package com.daidai.panel.data.model
 
 import com.google.gson.annotations.SerializedName
+import com.google.gson.annotations.JsonAdapter
 
 data class EnvVar(
     @SerializedName("id") val id: Int = 0,
@@ -10,7 +11,7 @@ data class EnvVar(
     @SerializedName("enabled") val enabled: Boolean = true,
     @SerializedName("position") val position: Int = 0,
     @SerializedName("sort_order") val sortOrder: Int = 0,
-    @SerializedName("group") val group: String = "",
+    @SerializedName("group") @JsonAdapter(LabelsDeserializer::class) val group: String = "",
     @SerializedName("created_at") val createdAt: String = "",
     @SerializedName("updated_at") val updatedAt: String = ""
 ) {

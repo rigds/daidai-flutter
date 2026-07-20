@@ -162,7 +162,7 @@ struct DashboardView: View {
                 ], spacing: 12) {
                     statItem(count: viewModel.taskCount, label: "总任务", color: AppColors.info)
                     statItem(count: viewModel.runningTaskCount, label: "运行中", color: AppColors.success)
-                    statItem(count: viewModel.todayRunCount, label: "今日执行", color: AppColors.primary)
+                    statItem(count: viewModel.todaySuccessCount, label: "今日成功", color: AppColors.primary)
                     statItem(count: viewModel.todayFailCount, label: "今日失败", color: AppColors.error)
                 }
 
@@ -170,10 +170,6 @@ struct DashboardView: View {
 
                 HStack(spacing: 16) {
                     miniStat(count: viewModel.enabledTaskCount, label: "已启用", icon: "checkmark.circle")
-                    miniStat(count: viewModel.disabledTaskCount, label: "已禁用", icon: "pause.circle")
-                    miniStat(count: viewModel.envCount, label: "环境变量", icon: "key")
-                    miniStat(count: viewModel.subscriptionCount, label: "订阅", icon: "arrow.triangle.2.circlepath")
-                    miniStat(count: viewModel.depCount, label: "依赖", icon: "shippingbox")
                 }
             }
         }

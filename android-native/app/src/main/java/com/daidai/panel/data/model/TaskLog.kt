@@ -14,15 +14,15 @@ data class TaskLog(
     @SerializedName("created_at") val createdAt: String = "",
     @SerializedName("task_name") val taskName: String = ""
 ) {
-    val isSuccess: Boolean get() = status == 1
-    val isFailed: Boolean get() = status == 2
-    val isRunning: Boolean get() = status == 0
+    val isSuccess: Boolean get() = status == 0
+    val isFailed: Boolean get() = status == 1
+    val isRunning: Boolean get() = status == 2
 
     val statusText: String
         get() = when (status) {
-            0 -> "运行中"
-            1 -> "成功"
-            2 -> "失败"
+            0 -> "成功"
+            1 -> "失败"
+            2 -> "运行中"
             3 -> "超时"
             else -> "未知"
         }

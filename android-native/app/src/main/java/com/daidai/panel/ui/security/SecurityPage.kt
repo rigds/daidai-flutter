@@ -259,7 +259,7 @@ private fun SessionsTab(state: SecurityState, viewModel: SecurityViewModel) {
                             }
                             if (session["is_current"] as? Boolean != true) {
                                 IconButton(onClick = {
-                                    viewModel.kickSession(session["id"] as? String ?: "")
+                                    viewModel.kickSession((session["id"] as? Number)?.toInt()?.toString() ?: session["id"] as? String ?: "")
                                 }) {
                                     Icon(Icons.Default.Close, "踢出", tint = AppColors.red500)
                                 }

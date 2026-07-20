@@ -2,6 +2,7 @@ package com.daidai.panel.ui.deps
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daidai.panel.core.network.ApiEndpoints
 import com.daidai.panel.core.network.NetworkModule
 import com.daidai.panel.data.model.Dependency
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,10 +46,9 @@ class DepViewModel @Inject constructor(
                 else params["type"] = "0"
                 val response = api.getDependencies(params)
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val data = response.body()?.data
                     _state.value = _state.value.copy(
-                        deps = data?.items ?: emptyList(),
-                        total = data?.total ?: 0,
+                        deps = response.body()?.data ?: emptyList(),
+                        total = response.body()?.total ?: 0,
                         isLoading = false
                     )
                 } else {
@@ -114,7 +114,7 @@ class DepViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                val response = api.streamDepLog(mapOf("name" to name))
+                val response = api.streamDepLog(ApiEndpoints.depLogStream(0) + "?name=$name")
                 if (response.isSuccessful) {
                     val body = response.body()
                     val log = body?.string() ?: ""
@@ -138,7 +138,7 @@ class DepViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.reinstallDep(mapOf("id" to id))
+                api.reinstallDep(ApiEndpoints.depReinstall(id))
                 load()
             } catch (_: Exception) {}
         }
@@ -148,7 +148,7 @@ class DepViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.cancelDep(mapOf("name" to name))
+                api.cancelDep(ApiEndpoints.depCancel(0) + "?name=$name")
                 val updated = _state.value.installingDeps.toMutableSet()
                 updated.remove(name)
                 _state.value = _state.value.copy(installingDeps = updated)

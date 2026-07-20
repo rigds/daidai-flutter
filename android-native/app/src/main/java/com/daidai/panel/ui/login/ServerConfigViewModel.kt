@@ -43,13 +43,14 @@ class ServerConfigViewModel @Inject constructor(
 
     fun addServer(name: String, url: String) {
         viewModelScope.launch {
+            val cleanUrl = url.trim().trimEnd('/')
             val current = _panels.value.toMutableList()
-            val exists = current.any { it["url"] == url }
+            val exists = current.any { it["url"] == cleanUrl }
             if (exists) {
                 _error.value = "该服务器已存在"
                 return@launch
             }
-            current.add(mapOf("name" to name, "url" to url))
+            current.add(mapOf("name" to name.trim(), "url" to cleanUrl))
             secureStorage.savePanelsConfig(current)
             _panels.value = current
         }
@@ -75,9 +76,8 @@ class ServerConfigViewModel @Inject constructor(
             _isLoading.value = true
             _healthCheckResult.value = null
             try {
-                val retrofit = RetrofitClient.createPlainRetrofit(
-                    if (url.endsWith("/")) url else "$url/"
-                )
+                val cleanUrl = url.trim().trimEnd('/')
+                val retrofit = RetrofitClient.createPlainRetrofit(cleanUrl)
                 val api = retrofit.create(com.daidai.panel.core.network.ApiService::class.java)
                 val response = api.health()
                 _healthCheckResult.value = url to (response.isSuccessful)

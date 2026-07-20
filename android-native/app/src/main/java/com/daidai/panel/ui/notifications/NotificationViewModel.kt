@@ -2,6 +2,7 @@ package com.daidai.panel.ui.notifications
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daidai.panel.core.network.ApiEndpoints
 import com.daidai.panel.core.network.NetworkModule
 import com.daidai.panel.data.model.NotifyChannel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,10 +41,9 @@ class NotificationViewModel @Inject constructor(
                 val api = networkModule.getApiService()
                 val response = api.getNotifications(emptyMap())
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val data = response.body()?.data
                     _state.value = _state.value.copy(
-                        channels = data?.items ?: emptyList(),
-                        total = data?.total ?: 0,
+                        channels = response.body()?.data ?: emptyList(),
+                        total = response.body()?.total ?: 0,
                         isLoading = false
                     )
                 } else {
@@ -128,7 +128,7 @@ class NotificationViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.enableNotification(mapOf("id" to id))
+                api.enableNotification(ApiEndpoints.notificationEnable(id))
                 load()
             } catch (_: Exception) {}
         }
@@ -138,7 +138,7 @@ class NotificationViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val api = networkModule.getApiService()
-                api.disableNotification(mapOf("id" to id))
+                api.disableNotification(ApiEndpoints.notificationDisable(id))
                 load()
             } catch (_: Exception) {}
         }
@@ -149,7 +149,7 @@ class NotificationViewModel @Inject constructor(
             _state.value = _state.value.copy(testResult = null)
             try {
                 val api = networkModule.getApiService()
-                val response = api.testNotification(mapOf("id" to id))
+                val response = api.testNotification(ApiEndpoints.notificationTest(id))
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     _state.value = _state.value.copy(testResult = "发送成功")
                 } else {
