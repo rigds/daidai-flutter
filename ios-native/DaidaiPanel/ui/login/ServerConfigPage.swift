@@ -150,7 +150,7 @@ struct ServerConfigPage: View {
                 .foregroundColor(.secondary)
             Text("点击右上角 + 添加服务器")
                 .font(.subheadline)
-                .foregroundColor(.tertiary)
+                .foregroundColor(Color(UIColor.tertiaryLabel))
             Spacer()
         }
         .frame(maxWidth: .infinity)
@@ -290,7 +290,7 @@ struct ServerRow: View {
 
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.tertiary)
+                    .foregroundColor(Color(UIColor.tertiaryLabel))
             }
             .contentShape(Rectangle())
         }

@@ -134,7 +134,7 @@ struct PlaceholderPage: View {
                     .foregroundColor(.secondary)
                 Text("功能开发中...")
                     .font(.subheadline)
-                    .foregroundColor(.tertiary)
+                    .foregroundColor(Color(UIColor.tertiaryLabel))
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

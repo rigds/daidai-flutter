@@ -11,58 +11,62 @@ struct LogListView: View {
 
     var body: some View {
         NavigationStack {
-            GlassScaffold {
-                VStack(spacing: 0) {
-                    if viewModel.isLoading && viewModel.logs.isEmpty {
-                        VStack {
-                            Spacer()
-                            ProgressView("加载中...")
-                            Spacer()
-                        }
-                    } else if viewModel.logs.isEmpty {
-                        emptyState
-                    } else {
-                        logList
+            logContent
+        }
+    }
+
+    private var logContent: some View {
+        GlassScaffold {
+            VStack(spacing: 0) {
+                if viewModel.isLoading && viewModel.logs.isEmpty {
+                    VStack {
+                        Spacer()
+                        ProgressView("加载中...")
+                        Spacer()
                     }
+                } else if viewModel.logs.isEmpty {
+                    emptyState
+                } else {
+                    logList
                 }
             }
-            .navigationTitle("执行日志")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button(role: .destructive) {
-                            showCleanConfirm = true
-                        } label: {
-                            Label("清空日志", systemImage: "trash")
-                        }
+        }
+        .navigationTitle("执行日志")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(role: .destructive) {
+                        showCleanConfirm = true
                     } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .fontWeight(.semibold)
+                        Label("清空日志", systemImage: "trash")
                     }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .fontWeight(.semibold)
                 }
             }
-            .task {
-                viewModel.updateAPI(apiService)
-                await viewModel.load()
+        }
+        .task {
+            viewModel.updateAPI(apiService)
+            await viewModel.load()
+        }
+        .alert("确认清空", isPresented: $showCleanConfirm) {
+            Button("取消", role: .cancel) {}
+            Button("清空", role: .destructive) {
+                Task { try? await viewModel.cleanLogs() }
             }
-            .alert("确认清空", isPresented: $showCleanConfirm) {
-                Button("取消", role: .cancel) {}
-                Button("清空", role: .destructive) {
-                    Task { try? await viewModel.cleanLogs() }
-                }
-            } message: {
-                Text("确定要清空所有日志吗？此操作不可恢复。")
-            }
-            .alert("错误", isPresented: $showError) {
-                Button("确定") { viewModel.error = nil }
-                Button("重试") { Task { await viewModel.load() } }
-            } message: {
-                Text(viewModel.error ?? "")
-            }
-            .onChange(of: viewModel.error) { newValue in
-                showError = newValue != nil
-            }
+        } message: {
+            Text("确定要清空所有日志吗？此操作不可恢复。")
+        }
+        .alert("错误", isPresented: $showError) {
+            Button("确定") { viewModel.error = nil }
+            Button("重试") { Task { await viewModel.load() } }
+        } message: {
+            Text(viewModel.error ?? "")
+        }
+        .onChange(of: viewModel.error) { newValue in
+            showError = newValue != nil
         }
     }
 
@@ -147,7 +151,7 @@ struct LogListView: View {
                 .foregroundColor(.secondary)
             Text("任务执行后会在这里显示日志")
                 .font(.subheadline)
-                .foregroundColor(.tertiary)
+                .foregroundColor(Color(UIColor.tertiaryLabel))
             Spacer()
         }
         .frame(maxWidth: .infinity)

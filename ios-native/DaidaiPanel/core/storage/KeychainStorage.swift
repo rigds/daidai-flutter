@@ -19,7 +19,7 @@ struct KeychainItem {
 }
 
 final class KeychainStorage: ObservableObject {
-    static let shared = KeychainStorage.shared
+    static let shared = KeychainStorage()
     private let service = "com.daidai.panel"
 
     private init() {}

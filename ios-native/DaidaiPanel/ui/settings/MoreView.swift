@@ -51,7 +51,7 @@ struct MoreView: View {
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.tertiary)
+                    .foregroundColor(Color(UIColor.tertiaryLabel))
             }
             .padding(.vertical, 4)
         }

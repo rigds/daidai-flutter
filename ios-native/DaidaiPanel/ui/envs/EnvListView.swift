@@ -11,46 +11,50 @@ struct EnvListView: View {
 
     var body: some View {
         NavigationStack {
-            GlassScaffold {
-                VStack(spacing: 0) {
-                    SearchBar(text: $searchText, placeholder: "搜索环境变量...") {
-                        viewModel.keyword = searchText
-                        Task { await viewModel.load() }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
+            envContent
+        }
+    }
 
-                    groupFilter
-                    envList
+    private var envContent: some View {
+        GlassScaffold {
+            VStack(spacing: 0) {
+                SearchBar(text: $searchText, placeholder: "搜索环境变量...") {
+                    viewModel.keyword = searchText
+                    Task { await viewModel.load() }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+
+                groupFilter
+                envList
+            }
+        }
+        .navigationTitle("环境变量")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    showAddSheet = true
+                } label: {
+                    Image(systemName: "plus")
+                        .fontWeight(.semibold)
                 }
             }
-            .navigationTitle("环境变量")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showAddSheet = true
-                    } label: {
-                        Image(systemName: "plus")
-                            .fontWeight(.semibold)
-                    }
-                }
-            }
-            .task {
-                viewModel.updateAPI(apiService)
-                await viewModel.load()
-            }
-            .sheet(isPresented: $showAddSheet) {
-                EnvFormSheet(viewModel: viewModel, isPresented: $showAddSheet)
-            }
-            .alert("错误", isPresented: $showError) {
-                Button("确定") { viewModel.error = nil }
-            } message: {
-                Text(viewModel.error ?? "")
-            }
-            .onChange(of: viewModel.error) { newValue in
-                showError = newValue != nil
-            }
+        }
+        .task {
+            viewModel.updateAPI(apiService)
+            await viewModel.load()
+        }
+        .sheet(isPresented: $showAddSheet) {
+            EnvFormSheet(viewModel: viewModel, isPresented: $showAddSheet)
+        }
+        .alert("错误", isPresented: $showError) {
+            Button("确定") { viewModel.error = nil }
+        } message: {
+            Text(viewModel.error ?? "")
+        }
+        .onChange(of: viewModel.error) { newValue in
+            showError = newValue != nil
         }
     }
 
@@ -172,10 +176,10 @@ struct EnvListView: View {
                                 .clipShape(Capsule())
                         }
 
-                        if !env.remarks.isEmpty {
+                            if !env.remarks.isEmpty {
                             Text(env.remarks)
                                 .font(.caption2)
-                                .foregroundColor(.tertiary)
+                                .foregroundColor(Color(UIColor.tertiaryLabel))
                                 .lineLimit(1)
                         }
 
@@ -224,7 +228,7 @@ struct EnvListView: View {
                 .foregroundColor(.secondary)
             Text("环境变量可在任务中引用")
                 .font(.subheadline)
-                .foregroundColor(.tertiary)
+                .foregroundColor(Color(UIColor.tertiaryLabel))
             Spacer()
         }
         .frame(maxWidth: .infinity)
