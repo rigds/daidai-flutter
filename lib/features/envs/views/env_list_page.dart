@@ -1252,6 +1252,49 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
     );
   }
 
+  bool _listsEqual(List<int> a, List<int> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  List<(int, int?)> _computeMoves(List<int> original, List<int> target) {
+    final moves = <(int, int?)>[];
+    final working = List<int>.from(original);
+
+    for (var i = 0; i < target.length; i++) {
+      if (working[i] == target[i]) continue;
+
+      final fromIndex = working.indexOf(target[i]);
+      if (fromIndex == -1) continue;
+
+      final sourceId = working[fromIndex];
+      working.removeAt(fromIndex);
+
+      int? targetId;
+      if (i < working.length) {
+        targetId = working[i];
+      } else {
+        targetId = null;
+      }
+      working.insert(i, sourceId);
+
+      moves.add((sourceId, targetId));
+    }
+
+    return moves;
+  }
+
+  Future<void> _saveOrderChanges(List<int> original, List<int> target) async {
+    final moves = _computeMoves(original, target);
+    final notifier = ref.read(envListProvider.notifier);
+    for (final (sourceId, targetId) in moves) {
+      await notifier.sortEnvs(sourceId, targetId);
+    }
+  }
+
   void _showDetailSheet(EnvVar env) {
     final messenger = ScaffoldMessenger.of(context);
     final nameC = TextEditingController(text: env.name);
