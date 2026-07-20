@@ -1001,7 +1001,7 @@ struct TwoFaStatusData: Codable {
     let enabled: Bool
 }
 
-struct OpenApiAppData: Codable {
+struct OpenApiAppData: Codable, Identifiable {
     let id: Int
     let name: String
     let enabled: Bool

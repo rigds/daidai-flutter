@@ -58,7 +58,7 @@ struct AppLockSettingsView: View {
                         .foregroundColor(AppColors.primary)
                 }
             }
-            .onChange(of: lockEnabled) { _, newValue in
+            .onChange(of: lockEnabled) { newValue in
                 if newValue {
                     setupStep = .chooseType
                     showSetupSheet = true
@@ -110,7 +110,7 @@ struct AppLockSettingsView: View {
                         .foregroundColor(AppColors.primary)
                 }
             }
-            .onChange(of: biometricEnabled) { _, newValue in
+            .onChange(of: biometricEnabled) { newValue in
                 if newValue {
                     authenticateBiometric { success in
                         if !success {

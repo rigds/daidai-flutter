@@ -94,7 +94,7 @@ struct ScriptViewView: View {
     private var editorView: some View {
         TextEditor(text: $editedContent)
             .font(.system(.body, design: .monospaced))
-            .onChange(of: editedContent) { _, _ in
+            .onChange(of: editedContent) { _ in
                 hasUnsavedChanges = editedContent != viewModel.fileContent
             }
     }

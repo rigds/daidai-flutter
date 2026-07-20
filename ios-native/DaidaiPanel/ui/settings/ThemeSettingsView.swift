@@ -20,7 +20,7 @@ struct ThemeSettingsView: View {
         }
         .navigationTitle("主题设置")
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: selectedPhoto) { _, newItem in
+        .onChange(of: selectedPhoto) { newItem in
             Task { await loadImage(from: newItem) }
         }
     }
