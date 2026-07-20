@@ -6,7 +6,7 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            DashboardView()
+            DashboardView(selectedTab: $selectedTab)
                 .tag(0)
                 .tabItem {
                     Label("主页", systemImage: selectedTab == 0 ? "square.grid.2x2.fill" : "square.grid.2x2")

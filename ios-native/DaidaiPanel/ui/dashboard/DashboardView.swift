@@ -6,6 +6,8 @@ struct DashboardView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var navManager: NavigationManager
     @StateObject private var viewModel = DashboardViewModel(api: ApiService(baseURL: "http://localhost", keychain: KeychainStorage.shared))
+    @StateObject private var taskViewModel = TaskViewModel(api: ApiService(baseURL: "http://localhost", keychain: KeychainStorage.shared))
+    var selectedTab: Binding<Int>?
 
     var body: some View {
         NavigationStack {
@@ -34,6 +36,7 @@ struct DashboardView: View {
             }
             .task {
                 viewModel.updateAPI(apiService)
+                taskViewModel.updateAPI(apiService)
                 await viewModel.load()
             }
             .alert("错误", isPresented: .init(
@@ -221,11 +224,31 @@ struct DashboardView: View {
                     GridItem(.flexible()),
                     GridItem(.flexible())
                 ], spacing: 12) {
+                    quickAction(icon: "play.fill", title: "运行全部", color: AppColors.success) {
+                        Task {
+                            await taskViewModel.load()
+                            let enabledIds = taskViewModel.tasks.filter { $0.isEnabled }.map { $0.id }
+                            if !enabledIds.isEmpty {
+                                try? await taskViewModel.batchRun(enabledIds)
+                            }
+                        }
+                    }
                     quickAction(icon: "plus.circle", title: "新建任务", color: AppColors.primary) {
                         navManager.navigate(to: .taskForm(taskId: nil))
                     }
+                    quickAction(icon: "list.bullet", title: "任务管理", color: AppColors.amber500) {
+                        if let binding = selectedTab {
+                            binding.wrappedValue = 1
+                        } else {
+                            navManager.navigate(to: .tasks)
+                        }
+                    }
                     quickAction(icon: "terminal", title: "查看日志", color: AppColors.blue500) {
-                        navManager.navigate(to: .logs)
+                        if let binding = selectedTab {
+                            binding.wrappedValue = 2
+                        } else {
+                            navManager.navigate(to: .logs)
+                        }
                     }
                     quickAction(icon: "key", title: "环境变量", color: AppColors.purple500) {
                         navManager.navigate(to: .envs)

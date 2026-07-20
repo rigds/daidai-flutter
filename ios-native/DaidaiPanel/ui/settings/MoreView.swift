@@ -167,6 +167,10 @@ struct MoreView: View {
                 navManager.navigate(to: .sponsors)
             }
 
+            AppListTile(icon: "info.circle", title: "关于") {
+                navManager.navigate(to: .about)
+            }
+
             HStack {
                 Image(systemName: "info.circle")
                     .foregroundColor(.secondary)

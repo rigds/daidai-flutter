@@ -8,6 +8,8 @@ struct EnvListView: View {
     @State private var searchText = ""
     @State private var showAddSheet = false
     @State private var showError = false
+    @State private var showEditSheet = false
+    @State private var selectedEnv: EnvVar?
 
     var body: some View {
         NavigationStack {
@@ -47,6 +49,11 @@ struct EnvListView: View {
         }
         .sheet(isPresented: $showAddSheet) {
             EnvFormSheet(viewModel: viewModel, isPresented: $showAddSheet)
+        }
+        .sheet(isPresented: $showEditSheet) {
+            if let env = selectedEnv {
+                EnvDetailView(env: env, viewModel: viewModel)
+            }
         }
         .alert("错误", isPresented: $showError) {
             Button("确定") { viewModel.error = nil }
@@ -109,6 +116,10 @@ struct EnvListView: View {
                     LazyVStack(spacing: 8) {
                         ForEach(viewModel.envs) { env in
                             envCard(env)
+                                .onTapGesture {
+                                    selectedEnv = env
+                                    showEditSheet = true
+                                }
                         }
                     }
                     .padding(.horizontal, 16)

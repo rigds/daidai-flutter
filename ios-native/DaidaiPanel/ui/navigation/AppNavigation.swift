@@ -25,6 +25,7 @@ enum AppRoute: Hashable {
     case themeSettings
     case appLock
     case sponsors
+    case about
 }
 
 @MainActor
@@ -88,7 +89,7 @@ struct AppNavigationStack<Content: View>: View {
         case .taskForm(let taskId):
             TaskFormPlaceholder(taskId: taskId)
         case .logStream(let logId):
-            LogStreamPlaceholder(logId: logId)
+            LogStreamView(logId: logId)
         case .subscriptions:
             SubscriptionListView()
         case .scripts:
@@ -115,6 +116,8 @@ struct AppNavigationStack<Content: View>: View {
             AppLockSettingsView()
         case .sponsors:
             SponsorView()
+        case .about:
+            AboutView()
         }
     }
 }
@@ -151,13 +154,5 @@ struct TaskFormPlaceholder: View {
             title: taskId == nil ? "新建任务" : "编辑任务",
             icon: "plus.circle.fill"
         )
-    }
-}
-
-struct LogStreamPlaceholder: View {
-    let logId: Int
-
-    var body: some View {
-        PlaceholderPage(title: "日志详情 #\(logId)", icon: "terminal.fill")
     }
 }

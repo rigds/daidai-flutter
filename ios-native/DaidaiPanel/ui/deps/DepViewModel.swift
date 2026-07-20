@@ -25,8 +25,9 @@ final class DepViewModel: ObservableObject {
     func load() async {
         isLoading = true
         error = nil
+        let type = selectedTab == .nodejs ? "nodejs" : "python"
         do {
-            let response: ApiResponse<PaginatedData<Dependency>> = try await api.getDeps(page: 1, pageSize: 100)
+            let response: ApiResponse<PaginatedData<Dependency>> = try await api.getDeps(page: 1, pageSize: 100, type: type)
             self.deps = response.data?.items ?? []
         } catch {
             self.error = ApiUtils.extractErrorMessage(from: error)
@@ -35,8 +36,7 @@ final class DepViewModel: ObservableObject {
     }
 
     func filteredDeps() -> [Dependency] {
-        let type = selectedTab == .nodejs ? "nodejs" : "python"
-        return deps.filter { $0.type == type }
+        deps
     }
 
     func install(name: String, version: String? = nil) async throws {

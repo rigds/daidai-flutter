@@ -44,6 +44,9 @@ struct DepListView: View {
             viewModel.updateAPI(apiService)
             await viewModel.load()
         }
+        .onChange(of: viewModel.selectedTab) { _ in
+            Task { await viewModel.load() }
+        }
         .refreshable { await viewModel.load() }
         .alert("安装依赖", isPresented: $showInstallAlert) {
             TextField("包名称", text: $installName)
