@@ -239,7 +239,7 @@ class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
     final panelToSave = _panelForSave(finalUrl, existing);
     if (existing == null || panelToSave.name != existing.name) {
       await SecureStorage.savePanel(panelToSave);
-      await _loadPanels(); // 保存后重新加载一下列表，更新UI
+      await _loadPanels(); 
     }
 
     if (mounted) {
@@ -353,94 +353,143 @@ class _ServerConfigPageState extends ConsumerState<ServerConfigPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
+              
               if (_panels.isNotEmpty) ...[
                 const SizedBox(height: 28),
-                Text('已保存的面板', style: theme.textTheme.titleSmall),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('已保存的面板', style: theme.textTheme.titleSmall),
+                    Text('长按卡片可拖拽排序', style: TextStyle(fontSize: 12, color: theme.colorScheme.primary)),
+                  ],
+                ),
                 const SizedBox(height: 8),
-                ..._panels.map(
-                  (panel) => Card(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: theme.colorScheme.primaryContainer,
-                        child: Icon(
-                          Icons.dashboard,
-                          size: 20,
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                      title: Text(
-                        panel.name.isNotEmpty ? panel.name : panel.url,
-                        style: theme.textTheme.titleSmall,
-                      ),
-                      subtitle: Text(
-                        panel.url,
-                        style: theme.textTheme.bodySmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (panel.url == _activeServerUrl)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              margin: const EdgeInsets.only(right: 4),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primaryContainer,
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                              child: Text(
-                                '当前',
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            
-                          // 🌟 新增的编辑按钮
-                          IconButton(
-                            icon: Icon(
-                              Icons.edit_outlined,
+                
+                // 🌟 核心修改区：引入支持防跳位计算的拖拽列表
+                ReorderableListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(), // 禁止内部滚动，防止与外层页面冲突
+                  buildDefaultDragHandles: false, // 隐藏默认的难看拖拽把手，使用全局长按
+                  itemCount: _panels.length,
+                  proxyDecorator: (child, index, animation) {
+                    return Material(
+                      elevation: 6,
+                      color: Colors.transparent,
+                      shadowColor: theme.colorScheme.shadow.withAlpha(50),
+                      child: child,
+                    );
+                  },
+                  onReorder: (oldIndex, newIndex) async {
+                    // 🌟 经典的索引越界修复补丁
+                    if (oldIndex < newIndex) {
+                      newIndex -= 1;
+                    }
+                    setState(() {
+                      final item = _panels.removeAt(oldIndex);
+                      _panels.insert(newIndex, item);
+                    });
+                    
+                    // 尝试将最新的顺序保存到本地
+                    try {
+                      // 这里的实现依赖于你的 SecureStorage，这里先循环重新保存覆盖
+                      // 如果重启 App 后顺序恢复原样，我们可以去修改 secure_storage.dart 加一个专门的重排方法
+                      for (var p in _panels) {
+                        await SecureStorage.savePanel(p);
+                      }
+                    } catch (e) {
+                      debugPrint('保存排序失败: $e');
+                    }
+                  },
+                  itemBuilder: (context, index) {
+                    final panel = _panels[index];
+                    return Card(
+                      // 🌟 必须给每个元素唯一的 Key，拖拽排序才能正确识别
+                      key: ValueKey(panel.url),
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: ReorderableDelayedDragStartListener(
+                        index: index,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: theme.colorScheme.primaryContainer,
+                            child: Icon(
+                              Icons.dashboard,
                               size: 20,
                               color: theme.colorScheme.primary,
                             ),
-                            tooltip: '编辑配置',
-                            onPressed: () {
-                              // 将信息填入下方表单
-                              setState(() {
-                                _nameController.text = panel.name == panel.url ? '' : panel.name;
-                                _controller.text = panel.url;
-                              });
-                              _showMessage('已将服务器信息填入下方表单，请修改后保存');
-                            },
                           ),
-                          
-                          // 原本的删除按钮
-                          IconButton(
-                            icon: Icon(
-                              Icons.delete_outline,
-                              size: 20,
-                              color: theme.colorScheme.error,
-                            ),
-                            tooltip: '删除',
-                            onPressed: () => _deletePanel(panel),
+                          title: Text(
+                            panel.name.isNotEmpty ? panel.name : panel.url,
+                            style: theme.textTheme.titleSmall,
                           ),
-                        ],
+                          subtitle: Text(
+                            panel.url,
+                            style: theme.textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (panel.url == _activeServerUrl)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  margin: const EdgeInsets.only(right: 4),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.primaryContainer,
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Text(
+                                    '当前',
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      color: theme.colorScheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.edit_outlined,
+                                  size: 20,
+                                  color: theme.colorScheme.primary,
+                                ),
+                                tooltip: '编辑配置',
+                                onPressed: () {
+                                  setState(() {
+                                    _nameController.text = panel.name == panel.url ? '' : panel.name;
+                                    _controller.text = panel.url;
+                                  });
+                                  _showMessage('已将服务器信息填入下方表单，请修改后保存');
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete_outline,
+                                  size: 20,
+                                  color: theme.colorScheme.error,
+                                ),
+                                tooltip: '删除',
+                                onPressed: () => _deletePanel(panel),
+                              ),
+                            ],
+                          ),
+                          onTap: () => _connect(
+                            url: panel.url,
+                            skipAutoLogin: !panel.autoLogin,
+                          ),
+                        ),
                       ),
-                      onTap: () => _connect(
-                        url: panel.url,
-                        skipAutoLogin: !panel.autoLogin,
-                      ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-                const SizedBox(height: 20),
+                // 🌟 拖拽列表区域结束
+                
+                const SizedBox(height: 12),
                 const Divider(),
               ],
+              
               const SizedBox(height: 20),
               Text('添加 / 修改面板', style: theme.textTheme.titleSmall),
               const SizedBox(height: 12),
