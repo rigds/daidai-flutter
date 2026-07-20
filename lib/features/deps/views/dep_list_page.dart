@@ -1099,7 +1099,7 @@ class _DepListPageState extends ConsumerState<DepListPage> {
     final isNarrow = screenWidth < 420;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 12),
         child: Column(

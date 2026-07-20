@@ -100,7 +100,7 @@ class _SponsorPageState extends State<SponsorPage> {
     final isLight = theme.brightness == Brightness.light;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      
       appBar: AppBar(title: const Text('赞助名单')),
       body: _loading
           ? const Center(

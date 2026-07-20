@@ -17,7 +17,7 @@ class ThemeSettingsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('主题设置'),
-        backgroundColor: Colors.transparent,
+        
         elevation: 0,
       ),
       body: ListView(

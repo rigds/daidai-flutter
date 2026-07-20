@@ -104,7 +104,7 @@ class _PanelLogPageState extends State<PanelLogPage> {
         : AppColors.slate200;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      
       appBar: AppBar(
         title: const Text('面板日志'),
         actions: [
