@@ -78,15 +78,25 @@ fun LoginPage(
     val loginState by loginViewModel.loginState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val isLight = !isSystemInDarkTheme()
+    var isLoginLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(authState.status) {
         if (authState.status == AuthStatus.AUTHENTICATED) {
+            isLoginLoading = false
             onLoginSuccess()
+        }
+    }
+
+    // Initialize auth state if still UNKNOWN
+    LaunchedEffect(Unit) {
+        if (authState.status == AuthStatus.UNKNOWN) {
+            authViewModel.checkAuthStatus()
         }
     }
 
     LaunchedEffect(authState.error) {
         authState.error?.let {
+            isLoginLoading = false
             snackbarHostState.showSnackbar(it)
             authViewModel.clearError()
         }
@@ -284,6 +294,7 @@ fun LoginPage(
                 // Login button
                 Button(
                     onClick = {
+                        isLoginLoading = true
                         authViewModel.login(
                             username = loginState.username,
                             password = loginState.password,
@@ -292,14 +303,14 @@ fun LoginPage(
                     },
                     enabled = loginState.username.isNotBlank() &&
                             loginState.password.isNotBlank() &&
-                            authState.status != AuthStatus.UNKNOWN,
+                            !isLoginLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = AppColors.primary)
                 ) {
-                    if (authState.status == AuthStatus.UNKNOWN) {
+                    if (isLoginLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = AppColors.white,

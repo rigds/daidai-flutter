@@ -1,10 +1,14 @@
 import Foundation
 
 struct ApiEndpoints {
-    private let baseURL: String
+    private var baseURL: String
 
     init(baseURL: String) {
         self.baseURL = baseURL.hasSuffix("/") ? String(baseURL.dropLast()) : baseURL
+    }
+
+    mutating func updateBaseURL(_ url: String) {
+        self.baseURL = url.hasSuffix("/") ? String(url.dropLast()) : url
     }
 
     private func path(_ p: String) -> String { "\(baseURL)/api\(p)" }

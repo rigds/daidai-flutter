@@ -1,7 +1,7 @@
 import Foundation
 
 final class ApiService: ObservableObject {
-    let endpoints: ApiEndpoints
+    private(set) var endpoints: ApiEndpoints
     private let interceptor: AuthInterceptor
     private let session: URLSession
     private let decoder: JSONDecoder = {
@@ -21,6 +21,10 @@ final class ApiService: ObservableObject {
         config.timeoutIntervalForRequest = 30
         config.timeoutIntervalForResource = 120
         self.session = URLSession(configuration: config)
+    }
+
+    func updateBaseURL(_ url: String) {
+        endpoints.updateBaseURL(url)
     }
 
     var authInterceptor: AuthInterceptor { interceptor }

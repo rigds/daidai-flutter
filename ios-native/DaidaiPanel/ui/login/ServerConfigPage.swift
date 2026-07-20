@@ -103,6 +103,7 @@ final class ServerConfigViewModel: ObservableObject {
 struct ServerConfigPage: View {
     @EnvironmentObject var keychain: KeychainStorage
     @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var apiService: ApiService
     @StateObject private var viewModel: ServerConfigViewModel
 
     init() {
@@ -162,6 +163,7 @@ struct ServerConfigPage: View {
                 ForEach(viewModel.servers) { server in
                     ServerRow(server: server) {
                         viewModel.selectServer(server)
+                        apiService.updateBaseURL(server.url)
                     }
                 }
                 .onDelete { offsets in
