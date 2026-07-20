@@ -23,7 +23,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   String? _serverUrl;
   List<PanelConfig> _panels = [];
   
-  // 🌟 新增：给头像加个 Key，用于精准计算弹窗出现的坐标位置
   final GlobalKey _avatarKey = GlobalKey(); 
 
   @override
@@ -97,12 +96,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     context.go(!panel.autoLogin ? '/server-config?manual=1' : '/boot');
   }
 
-  // 🌟 核心优化：手动控制菜单弹出的 UI 和逻辑
   void _showServerMenu(BuildContext context, bool isLight, AuthState auth) async {
     final RenderBox button = _avatarKey.currentContext!.findRenderObject() as RenderBox;
     final RenderBox overlay = Navigator.of(context, rootNavigator: true).overlay!.context.findRenderObject() as RenderBox;
 
-    // 计算弹窗该出现的位置（头像正下方稍微偏移一点）
     final RelativeRect position = RelativeRect.fromRect(
       Rect.fromPoints(
         button.localToGlobal(Offset(0, button.size.height + 8), ancestor: overlay),
@@ -113,7 +110,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
     final items = <PopupMenuEntry<String>>[];
 
-    // 生成服务器列表并加分割线
     for (int i = 0; i < _panels.length; i++) {
       final panel = _panels[i];
       final isCurrent = panel.url == _serverUrl;
@@ -123,7 +119,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         PopupMenuItem(
           value: isCurrent ? 'current' : 'switch_${panel.url}',
           enabled: !isCurrent,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          // 🌟 调整内边距，让空间更紧凑
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
               Icon(
@@ -133,7 +130,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       ? AppColors.primary
                       : (isLight ? AppColors.slate600 : AppColors.slate300)
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,16 +164,16 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 ),
               ),
               if (isCurrent) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withAlpha(20),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     '当前',
-                    style: TextStyle(fontSize: 10, color: AppColors.primary, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 9, color: AppColors.primary, fontWeight: FontWeight.w600),
                   ),
                 ),
               ]
@@ -185,51 +182,49 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         )
       );
 
-      // 🌟 修复不直观：每个面板之间强制增加 1 像素细分割线
       if (i < _panels.length - 1) {
         items.add(const PopupMenuDivider(height: 1));
       }
     }
 
     if (_panels.isNotEmpty) {
-      items.add(const PopupMenuDivider(height: 16));
+      items.add(const PopupMenuDivider(height: 12));
     }
 
-    // 底部固定操作
     items.addAll([
       PopupMenuItem(
         value: 'add_server',
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
           children: [
             Icon(Icons.add_circle_outline, size: 18, color: isLight ? AppColors.slate700 : AppColors.slate200),
-            const SizedBox(width: 10),
-            Text('添加 / 管理面板', style: TextStyle(fontSize: 14, color: isLight ? AppColors.slate700 : AppColors.slate200)),
+            const SizedBox(width: 8),
+            Text('添加/管理', style: TextStyle(fontSize: 14, color: isLight ? AppColors.slate700 : AppColors.slate200)),
           ],
         ),
       ),
       const PopupMenuDivider(height: 1),
       const PopupMenuItem(
         value: 'logout',
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
           children: [
             Icon(Icons.logout, size: 18, color: Colors.redAccent),
-            SizedBox(width: 10),
-            Text('退出当前账号', style: TextStyle(fontSize: 14, color: Colors.redAccent)),
+            SizedBox(width: 8),
+            Text('退出账号', style: TextStyle(fontSize: 14, color: Colors.redAccent)),
           ],
         ),
       ),
     ]);
 
-    // 唤起菜单
     final value = await showMenu<String>(
       context: context,
-      useRootNavigator: true, // 🌟 修复不消失：强制覆盖底部导航栏
+      useRootNavigator: true, 
       position: position,
-      constraints: const BoxConstraints(maxWidth: 240), // 🌟 修复太宽：约束最大宽度
+      // 🌟 核心修改：强制固定宽度为 180，达到截图里的完美紧凑感
+      constraints: const BoxConstraints(minWidth: 180, maxWidth: 180), 
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14), // 圆角稍微缩小一点配合窄边框
       ),
       color: isLight ? AppColors.slate50 : AppColors.slate800,
       elevation: 6,
@@ -271,7 +266,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         AppUpdateService.showUpdateDialog(context, info);
       }
     } catch (_) {
-      // Silent — do not disturb user on failure
     }
   }
 
@@ -458,7 +452,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       ),
                       const SizedBox(width: 12),
                       
-                      // 🌟 将普通的头像包裹在 GestureDetector 中，绑定到写好的 _showServerMenu
                       GestureDetector(
                         key: _avatarKey,
                         onTap: () => _showServerMenu(context, isLight, auth),
