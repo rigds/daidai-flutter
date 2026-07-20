@@ -31,7 +31,8 @@ fun ResourceCard(
     glassMode: Boolean = false,
     modifier: Modifier = Modifier,
     size: Dp = 100.dp,
-    strokeWidth: Dp = 8.dp
+    strokeWidth: Dp = 8.dp,
+    subtitle: String = ""
 ) {
     val isLight = !isSystemInDarkTheme()
     val progressColor = when {
@@ -103,6 +104,16 @@ fun ResourceCard(
                 color = if (isLight) AppColors.slate500 else AppColors.slate400,
                 modifier = Modifier.padding(top = 4.dp)
             )
+
+            if (subtitle.isNotEmpty()) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                    color = if (isLight) AppColors.slate400 else AppColors.slate500,
+                    modifier = Modifier.padding(top = 2.dp),
+                    maxLines = 1
+                )
+            }
         }
     }
 }

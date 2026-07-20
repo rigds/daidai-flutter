@@ -36,17 +36,15 @@ data class Task(
     @SerializedName("updated_at") val updatedAt: String = ""
 ) {
     val isDisabled: Boolean get() = status == 0
-    val isQueued: Boolean get() = status == 4
+    val isQueued: Boolean get() = status == 2
     val isEnabled: Boolean get() = status == 1
-    val isRunning: Boolean get() = status == 3
+    val isRunning: Boolean get() = status == 2
 
     val statusText: String
         get() = when (status) {
             0 -> "已禁用"
             1 -> "已启用"
-            2 -> "等待中"
-            3 -> "运行中"
-            4 -> "队列中"
+            2 -> "运行中"
             else -> "未知"
         }
 

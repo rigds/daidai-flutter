@@ -177,14 +177,16 @@ fun DashboardPage(
                     label = "内存",
                     glassMode = glassMode,
                     modifier = Modifier.weight(1f),
-                    size = 80.dp
+                    size = 80.dp,
+                    subtitle = state.memoryFormatted
                 )
                 ResourceCard(
                     percentage = state.diskUsage,
                     label = "磁盘",
                     glassMode = glassMode,
                     modifier = Modifier.weight(1f),
-                    size = 80.dp
+                    size = 80.dp,
+                    subtitle = state.diskFormatted
                 )
             }
         }

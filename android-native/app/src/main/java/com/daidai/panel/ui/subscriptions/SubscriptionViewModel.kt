@@ -39,10 +39,9 @@ class SubscriptionViewModel @Inject constructor(
                 val api = networkModule.getApiService()
                 val response = api.getSubscriptions(emptyMap())
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val data = response.body()?.data
                     _state.value = _state.value.copy(
-                        subscriptions = data?.items ?: emptyList(),
-                        total = data?.total ?: 0,
+                        subscriptions = response.body()?.data ?: emptyList(),
+                        total = response.body()?.total ?: 0,
                         isLoading = false
                     )
                 } else {

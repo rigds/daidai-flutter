@@ -45,10 +45,9 @@ class DepViewModel @Inject constructor(
                 else params["type"] = "0"
                 val response = api.getDependencies(params)
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val data = response.body()?.data
                     _state.value = _state.value.copy(
-                        deps = data?.items ?: emptyList(),
-                        total = data?.total ?: 0,
+                        deps = response.body()?.data ?: emptyList(),
+                        total = response.body()?.total ?: 0,
                         isLoading = false
                     )
                 } else {

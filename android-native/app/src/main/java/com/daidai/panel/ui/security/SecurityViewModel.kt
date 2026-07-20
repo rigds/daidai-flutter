@@ -58,7 +58,7 @@ class SecurityViewModel @Inject constructor(
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     @Suppress("UNCHECKED_CAST")
                     _state.value = _state.value.copy(
-                        loginLogs = response.body()?.data?.items as? List<Map<String, Any>> ?: emptyList(),
+                        loginLogs = response.body()?.data as? List<Map<String, Any>> ?: emptyList(),
                         isLoading = false
                     )
                 } else {
@@ -229,7 +229,7 @@ class SecurityViewModel @Inject constructor(
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     @Suppress("UNCHECKED_CAST")
                     _state.value = _state.value.copy(
-                        auditLogs = response.body()?.data?.items as? List<Map<String, Any>> ?: emptyList(),
+                        auditLogs = response.body()?.data as? List<Map<String, Any>> ?: emptyList(),
                         isLoading = false
                     )
                 } else {

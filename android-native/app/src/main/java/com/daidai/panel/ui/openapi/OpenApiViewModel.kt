@@ -38,11 +38,10 @@ class OpenApiViewModel @Inject constructor(
                 val api = networkModule.getApiService()
                 val response = api.getOpenApiApps(emptyMap())
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val data = response.body()?.data
                     @Suppress("UNCHECKED_CAST")
                     _state.value = _state.value.copy(
-                        apps = data?.items as? List<Map<String, Any>> ?: emptyList(),
-                        total = data?.total ?: 0,
+                        apps = response.body()?.data as? List<Map<String, Any>> ?: emptyList(),
+                        total = response.body()?.total ?: 0,
                         isLoading = false
                     )
                 } else {
@@ -151,7 +150,7 @@ class OpenApiViewModel @Inject constructor(
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     @Suppress("UNCHECKED_CAST")
                     _state.value = _state.value.copy(
-                        logs = response.body()?.data?.items as? List<Map<String, Any>> ?: emptyList()
+                        logs = response.body()?.data as? List<Map<String, Any>> ?: emptyList()
                     )
                 }
             } catch (_: Exception) {}
