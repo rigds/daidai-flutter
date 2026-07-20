@@ -1142,14 +1142,14 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                             key: ValueKey(env.id),
                             margin: const EdgeInsets.only(bottom: 10),
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
+                              horizontal: 16,
                               vertical: 14,
                             ),
                             decoration: BoxDecoration(
                               color: isLight
                                   ? Colors.white
                                   : AppColors.slate900,
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: isLight
                                     ? AppColors.slate200
@@ -1897,11 +1897,11 @@ class _EnvCardState extends State<_EnvCard> {
       },
       onLongPress: widget.onLongPress,
       child: Container(
-        // 🌟 核心修改：统一圆角 (14) 与其他界面完美一致，使用 bottom: 10 留出空白行隔开
+        // 🌟 核心修改：统一卡片间距 (bottom: 10) 与圆角 (14)，与日志等界面完全一致
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 12,
+          horizontal: 16,
+          vertical: 14,
         ),
         decoration: BoxDecoration(
           color: glassCardColor(glassMode: widget.glassMode, isLight: isLight),
@@ -1934,19 +1934,19 @@ class _EnvCardState extends State<_EnvCard> {
                   const SizedBox(width: 8),
                 ],
                 Container(
-                  width: 7,
-                  height: 7,
+                  width: 8,
+                  height: 8,
                   decoration: BoxDecoration(
                     color: env.enabled ? AppColors.primary : AppColors.slate300,
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     env.name,
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: isLight ? AppColors.blue600 : AppColors.blue500,
                     ),
@@ -1955,9 +1955,9 @@ class _EnvCardState extends State<_EnvCard> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // 🌟 白衣骑俑（已启用 / 已禁用状态胶囊）放在右上角
+                // 🌟 “已启用/已禁用”标签放在右上角
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: env.enabled
                         ? (isLight ? AppColors.blue100 : AppColors.blue500.withAlpha(25))
@@ -1981,7 +1981,7 @@ class _EnvCardState extends State<_EnvCard> {
             // 第二行：中间的值与备注信息
             Padding(
               padding: EdgeInsets.only(
-                left: widget.selectionMode ? 32 : 15,
+                left: widget.selectionMode ? 32 : 18,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1990,7 +1990,7 @@ class _EnvCardState extends State<_EnvCard> {
                   Text(
                     env.value.replaceAll('\n', ' '),
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 12,
                       fontFamily: 'monospace',
                       color: isLight ? AppColors.slate500 : AppColors.slate400,
                     ),
@@ -1998,11 +1998,11 @@ class _EnvCardState extends State<_EnvCard> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (env.remarks.isNotEmpty) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
                     Text(
                       env.remarks,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 11,
                         color: isLight ? AppColors.slate400 : AppColors.slate500,
                         fontStyle: FontStyle.italic,
                       ),
@@ -2014,7 +2014,7 @@ class _EnvCardState extends State<_EnvCard> {
               ),
             ),
             
-            // 🌟 第三行：两个图标按钮放在右下角并排
+            // 🌟 第三行：两个图标按钮放在右下角并排对齐
             if (!widget.selectionMode) ...[
               const SizedBox(height: 8),
               Row(
@@ -2054,7 +2054,7 @@ class _MiniBtn extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: isLight ? AppColors.slate50 : AppColors.slate800,
           borderRadius: BorderRadius.circular(8),
@@ -2062,12 +2062,12 @@ class _MiniBtn extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 13, color: AppColors.slate400),
-            const SizedBox(width: 3),
+            Icon(icon, size: 14, color: AppColors.slate400),
+            const SizedBox(width: 4),
             Text(
               label,
               style: TextStyle(
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: AppColors.slate500,
               ),
