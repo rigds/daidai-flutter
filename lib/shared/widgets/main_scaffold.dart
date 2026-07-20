@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/theme_provider.dart';
-import 'app_background.dart';
 
 class MainScaffold extends ConsumerStatefulWidget {
   final Widget child;
@@ -70,12 +69,24 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     }
   }
 
+  Widget? _buildBackgroundImage(AppStyleSettings settings) {
+    if (settings.backgroundImagePath != null &&
+        settings.backgroundImagePath!.isNotEmpty) {
+      return Image.file(
+        File(settings.backgroundImagePath!),
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+      );
+    }
+    return null;
+  }
+
   Widget _buildGlassBottomBar(int idx) {
     return GlassTabBar.bottom(
       selectedIndex: idx,
       onTabSelected: _onTabSelected,
-      iconSize: 24, // 🌟 修改：玻璃模式图标放大
-      labelFontSize: 11, // 🌟 修改：玻璃模式字体放大
+      iconSize: 22, // 恢复官方默认尺寸
+      labelFontSize: 10, // 恢复官方默认尺寸
       barHeight: 58,
       horizontalPadding: 16,
       verticalPadding: 10,
@@ -169,7 +180,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
       final (icon, activeIcon, label) = items[i];
       final isActive = i == idx;
       
-      // 🌟 核心修改：大幅加深未选中状态的颜色
+      // 保持加深后的颜色不变
       final color = isActive 
           ? AppColors.primary 
           : (isLight ? AppColors.slate700 : AppColors.slate400);
@@ -196,7 +207,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
                   child: Icon(
                     isActive ? activeIcon : icon,
                     key: ValueKey('$i-$isActive'),
-                    size: 24, // 🌟 修改：图标放大至 24
+                    size: 21, // 恢复官方默认尺寸
                     color: color,
                   ),
                 ),
@@ -204,9 +215,9 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 11, // 🌟 修改：字体放大至 11
+                    fontSize: 10, // 恢复官方默认尺寸
                     color: color,
-                    // 🌟 修改：未选中时也加粗（w600），选中时更粗（w700）
+                    // 保持加粗效果提升清晰度
                     fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                   ),
                 ),
@@ -223,46 +234,47 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     final idx = _currentIndex(context);
     final settings = ref.watch(appStyleProvider);
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final hasBg = settings.backgroundImagePath != null &&
-        settings.backgroundImagePath!.isNotEmpty;
+    final bgImage = _buildBackgroundImage(settings);
+    final hasBg = bgImage != null;
 
     return PopScope<void>(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) => _handleBackPress(didPop),
       child: settings.glassMode
-          ? _buildGlassMode(idx, hasBg, settings)
-          : _buildClassicMode(idx, isLight, hasBg, settings),
+          ? _buildGlassMode(idx, bgImage, hasBg)
+          : _buildClassicMode(idx, isLight, bgImage, hasBg, settings),
     );
   }
 
-  /// 液态玻璃模式：GlassScaffold，背景图传入 background 参数
-  Widget _buildGlassMode(int idx, bool hasBg, AppStyleSettings settings) {
-    Widget? bgWidget;
-    if (hasBg) {
-      bgWidget = Image.file(
-        File(settings.backgroundImagePath!),
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-      );
-    }
-
+  /// 液态玻璃模式：GlassScaffold 自带背景处理
+  Widget _buildGlassMode(int idx, Widget? bgImage, bool hasBg) {
     return GlassScaffold(
-      background: bgWidget,
+      background: hasBg ? bgImage : null,
       body: widget.child,
       bottomBar: _buildGlassBottomBar(idx),
     );
   }
 
-  /// 经典模式：AppBackground + Scaffold
+  /// 经典模式：用 GlassPage 包裹确保背景可见
   Widget _buildClassicMode(
-      int idx, bool isLight, bool hasBg, AppStyleSettings settings) {
-    return AppBackground(
-      child: Scaffold(
-        backgroundColor: hasBg ? Colors.transparent : null,
-        body: widget.child,
-        extendBody: true,
-        bottomNavigationBar: _buildClassicBottomBar(idx, isLight),
-      ),
+      int idx, bool isLight, Widget? bgImage, bool hasBg, AppStyleSettings settings) {
+    if (hasBg) {
+      // 有背景图时用 GlassPage 让背景正确渲染
+      return GlassPage(
+        background: bgImage,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: widget.child,
+          extendBody: true,
+          bottomNavigationBar: _buildClassicBottomBar(idx, isLight),
+        ),
+      );
+    }
+    // 无背景图时直接用 Scaffold
+    return Scaffold(
+      body: widget.child,
+      extendBody: true,
+      bottomNavigationBar: _buildClassicBottomBar(idx, isLight),
     );
   }
 }
