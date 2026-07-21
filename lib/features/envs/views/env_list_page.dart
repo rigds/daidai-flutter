@@ -1140,7 +1140,7 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                           final env = state.envs[i];
                           return Container(
                             key: ValueKey(env.id),
-                            margin: const EdgeInsets.only(bottom: 10),
+                            margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 14,
@@ -1149,7 +1149,7 @@ class _EnvListPageState extends ConsumerState<EnvListPage> {
                               color: isLight
                                   ? Colors.white
                                   : AppColors.slate900,
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(18),
                               border: Border.all(
                                 color: isLight
                                     ? AppColors.slate200
@@ -1897,15 +1897,15 @@ class _EnvCardState extends State<_EnvCard> {
       },
       onLongPress: widget.onLongPress,
       child: Container(
-        // 🌟 核心修改：统一卡片间距 (bottom: 10) 与圆角 (14)，与日志等界面完全一致
-        margin: const EdgeInsets.only(bottom: 10),
+        // 🌟 统一卡片间距 (bottom: 12) 与“定时任务/运行日志”完全一致的大圆角 (18)
+        margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
         ),
         decoration: BoxDecoration(
           color: glassCardColor(glassMode: widget.glassMode, isLight: isLight),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: widget.selected
                 ? AppColors.primary
@@ -2016,7 +2016,7 @@ class _EnvCardState extends State<_EnvCard> {
             
             // 🌟 第三行：两个图标按钮放在右下角并排对齐
             if (!widget.selectionMode) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
