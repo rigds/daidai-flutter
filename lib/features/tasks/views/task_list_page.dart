@@ -260,7 +260,7 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
 
   Future<void> _openLatestLog(Task task) async {
     if (task.isRunning) {
-      _openLiveLog(task);
+      await _openLiveLog(task);
       return;
     }
     try {
@@ -274,14 +274,20 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
         _showMessage('当前任务暂无日志');
         return;
       }
-      context.push('/logs/${latestLog.id}/stream');
+      await context.push('/logs/${latestLog.id}/stream');
+      if (mounted) {
+        ref.read(taskProvider.notifier).load(refresh: true);
+      }
     } catch (_) {
       _showMessage('打开日志失败');
     }
   }
 
-  void _openLiveLog(Task task) {
-    context.push('/tasks/${task.id}/live-logs', extra: task.name);
+  Future<void> _openLiveLog(Task task) async {
+    await context.push('/tasks/${task.id}/live-logs', extra: task.name);
+    if (mounted) {
+      ref.read(taskProvider.notifier).load(refresh: true);
+    }
   }
 
   Future<void> _runTask(Task task) async {
@@ -290,14 +296,14 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
       if (!mounted) {
         return;
       }
-      _openLiveLog(task);
+      await _openLiveLog(task);
     } catch (error) {
       final message = _extractTaskError(error, '启动任务失败');
       if (!mounted) {
         return;
       }
       if (message.contains('运行中')) {
-        _openLiveLog(task);
+        await _openLiveLog(task);
         return;
       }
       _showMessage(message);
@@ -1544,6 +1550,104 @@ class _TaskListPageState extends ConsumerState<TaskListPage> {
       await _showActionError(error, '删除任务失败');
     }
   }
+
+  Future<void> _openLatestLog(Task task) async {
+    if (task.isRunning) {
+      await _openLiveLog(task);
+      return;
+    }
+    try {
+      final latestLog = await ref
+          .read(taskProvider.notifier)
+          .fetchLatestLog(task.id);
+      if (!mounted) {
+        return;
+      }
+      if (latestLog == null) {
+        _showMessage('当前任务暂无日志');
+        return;
+      }
+      await context.push('/logs/${latestLog.id}/stream');
+      if (mounted) {
+        ref.read(taskProvider.notifier).load(refresh: true);
+      }
+    } catch (_) {
+      _showMessage('打开日志失败');
+    }
+  }
+
+  Future<void> _openLiveLog(Task task) async {
+    await context.push('/tasks/${task.id}/live-logs', extra: task.name);
+    if (mounted) {
+      ref.read(taskProvider.notifier).load(refresh: true);
+    }
+  }
+
+  Future<void> _runTask(Task task) async {
+    try {
+      await ref.read(taskProvider.notifier).runTask(task.id);
+      if (!mounted) {
+        return;
+      }
+      await _openLiveLog(task);
+    } catch (error) {
+      final message = _extractTaskError(error, '启动任务失败');
+      if (!mounted) {
+        return;
+      }
+      if (message.contains('运行中')) {
+        await _openLiveLog(task);
+        return;
+      }
+      _showMessage(message);
+    }
+  }
+
+  Future<void> _stopTask(Task task) async {
+    try {
+      await ref.read(taskProvider.notifier).stopTask(task.id);
+      _showMessage('任务已停止');
+    } catch (error) {
+      await _showActionError(error, '停止任务失败');
+    }
+  }
+
+  Future<void> _toggleTaskEnabled(Task task) async {
+    try {
+      if (task.isDisabled) {
+        await ref.read(taskProvider.notifier).enableTask(task.id);
+        _showMessage('任务已启用');
+      } else {
+        await ref.read(taskProvider.notifier).disableTask(task.id);
+        _showMessage(task.isRunning ? '任务已设置为完成后禁用' : '任务已禁用');
+      }
+    } catch (error) {
+      await _showActionError(error, '更新任务状态失败');
+    }
+  }
+
+  Future<void> _copyTask(Task task) async {
+    try {
+      await ref.read(taskProvider.notifier).copyTask(task.id);
+      _showMessage('任务已复制');
+    } catch (error) {
+      await _showActionError(error, '复制任务失败');
+    }
+  }
+
+  Future<void> _togglePinned(Task task) async {
+    try {
+      if (task.isPinned) {
+        await ref.read(taskProvider.notifier).unpinTask(task.id);
+        _showMessage('已取消置顶');
+      } else {
+        await ref.read(taskProvider.notifier).pinTask(task.id);
+        _showMessage('已置顶任务');
+      }
+    } catch (error) {
+      await _showActionError(error, '更新置顶状态失败');
+    }
+  }
 }
 
 class _TaskCard extends StatefulWidget {
@@ -1735,7 +1839,7 @@ class _TaskCardState extends State<_TaskCard> {
         _closeActions();
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8), // 🌟 减小卡片间距
+        margin: const EdgeInsets.only(bottom: 8),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -1852,7 +1956,6 @@ class _TaskCardState extends State<_TaskCard> {
                     : const Duration(milliseconds: 160),
                 curve: Curves.easeOutCubic,
                 transform: Matrix4.translationValues(_dragOffset, 0, 0),
-                // 🌟 核心优化：大幅压缩卡片内边距，让整体高度变窄
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: glassCardColor(glassMode: widget.glassMode, isLight: widget.isLight),
@@ -1943,7 +2046,7 @@ class _TaskCardState extends State<_TaskCard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6), // 🌟 缩短各模块间距
+                    const SizedBox(height: 6),
                     _TaskScheduleSummary(
                       taskType: task.taskType,
                       taskTypeLabel: _taskTypeLabel(),
@@ -1957,7 +2060,7 @@ class _TaskCardState extends State<_TaskCard> {
                         isLight: widget.isLight,
                       ),
                     ],
-                    const SizedBox(height: 6), // 🌟 缩短底部间距
+                    const SizedBox(height: 6),
                     Row(
                       children: [
                         Expanded(
@@ -2027,7 +2130,6 @@ class _TaskPrimaryActionButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),
         child: Padding(
-          // 🌟 压平运行按钮的上下高度
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -2138,7 +2240,6 @@ class _TaskScheduleSummary extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      // 🌟 极大地收窄 Cron 灰色框的上下留白
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: isLight ? AppColors.slate50 : AppColors.slate800,
@@ -2150,7 +2251,6 @@ class _TaskScheduleSummary extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            // 🌟 缩小左侧图标容器尺寸
             width: 24,
             height: 24,
             decoration: BoxDecoration(
