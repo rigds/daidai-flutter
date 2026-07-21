@@ -1897,7 +1897,7 @@ class _EnvCardState extends State<_EnvCard> {
       },
       onLongPress: widget.onLongPress,
       child: Container(
-        // 🌟 统一卡片间距 (bottom: 12) 与“定时任务/运行日志”完全一致的大圆角 (18)
+        // 🌟 统一和任务/日志页面一致的卡片间距 (12) 与完美圆角 (20)
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -1905,7 +1905,7 @@ class _EnvCardState extends State<_EnvCard> {
         ),
         decoration: BoxDecoration(
           color: glassCardColor(glassMode: widget.glassMode, isLight: isLight),
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: widget.selected
                 ? AppColors.primary
@@ -1978,7 +1978,7 @@ class _EnvCardState extends State<_EnvCard> {
               ],
             ),
             
-            // 第二行：中间的值与备注信息
+            // 第二行：中间的值
             Padding(
               padding: EdgeInsets.only(
                 left: widget.selectionMode ? 32 : 18,
@@ -1997,43 +1997,59 @@ class _EnvCardState extends State<_EnvCard> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (env.remarks.isNotEmpty) ...[
-                    const SizedBox(height: 3),
-                    Text(
-                      env.remarks,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: isLight ? AppColors.slate400 : AppColors.slate500,
-                        fontStyle: FontStyle.italic,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
                 ],
               ),
             ),
             
-            // 🌟 第三行：两个图标按钮放在右下角并排对齐
-            if (!widget.selectionMode) ...[
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  _MiniBtn(
-                    icon: Icons.copy_outlined,
-                    label: '复制',
-                    onTap: widget.onCopy,
+            // 🌟 第三行：左下角显示备注，右下角并排放置“复制”和“详情”按钮
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 左下角：备注信息
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: widget.selectionMode ? 32 : 18,
+                    ),
+                    child: env.remarks.isNotEmpty
+                        ? Text(
+                            env.remarks,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isLight ? AppColors.slate400 : AppColors.slate500,
+                              fontStyle: FontStyle.italic,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          )
+                        : const SizedBox.shrink(),
                   ),
-                  const SizedBox(width: 6),
-                  _MiniBtn(
-                    icon: Icons.open_in_new,
-                    label: '详情',
-                    onTap: widget.onTap,
+                ),
+                
+                // 右下角：复制和详情图标按钮
+                if (!widget.selectionMode) ...[
+                  const SizedBox(width: 8),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _MiniBtn(
+                        icon: Icons.copy_outlined,
+                        label: '复制',
+                        onTap: widget.onCopy,
+                      ),
+                      const SizedBox(width: 6),
+                      _MiniBtn(
+                        icon: Icons.open_in_new,
+                        label: '详情',
+                        onTap: widget.onTap,
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ],
+              ],
+            ),
           ],
         ),
       ),
