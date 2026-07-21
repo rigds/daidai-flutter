@@ -69,48 +69,8 @@ class AppUpdateService {
 
   /// Check GitHub Releases for new version.
   static Future<AppUpdateInfo?> checkUpdate() async {
-    try {
-      final resp = await _dio.get(
-        'https://api.github.com/repos/$_kGitHubRepo/releases/latest',
-        options: Options(headers: {'Accept': 'application/vnd.github.v3+json'}),
-      );
-      final data = resp.data;
-      if (data is! Map<String, dynamic>) return null;
-
-      final tagName = (data['tag_name'] as String?)?.replaceFirst('v', '') ?? '';
-      final body = data['body']?.toString() ?? '';
-      final assets = data['assets'];
-
-      String apkUrl = '';
-      String assetName = '';
-      if (assets is List) {
-        for (final asset in assets) {
-          final name = asset['name']?.toString() ?? '';
-          if (name.endsWith('.apk')) {
-            final rawUrl = asset['browser_download_url']?.toString() ?? '';
-            if (_isTrustedDownloadUrl(rawUrl)) {
-              apkUrl = rawUrl;
-              assetName = name;
-              break;
-            }
-          }
-        }
-      }
-
-      final currentVersion = AppUserAgent.versionLabel.split('+').first;
-      final hasUpdate = tagName.isNotEmpty && _isNewer(tagName, currentVersion);
-
-      return AppUpdateInfo(
-        latestVersion: tagName,
-        currentVersion: currentVersion,
-        releaseNotes: body,
-        downloadUrl: apkUrl,
-        assetName: assetName,
-        hasUpdate: hasUpdate,
-      );
-    } catch (_) {
-      return null;
-    }
+    // 🌟 修改点：直接返回 null，彻底屏蔽更新检测逻辑，避免上游更新导致频繁弹窗
+    return null;
   }
 
   /// Compare semantic versions: returns true if remote > local.
