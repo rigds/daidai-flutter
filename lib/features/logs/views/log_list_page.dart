@@ -718,7 +718,7 @@ class _LogItem extends ConsumerWidget {
     return GestureDetector(
       onLongPress: onLongPress,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: selected
@@ -726,7 +726,7 @@ class _LogItem extends ConsumerWidget {
                     ? AppColors.primary.withAlpha(12)
                     : AppColors.primary.withAlpha(20))
               : glassCardColor(glassMode: glassMode, isLight: isLight),
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: selected
                 ? AppColors.primary.withAlpha(80)
