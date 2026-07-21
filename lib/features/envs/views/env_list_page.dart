@@ -1897,15 +1897,15 @@ class _EnvCardState extends State<_EnvCard> {
       },
       onLongPress: widget.onLongPress,
       child: Container(
-        // 🌟 统一和任务/日志页面一致的卡片间距 (12) 与完美圆角 (20)
-        margin: const EdgeInsets.only(bottom: 12),
+        // 🌟 统一和任务/日志页面一致的卡片间距 (8) 与完美圆角 (20)
+        margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
         ),
         decoration: BoxDecoration(
           color: glassCardColor(glassMode: widget.glassMode, isLight: isLight),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: widget.selected
                 ? AppColors.primary
